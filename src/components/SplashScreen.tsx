@@ -9,17 +9,18 @@ interface SplashScreenProps {
   onEnter: () => void;
 }
 
-// Game Boy 4-tone palette — same as burger menu
-const GAMEBOY_PALETTE = [
-  "#0F380F", // darkest
-  "#306230",
-  "#8BAC0F",
-  "#9BBC0F", // lightest
+// Vintage Flash palette — extracted from Tony's actual flash sheets
+const FLASH_PALETTE = [
+  "#02B2A8", // teal
+  "#3789C9", // blue
+  "#322A2A", // warm dark
+  "#B00307", // crimson
+  "#DF7695", // rose
 ];
 
-const FINAL_COLOR = "#0F380F"; // settle to darkest GB green
-const PIXEL_REVEAL = 2.0; // total time the grid takes to fill
-const JITTER = 0.25; // heavy jitter so the wave feels chaotic, not clean
+const FINAL_COLOR = "#322A2A"; // settle to warm dark
+const PIXEL_REVEAL = 0.8; // total reveal — fast
+const JITTER = 0.1; // light jitter, the wave is short so chaos is contained
 
 export function SplashScreen({ onEnter }: SplashScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,7 +81,7 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
           left: c * grid.size,
           key: `${r}-${c}`,
           glitch:
-            GAMEBOY_PALETTE[Math.floor(Math.random() * GAMEBOY_PALETTE.length)],
+            FLASH_PALETTE[Math.floor(Math.random() * FLASH_PALETTE.length)],
           jitter: Math.random() * JITTER,
         });
       }
@@ -113,14 +114,14 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
       const delay = baseDelay + p.jitter;
       gsap.to(block, {
         opacity: 1,
-        duration: 0.05,
+        duration: 0.04,
         delay,
         ease: "none",
       });
       gsap.to(block, {
         backgroundColor: FINAL_COLOR,
-        duration: 0.18,
-        delay: delay + 0.06,
+        duration: 0.12,
+        delay: delay + 0.04,
         ease: "none",
       });
     });
@@ -245,7 +246,7 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
           className="font-tattoo text-white text-xs sm:text-sm uppercase select-none"
           style={{ letterSpacing: "0.3em", opacity: 0 }}
         >
-          PRESS START
+          TAP TO ENTER
         </span>
       </div>
 

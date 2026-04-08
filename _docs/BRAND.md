@@ -30,6 +30,17 @@ Extracted from Tony's actual artwork.
 | `leaf` | `#5BAA4F` | Friendly green — accents, fresh moments |
 | `teal` | `#3CB5B5` | Bright teal — secondary backgrounds |
 
+### Vintage Flash (added 2026-04-08)
+Extracted from Tony's actual flash sheets. Used in the splash pixel-grid loader. Will likely expand into other sections.
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `flash-teal` | `#02B2A8` | Vivid vintage teal — splash pixel flicker |
+| `flash-blue` | `#3789C9` | Soft vintage blue — splash pixel flicker |
+| `flash-dark` | `#322A2A` | Warm dark — splash bg + final settled pixel color |
+| `flash-crimson` | `#B00307` | Deep red — splash pixel flicker, future CTAs |
+| `flash-rose` | `#DF7695` | Dusty rose pink — splash pixel flicker |
+
 ### Ink (Text + Outlines)
 | Token | Hex | Usage |
 |-------|-----|-------|
