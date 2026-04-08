@@ -5,10 +5,6 @@ import { initLenis, destroyLenis } from "@/lib/lenis";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Gallery } from "@/components/Gallery";
-import { Package } from "@/components/Package";
-import { Certificate } from "@/components/Certificate";
-import { Artist } from "@/components/Artist";
-import { FAQ } from "@/components/FAQ";
 import { Footer } from "@/components/Footer";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { MetaPixel } from "@/components/MetaPixel";
@@ -21,7 +17,7 @@ export default function Home() {
   // Init Lenis smooth scroll after entering
   useEffect(() => {
     if (!entered) return;
-    const lenis = initLenis();
+    initLenis();
     return () => {
       destroyLenis();
     };
@@ -29,16 +25,6 @@ export default function Home() {
 
   const handleEnter = useCallback(() => {
     setEntered(true);
-  }, []);
-
-  // Respect reduced motion
-  const [reducedMotion, setReducedMotion] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
   }, []);
 
   if (!entered) {
@@ -52,10 +38,6 @@ export default function Home() {
       <main>
         <Hero />
         <Gallery />
-        <Package />
-        <Certificate />
-        <Artist />
-        <FAQ />
       </main>
       <Footer />
       <CheckoutModal />

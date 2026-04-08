@@ -27,11 +27,11 @@ export function Navbar() {
 
   return (
     <>
-      {/* Burger — standalone fixed element, no transforms, no parent wrapper.
-          mix-blend-difference at the SVG level so it auto-reacts to the bg pixel-by-pixel. */}
+      {/* Burger — classic 3-line stack, thick + rounded caps for character.
+          Standalone fixed element, mix-blend-difference at the SVG level. */}
       <button
         onClick={() => setMenuOpen(true)}
-        className="fixed top-7 right-7 sm:top-9 sm:right-9 z-50 p-3 transition-opacity duration-500"
+        className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 p-3 transition-opacity duration-500"
         style={{
           opacity: showBurger ? 1 : 0,
           pointerEvents: showBurger ? "auto" : "none",
@@ -40,15 +40,18 @@ export function Navbar() {
         aria-hidden={!showBurger}
       >
         <svg
-          width="6"
-          height="26"
-          viewBox="0 0 6 26"
-          fill="#ffffff"
+          width="30"
+          height="22"
+          viewBox="0 0 30 22"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="2.8"
+          strokeLinecap="round"
           style={{ mixBlendMode: "difference" }}
         >
-          <circle cx="3" cy="3" r="3" />
-          <circle cx="3" cy="13" r="3" />
-          <circle cx="3" cy="23" r="3" />
+          <line x1="3" y1="4" x2="27" y2="4" />
+          <line x1="3" y1="11" x2="27" y2="11" />
+          <line x1="3" y1="18" x2="27" y2="18" />
         </svg>
       </button>
 

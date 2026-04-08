@@ -18,13 +18,24 @@ export function Hero() {
     const section = sectionRef.current;
     if (!logo || !section) return;
 
-    // Compute initial width as a plain px number — GSAP can't smoothly tween
-    // between a CSS calc/min() string and a px number
-    const initialWidth = Math.min(window.innerWidth * 0.14, 120);
+    // Compute initial width as a plain px number — mobile-first sizing.
+    // Mobile gets a much bigger logo (50vw, ~195px on iPhone) so it's actually
+    // visible. Desktop stays compact at 14vw / 120px max.
+    const isMobile = window.innerWidth < 768;
+    const initialWidth = isMobile
+      ? Math.min(window.innerWidth * 0.5, 220)
+      : Math.min(window.innerWidth * 0.14, 120);
+
+    // Compute initial top/left as px values too — mixing % and px in GSAP
+    // tweens causes the size-jump-on-stop bug
+    const initialLeft = window.innerWidth / 2;
+    const initialTop = window.innerHeight / 2;
 
     const ctx = gsap.context(() => {
-      // Initial state: centered, sized in px
+      // Initial state: centered (px values), sized for viewport
       gsap.set(logo, {
+        top: initialTop,
+        left: initialLeft,
         xPercent: -50,
         yPercent: -50,
         width: initialWidth,
