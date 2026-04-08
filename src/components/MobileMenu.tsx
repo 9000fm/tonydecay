@@ -104,10 +104,9 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         });
       });
 
-      const tl = gsap.timeline();
-
-      // Per-pixel computed delays — column distance from right + random jitter.
-      // The wave moves right→left overall but the front edge is jagged.
+      // Per-pixel INDEPENDENT tweens — each pixel gets its own delay computed
+      // from its column distance from the right edge + random jitter.
+      // Independent gsap.to calls (not a timeline) so they truly run in parallel.
       blocks.forEach((block, i) => {
         const p = pixels[i];
         if (!p) return;
@@ -115,61 +114,69 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         const colDistance = grid.cols - 1 - colIdx;
         const baseDelay = (colDistance / grid.cols) * TOTAL_REVEAL;
         const delay = baseDelay + p.jitter;
-        tl.to(
-          block,
-          { opacity: 1, duration: 0.04, ease: "none" },
-          delay
-        );
-        tl.to(
-          block,
-          { backgroundColor: FINAL_COLOR, duration: 0.12, ease: "none" },
-          delay + 0.05
-        );
-      });
-
-      const contentStart = TOTAL_REVEAL + 0.05;
-      tl.to(content, { opacity: 1, duration: 0.35, ease: "power2.out" }, contentStart);
-      tl.to(
-        links,
-        {
+        gsap.to(block, {
           opacity: 1,
-          y: 0,
-          duration: 0.45,
-          stagger: 0.05,
-          ease: "power2.out",
-        },
-        contentStart
-      );
-    } else {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          gsap.set(overlay, { display: "none" });
-          getLenis()?.start();
-          document.body.style.overflow = "";
-        },
+          duration: 0.04,
+          delay,
+          ease: "none",
+        });
+        gsap.to(block, {
+          backgroundColor: FINAL_COLOR,
+          duration: 0.12,
+          delay: delay + 0.05,
+          ease: "none",
+        });
       });
 
-      tl.to(content, { opacity: 0, duration: 0.15, ease: "power2.in" });
+      // Content + links fade in after the pixel reveal completes
+      const contentStart = TOTAL_REVEAL + JITTER_AMOUNT + 0.05;
+      gsap.to(content, {
+        opacity: 1,
+        duration: 0.35,
+        delay: contentStart,
+        ease: "power2.out",
+      });
+      gsap.to(links, {
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        delay: contentStart,
+        stagger: 0.05,
+        ease: "power2.out",
+      });
+    } else {
+      // Close — fast reverse glitch
+      gsap.to(content, { opacity: 0, duration: 0.15, ease: "power2.in" });
 
-      // Reverse: pixels glitch back, then disappear. Faster than open.
-      const closeReveal = 0.25;
+      const closeReveal = 0.22;
+      let maxDelay = 0;
       blocks.forEach((block, i) => {
         const p = pixels[i];
         if (!p) return;
         const colIdx = Math.floor(p.left / grid.size);
-        // Reverse the wave: leftmost column disappears first
+        // Reverse direction: leftmost column disappears first
         const baseDelay = (colIdx / grid.cols) * closeReveal;
-        const delay = baseDelay + p.jitter * 0.5;
-        tl.to(
-          block,
-          { backgroundColor: p.glitch, duration: 0.06, ease: "none" },
-          `>${delay}`
-        );
-        tl.to(
-          block,
-          { opacity: 0, duration: 0.05, ease: "none" },
-          `>${delay + 0.04}`
-        );
+        const delay = baseDelay + p.jitter * 0.4;
+        if (delay > maxDelay) maxDelay = delay;
+        gsap.to(block, {
+          backgroundColor: p.glitch,
+          duration: 0.05,
+          delay: delay + 0.1, // wait for content to start fading
+          ease: "none",
+        });
+        gsap.to(block, {
+          opacity: 0,
+          duration: 0.05,
+          delay: delay + 0.15,
+          ease: "none",
+        });
+      });
+
+      // Cleanup after the slowest pixel finishes
+      gsap.delayedCall(maxDelay + 0.25, () => {
+        gsap.set(overlay, { display: "none" });
+        getLenis()?.start();
+        document.body.style.overflow = "";
       });
     }
   }, [isOpen, grid, pixels]);

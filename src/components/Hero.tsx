@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 
 export function Hero() {
@@ -9,33 +9,6 @@ export function Hero() {
   const logoRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
-  const [isDark, setIsDark] = useState(false);
-
-  // Sample under-navbar dark detection — same as Navbar's logic
-  useEffect(() => {
-    let rafId: number | null = null;
-    const tick = () => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const x = 48; // sample at top-left where the logo lands
-        const y = 48;
-        const els = document.elementsFromPoint(x, y);
-        const dark = els.some((el) =>
-          (el as HTMLElement).closest('[data-nav-dark="true"]')
-        );
-        setIsDark(dark);
-      });
-    };
-    tick();
-    window.addEventListener("scroll", tick, { passive: true });
-    window.addEventListener("resize", tick);
-    return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      window.removeEventListener("scroll", tick);
-      window.removeEventListener("resize", tick);
-    };
-  }, []);
 
   // Entry sequence + scroll-driven morph
   useEffect(() => {
@@ -46,6 +19,10 @@ export function Hero() {
     if (!logo || !section) return;
 
     const ctx = gsap.context(() => {
+      // CRITICAL: tell GSAP about the CSS translate so it doesn't lose the centering
+      // when the morph tween starts touching xPercent/yPercent
+      gsap.set(logo, { xPercent: -50, yPercent: -50 });
+
       // Initial entry — sequential reveal
       const tl = gsap.timeline({ delay: 0.2 });
       tl.fromTo(
@@ -70,13 +47,13 @@ export function Hero() {
         );
       }
 
-      // Scroll-driven morph: big centered → top-left small (navbar slot)
+      // Scroll-driven morph: medium centered → top-left small
       gsap.to(logo, {
         top: 24,
         left: 24,
         xPercent: 0,
         yPercent: 0,
-        width: 64,
+        width: 56,
         ease: "none",
         scrollTrigger: {
           trigger: section,
@@ -87,8 +64,8 @@ export function Hero() {
       });
 
       // Tagline + scroll cue fade out as user scrolls into the morph
-      if (tagline || cue) {
-        const fadeTargets = [tagline, cue].filter(Boolean);
+      const fadeTargets = [tagline, cue].filter(Boolean);
+      if (fadeTargets.length) {
         gsap.to(fadeTargets, {
           opacity: 0,
           ease: "none",
@@ -110,14 +87,14 @@ export function Hero() {
       ref={sectionRef}
       className="relative min-h-screen bg-paper overflow-hidden"
     >
-      {/* Tagline + scroll cue, in normal flow at the bottom of the hero */}
+      {/* Tagline above the bottom */}
       <div className="absolute inset-x-0 bottom-24 flex flex-col items-center justify-center pointer-events-none">
         <div
           ref={taglineRef}
           className="font-tattoo text-ink text-xs sm:text-sm uppercase select-none"
           style={{ letterSpacing: "0.25em", opacity: 0 }}
         >
-          LIMITED EDITION · MMXXVI
+          LIMITED EDITION
         </div>
       </div>
       <div
@@ -128,27 +105,30 @@ export function Hero() {
         <div className="w-[1px] h-10 bg-ink/30 animate-pulse" />
       </div>
 
-      {/* Morphing logo — fixed-positioned, scroll-driven scale + position */}
+      {/* Morphing logo — fixed-positioned, scroll-driven scale + position.
+          mix-blend-mode: difference makes it auto-react to whatever bg is behind it.
+          GSAP sets xPercent/yPercent in JS — do NOT add CSS transform here. */}
       <div
         ref={logoRef}
         className="fixed pointer-events-none z-[60]"
         style={{
           top: "50%",
           left: "50%",
-          width: "min(60vw, 480px)",
-          transform: "translate(-50%, -50%)",
+          width: "min(32vw, 240px)",
           opacity: 0,
+          mixBlendMode: "difference",
         }}
       >
-        <Image
-          src="/gallery/tonydecay-logo.png"
-          alt="Tony Decay"
-          width={480}
-          height={160}
-          priority
-          className="w-full h-auto object-contain transition-[filter] duration-300"
-          style={{ filter: isDark ? "invert(1) brightness(1.1)" : "none" }}
-        />
+        <div style={{ filter: "invert(1) brightness(1.1)" }}>
+          <Image
+            src="/gallery/tonydecay-logo.png"
+            alt="Tony Decay"
+            width={480}
+            height={160}
+            priority
+            className="w-full h-auto object-contain"
+          />
+        </div>
       </div>
     </section>
   );
