@@ -18,10 +18,17 @@ export function Hero() {
     const section = sectionRef.current;
     if (!logo || !section) return;
 
+    // Compute initial width as a plain px number — GSAP can't smoothly tween
+    // between a CSS calc/min() string and a px number
+    const initialWidth = Math.min(window.innerWidth * 0.14, 120);
+
     const ctx = gsap.context(() => {
-      // CRITICAL: tell GSAP about the CSS translate so it doesn't lose the centering
-      // when the morph tween starts touching xPercent/yPercent
-      gsap.set(logo, { xPercent: -50, yPercent: -50 });
+      // Initial state: centered, sized in px
+      gsap.set(logo, {
+        xPercent: -50,
+        yPercent: -50,
+        width: initialWidth,
+      });
 
       // Initial entry — sequential reveal
       const tl = gsap.timeline({ delay: 0.2 });
@@ -107,14 +114,13 @@ export function Hero() {
 
       {/* Morphing logo — fixed-positioned, scroll-driven scale + position.
           mix-blend-mode: difference makes it auto-react to whatever bg is behind it.
-          GSAP sets xPercent/yPercent in JS — do NOT add CSS transform here. */}
+          GSAP sets width / xPercent / yPercent in JS — do NOT set them in CSS here. */}
       <div
         ref={logoRef}
         className="fixed pointer-events-none z-[60]"
         style={{
           top: "50%",
           left: "50%",
-          width: "min(32vw, 240px)",
           opacity: 0,
           mixBlendMode: "difference",
         }}
