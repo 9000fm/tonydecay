@@ -53,6 +53,15 @@ html {
   overscroll-behavior-y: none;
 }
 
+/* Custom monkey-hand cursor — pixel art pointing finger */
+html, body {
+  cursor: url('/cursor/1.png') 8 4, auto;
+}
+
+a, button, [role="button"], summary, [data-cursor-pointer] {
+  cursor: url('/cursor/1.png') 8 4, pointer;
+}
+
 html.lenis, html.lenis body {
   height: auto;
 }

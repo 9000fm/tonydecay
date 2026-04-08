@@ -17,17 +17,17 @@ const NAV_LINKS = [
   { label: "CONTACT", href: "#contact" },
 ];
 
-// Tony's print palette — pixels flash these on the way to dark
-const GLITCH_COLORS = [
-  "#2B5DAE", // royal
-  "#F2A2BC", // coral
-  "#D7322E", // crimson
-  "#F7C234", // gold
-  "#5BAA4F", // leaf
-  "#3CB5B5", // teal
+// Game Boy 4-tone palette — pixels flash these on the way to settle
+const GAMEBOY_PALETTE = [
+  "#0F380F", // darkest green
+  "#306230",
+  "#8BAC0F",
+  "#9BBC0F", // lightest yellow-green
 ];
 
-const FINAL_COLOR = "#0a0a0a"; // bg-bg
+const FINAL_COLOR = "#0F380F"; // settle to darkest GB green
+const TOTAL_REVEAL = 0.45; // total reveal time
+const JITTER_AMOUNT = 0.08; // ±80ms random offset per pixel
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -54,22 +54,23 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     return () => window.removeEventListener("resize", compute);
   }, []);
 
-  // Build pixels in column-major order: rightmost column first, top→bottom within each column.
-  // The DOM/array order = the reveal order. Each pixel gets a random glitch color baked in.
+  // Build pixels in row-major order; each gets a random GB-palette glitch color baked in.
   const pixels = useMemo(() => {
     const list: {
       top: number;
       left: number;
       key: string;
       glitch: string;
+      jitter: number;
     }[] = [];
-    for (let c = grid.cols - 1; c >= 0; c--) {
-      for (let r = 0; r < grid.rows; r++) {
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
         list.push({
           top: r * grid.size,
           left: c * grid.size,
           key: `${r}-${c}`,
-          glitch: GLITCH_COLORS[Math.floor(Math.random() * GLITCH_COLORS.length)],
+          glitch: GAMEBOY_PALETTE[Math.floor(Math.random() * GAMEBOY_PALETTE.length)],
+          jitter: Math.random() * JITTER_AMOUNT,
         });
       }
     }
@@ -96,7 +97,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       gsap.set(content, { opacity: 0 });
       gsap.set(links, { opacity: 0, y: 16 });
 
-      // Reset each pixel to its glitch color, opacity 0
       blocks.forEach((b, i) => {
         gsap.set(b, {
           backgroundColor: pixels[i]?.glitch ?? FINAL_COLOR,
@@ -106,37 +106,39 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
       const tl = gsap.timeline();
 
-      // Pass 1 — pixels appear in column order (right→left), each flashing its glitch color
-      tl.to(blocks, {
-        opacity: 1,
-        duration: 0.06,
-        stagger: { each: 0.0018, from: "start" },
-        ease: "none",
+      // Per-pixel computed delays — column distance from right + random jitter.
+      // The wave moves right→left overall but the front edge is jagged.
+      blocks.forEach((block, i) => {
+        const p = pixels[i];
+        if (!p) return;
+        const colIdx = Math.floor(p.left / grid.size);
+        const colDistance = grid.cols - 1 - colIdx;
+        const baseDelay = (colDistance / grid.cols) * TOTAL_REVEAL;
+        const delay = baseDelay + p.jitter;
+        tl.to(
+          block,
+          { opacity: 1, duration: 0.04, ease: "none" },
+          delay
+        );
+        tl.to(
+          block,
+          { backgroundColor: FINAL_COLOR, duration: 0.12, ease: "none" },
+          delay + 0.05
+        );
       });
 
-      // Pass 2 — same stagger order, slightly delayed: each pixel transitions to dark
-      tl.to(
-        blocks,
-        {
-          backgroundColor: FINAL_COLOR,
-          duration: 0.18,
-          stagger: { each: 0.0018, from: "start" },
-          ease: "none",
-        },
-        "<+0.08"
-      );
-
-      tl.to(content, { opacity: 1, duration: 0.4, ease: "power2.out" }, "-=0.3");
+      const contentStart = TOTAL_REVEAL + 0.05;
+      tl.to(content, { opacity: 1, duration: 0.35, ease: "power2.out" }, contentStart);
       tl.to(
         links,
         {
           opacity: 1,
           y: 0,
-          duration: 0.5,
+          duration: 0.45,
           stagger: 0.05,
           ease: "power2.out",
         },
-        "<"
+        contentStart
       );
     } else {
       const tl = gsap.timeline({
@@ -147,29 +149,28 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         },
       });
 
-      tl.to(content, { opacity: 0, duration: 0.2, ease: "power2.in" });
+      tl.to(content, { opacity: 0, duration: 0.15, ease: "power2.in" });
 
-      // Reverse: pixels glitch back to their flash color, then fade out
-      tl.to(
-        blocks,
-        {
-          backgroundColor: (i: number) => pixels[i]?.glitch ?? FINAL_COLOR,
-          duration: 0.1,
-          stagger: { each: 0.0012, from: "end" },
-          ease: "none",
-        },
-        "-=0.05"
-      );
-      tl.to(
-        blocks,
-        {
-          opacity: 0,
-          duration: 0.06,
-          stagger: { each: 0.0012, from: "end" },
-          ease: "none",
-        },
-        "<+0.05"
-      );
+      // Reverse: pixels glitch back, then disappear. Faster than open.
+      const closeReveal = 0.25;
+      blocks.forEach((block, i) => {
+        const p = pixels[i];
+        if (!p) return;
+        const colIdx = Math.floor(p.left / grid.size);
+        // Reverse the wave: leftmost column disappears first
+        const baseDelay = (colIdx / grid.cols) * closeReveal;
+        const delay = baseDelay + p.jitter * 0.5;
+        tl.to(
+          block,
+          { backgroundColor: p.glitch, duration: 0.06, ease: "none" },
+          `>${delay}`
+        );
+        tl.to(
+          block,
+          { opacity: 0, duration: 0.05, ease: "none" },
+          `>${delay + 0.04}`
+        );
+      });
     }
   }, [isOpen, grid, pixels]);
 
@@ -262,29 +263,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           ))}
         </nav>
 
-        {/* Socials — bigger Instagram */}
-        <div className="flex items-center gap-5 mt-14">
-          <a
-            href="https://instagram.com/tonydecay"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/70 hover:text-white transition-colors duration-300"
-            aria-label="Instagram"
-          >
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <rect x="2" y="2" width="20" height="20" rx="5" />
-              <circle cx="12" cy="12" r="5" />
-              <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
-            </svg>
-          </a>
-        </div>
+        {/* Instagram — text label, no SVG */}
+        <a
+          href="https://www.instagram.com/tony.decay"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-tattoo text-base sm:text-lg uppercase text-white/60 hover:text-white transition-colors duration-300 mt-14"
+          style={{ letterSpacing: "0.06em" }}
+        >
+          @TONY.DECAY
+        </a>
       </div>
     </div>
   );

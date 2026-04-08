@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useState } from "react";
 
 const faqs = [
   {
@@ -37,70 +36,18 @@ const faqs = [
 ];
 
 export function FAQ() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const itemRefs = useRef<(HTMLDetailsElement | null)[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        // Heading — scale + Y combo
-        gsap.fromTo(
-          headingRef.current,
-          { opacity: 0, scale: 0.92, y: 40 },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-
-      const items = itemRefs.current.filter(Boolean);
-      // Items slide in from the LEFT — different direction than other sections for variety
-      gsap.fromTo(
-        items,
-        { opacity: 0, x: -40, scale: 0.95 },
-        {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          duration: 0.7,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   const handleToggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <section ref={sectionRef} id="faq" data-nav-dark="true" className="relative py-24 sm:py-32 bg-bg-alt">
+    <section id="faq" data-nav-dark="true" className="relative py-24 sm:py-32 bg-bg-alt">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-[1px] bg-accent/40" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <h2
-          ref={headingRef}
-          className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-16 tracking-tight opacity-0"
-        >
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-16 tracking-tight">
           FAQ
         </h2>
 
@@ -108,11 +55,8 @@ export function FAQ() {
           {faqs.map((faq, index) => (
             <details
               key={faq.question}
-              ref={(el) => {
-                itemRefs.current[index] = el;
-              }}
               open={openIndex === index}
-              className="group py-6 opacity-0"
+              className="group py-6"
               onClick={(e) => {
                 e.preventDefault();
                 handleToggle(index);
