@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MobileMenu } from "./MobileMenu";
 
@@ -16,9 +15,9 @@ export function Navbar() {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        // Burger appears after the user scrolls past the hero
-        setShowBurger(window.scrollY > 150);
-        // Sample the element under a fixed point just below the navbar
+        // Burger appears after the user scrolls past the hero start
+        setShowBurger(window.scrollY > 200);
+        // Sample under the navbar
         const x = window.innerWidth / 2;
         const y = 90;
         const els = document.elementsFromPoint(x, y);
@@ -41,28 +40,11 @@ export function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50">
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-center h-20">
-          {/* Logo — top center */}
-          <a
-            href="#"
-            className="select-none flex items-center"
-            aria-label="Tony Decay home"
-          >
-            <Image
-              src="/gallery/tonydecay-logo.png"
-              alt="Tony Decay"
-              width={240}
-              height={80}
-              priority
-              className="h-12 sm:h-14 w-auto object-contain transition-[filter] duration-300"
-              style={{ filter: isDark ? "invert(1) brightness(1.1)" : "none" }}
-            />
-          </a>
-
-          {/* Burger — top right, hidden until scroll */}
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-end h-20">
+          {/* Burger — top right, hidden until scroll. Hand-drawn SVG */}
           <button
             onClick={() => setMenuOpen(true)}
-            className="absolute right-5 sm:right-8 top-1/2 -translate-y-1/2 flex flex-col items-end gap-[6px] p-2 group transition-opacity duration-500"
+            className="p-2 transition-opacity duration-500"
             style={{
               opacity: showBurger ? 1 : 0,
               pointerEvents: showBurger ? "auto" : "none",
@@ -70,18 +52,20 @@ export function Navbar() {
             aria-label="Open menu"
             aria-hidden={!showBurger}
           >
-            <span
-              className="block w-8 h-[2.5px] transition-colors duration-300"
-              style={{ backgroundColor: isDark ? "#ffffff" : "#1A1A1A" }}
-            />
-            <span
-              className="block w-8 h-[2.5px] transition-colors duration-300"
-              style={{ backgroundColor: isDark ? "#ffffff" : "#1A1A1A" }}
-            />
-            <span
-              className="block w-8 h-[2.5px] transition-colors duration-300"
-              style={{ backgroundColor: isDark ? "#ffffff" : "#1A1A1A" }}
-            />
+            <svg
+              width="34"
+              height="22"
+              viewBox="0 0 34 22"
+              fill="none"
+              stroke={isDark ? "#ffffff" : "#1A1A1A"}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              className="transition-[stroke] duration-300"
+            >
+              <path d="M3 4 Q 17 5.2 31 4" />
+              <path d="M3 11 Q 17 9.8 31 11" />
+              <path d="M3 18 Q 17 19.4 31 18" />
+            </svg>
           </button>
         </div>
       </nav>

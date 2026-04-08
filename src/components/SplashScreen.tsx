@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import { gsap } from "@/lib/gsap";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
 
@@ -9,6 +10,13 @@ interface SplashScreenProps {
 }
 
 const CIRCLE_DIAMETER = 144; // matches w-36 h-36
+
+const PROGRESSION_LABELS = [
+  { threshold: 0, text: "LIMITED EDITION" },
+  { threshold: 25, text: "100 SETS" },
+  { threshold: 50, text: "15 PRINTS" },
+  { threshold: 75, text: "MMXXVI" },
+];
 
 // Update the conic-gradient ring + counter text from a single progress object.
 function renderProgress(
@@ -24,6 +32,14 @@ function renderProgress(
   }
 }
 
+function labelForValue(value: number): string {
+  let label = PROGRESSION_LABELS[0].text;
+  for (const l of PROGRESSION_LABELS) {
+    if (value >= l.threshold) label = l.text;
+  }
+  return label;
+}
+
 export function SplashScreen({ onEnter }: SplashScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const circleWrapRef = useRef<HTMLDivElement>(null);
@@ -31,8 +47,11 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
   const textStackRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const growerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
+  const [currentLabel, setCurrentLabel] = useState(PROGRESSION_LABELS[0].text);
   const imagesReady = useRef(false);
+  const lastLabel = useRef(PROGRESSION_LABELS[0].text);
 
   // Preload images in background
   useEffect(() => {
@@ -54,8 +73,15 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
   // Dramatic 4-phase loader: slow build → burst → deceleration → agonizing crawl
   useEffect(() => {
     const progress = { value: 0 };
-    const onUpdate = () =>
+    const onUpdate = () => {
       renderProgress(progress.value, counterRef.current, ringRef.current);
+      // Check if label needs to swap
+      const next = labelForValue(progress.value);
+      if (next !== lastLabel.current) {
+        lastLabel.current = next;
+        setCurrentLabel(next);
+      }
+    };
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -81,11 +107,27 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
     };
   }, []);
 
-  // When loaded — counter swaps to "enter"
+  // Crossfade label on change
+  useEffect(() => {
+    const el = labelRef.current;
+    if (!el) return;
+    gsap.fromTo(
+      el,
+      { opacity: 0, y: 4 },
+      { opacity: 0.6, y: 0, duration: 0.35, ease: "power2.out" }
+    );
+  }, [currentLabel]);
+
+  // When loaded — counter swaps to "enter", label fades out
   useEffect(() => {
     if (!loaded) return;
     const counter = counterRef.current;
+    const label = labelRef.current;
     if (!counter) return;
+
+    if (label) {
+      gsap.to(label, { opacity: 0, duration: 0.3, ease: "power2.in" });
+    }
 
     gsap.to(counter, {
       opacity: 0,
@@ -132,9 +174,9 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[100] bg-bg flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[100] bg-bg flex flex-col items-center justify-center overflow-hidden"
     >
-      {/* Circle wrap — TDK + counter live inside, ring fills around */}
+      {/* Circle wrap — logo + counter live inside, ring fills around */}
       <div
         ref={circleWrapRef}
         className="relative w-36 h-36"
@@ -152,36 +194,45 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
           }}
         />
 
-        {/* Thin outline */}
-        <div className="absolute inset-0 rounded-full border border-white/10" />
-
-        {/* TDK + counter stack — inverts against the ring via difference blend */}
+        {/* Logo + counter stack */}
         <div
           ref={textStackRef}
           className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 select-none"
-          style={{ mixBlendMode: "difference" }}
         >
-          <span
-            className="text-white text-2xl font-bold tracking-tight"
-            style={{ letterSpacing: "0.02em" }}
-          >
-            TDK
-          </span>
+          <div className="relative w-20 h-12">
+            <Image
+              src="/gallery/tonydecay-logo.png"
+              alt="Tony Decay"
+              fill
+              priority
+              className="object-contain"
+              style={{ filter: "invert(1) brightness(1.1)" }}
+            />
+          </div>
           <span
             ref={counterRef}
             className="text-white font-mono text-[13px] tabular-nums"
-            style={{ letterSpacing: "0.05em" }}
+            style={{ letterSpacing: "0.05em", mixBlendMode: "difference" }}
           >
             0
           </span>
         </div>
 
-        {/* Grower — sits hidden inside the circle, expands on click to become the cream homepage canvas */}
+        {/* Grower — hidden until click, expands to become the cream homepage */}
         <div
           ref={growerRef}
           className="absolute inset-0 rounded-full bg-paper pointer-events-none"
           style={{ opacity: 0 }}
         />
+      </div>
+
+      {/* Sequential progression label below the circle */}
+      <div
+        ref={labelRef}
+        className="font-tattoo text-white/60 text-xs uppercase mt-8 select-none"
+        style={{ letterSpacing: "0.2em", opacity: 0 }}
+      >
+        {currentLabel}
       </div>
     </div>
   );
