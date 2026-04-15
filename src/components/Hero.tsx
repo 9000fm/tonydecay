@@ -9,37 +9,12 @@ interface HeroProps {
   splashDone: boolean;
 }
 
-// 3-layer depth system: HERO (bold), MID (moderate), GHOST (barely there)
-const COLLAGE_PRINTS = [
-  // ── HERO layer: 3 large, vivid prints near Firma ──
-  { idx: 6,  x: "5%",   y: "15%",  w: "48vw", maxW: 220, rot: -4,   opacity: 0.3,  speed: 0.15 },
-  { idx: 9,  x: "45%",  y: "20%",  w: "50vw", maxW: 230, rot: 3,    opacity: 0.28, speed: 0.18 },
-  { idx: 2,  x: "20%",  y: "38%",  w: "45vw", maxW: 210, rot: -2,   opacity: 0.32, speed: 0.12 },
-
-  // ── MID layer: 5 medium prints around edges ──
-  { idx: 0,  x: "-8%",  y: "-2%",  w: "32vw", maxW: 155, rot: -6,   opacity: 0.16, speed: 0.28 },
-  { idx: 4,  x: "72%",  y: "5%",   w: "34vw", maxW: 160, rot: 5,    opacity: 0.14, speed: 0.32 },
-  { idx: 7,  x: "-5%",  y: "55%",  w: "30vw", maxW: 145, rot: 7,    opacity: 0.18, speed: 0.25 },
-  { idx: 11, x: "68%",  y: "50%",  w: "35vw", maxW: 165, rot: -5,   opacity: 0.15, speed: 0.3  },
-  { idx: 13, x: "35%",  y: "72%",  w: "33vw", maxW: 150, rot: 3,    opacity: 0.17, speed: 0.22 },
-
-  // ── GHOST layer: 7 tiny texture pieces, barely visible ──
-  { idx: 1,  x: "80%",  y: "30%",  w: "18vw", maxW: 90,  rot: 8,    opacity: 0.06, speed: 0.4  },
-  { idx: 3,  x: "55%",  y: "-5%",  w: "20vw", maxW: 95,  rot: -3,   opacity: 0.07, speed: 0.35 },
-  { idx: 5,  x: "90%",  y: "65%",  w: "16vw", maxW: 80,  rot: 4,    opacity: 0.05, speed: 0.38 },
-  { idx: 8,  x: "10%",  y: "80%",  w: "22vw", maxW: 100, rot: -7,   opacity: 0.06, speed: 0.42 },
-  { idx: 10, x: "60%",  y: "82%",  w: "19vw", maxW: 88,  rot: 2,    opacity: 0.07, speed: 0.36 },
-  { idx: 12, x: "85%",  y: "85%",  w: "15vw", maxW: 75,  rot: -4,   opacity: 0.05, speed: 0.4  },
-  { idx: 14, x: "-2%",  y: "35%",  w: "17vw", maxW: 85,  rot: 6,    opacity: 0.06, speed: 0.33 },
-];
-
 export function Hero({ splashDone }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const logoFilterRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
-  const collageRef = useRef<HTMLDivElement>(null);
   const [resizeKey, setResizeKey] = useState(0);
 
   // Debounced resize
@@ -77,28 +52,6 @@ export function Hero({ splashDone }: HeroProps) {
       );
     }
     return () => { tl.kill(); };
-  }, [splashDone]);
-
-  // Parallax on collage prints
-  useEffect(() => {
-    if (!splashDone || !collageRef.current || !sectionRef.current) return;
-    const prints = Array.from(collageRef.current.children) as HTMLElement[];
-    const ctx = gsap.context(() => {
-      prints.forEach((el, i) => {
-        const speed = COLLAGE_PRINTS[i]?.speed || 0.3;
-        gsap.to(el, {
-          yPercent: -speed * 60,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.5,
-          },
-        });
-      });
-    });
-    return () => ctx.revert();
   }, [splashDone]);
 
   // Scroll morph: logo shrinks to top-left
@@ -178,37 +131,23 @@ export function Hero({ splashDone }: HeroProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[92vh] overflow-hidden"
+      className="relative h-[92vh] overflow-hidden bg-paper section-fade-to-dark"
     >
-      {/* Background — cream base */}
-      <div className="absolute inset-0" style={{ backgroundColor: "#F0EBDC" }} />
-
-      {/* Dense scatter — all 15 prints, chaotic, atmospheric */}
-      <div ref={collageRef} className="absolute inset-0 z-[1]">
-        {COLLAGE_PRINTS.map((p, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: p.x,
-              top: p.y,
-              width: p.w,
-              maxWidth: p.maxW,
-              opacity: p.opacity,
-              transform: `rotate(${p.rot}deg)`,
-              mixBlendMode: "multiply",
-            }}
-          >
-            <Image
-              src={PLACEHOLDER_PRINTS[p.idx]?.src || "/gallery/1.png"}
-              alt=""
-              width={300}
-              height={400}
-              className="w-full h-auto object-cover"
-              draggable={false}
-            />
-          </div>
-        ))}
+      {/* Single background print — atmospheric, behind everything */}
+      <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none">
+        <div
+          className="w-[60vw] md:w-[30vw]"
+          style={{ opacity: 0.1, mixBlendMode: "multiply" }}
+        >
+          <Image
+            src={PLACEHOLDER_PRINTS[9]?.src || "/gallery/10.png"}
+            alt=""
+            width={600}
+            height={800}
+            className="w-full h-auto object-contain"
+            draggable={false}
+          />
+        </div>
       </div>
 
       {/* Gold accent line */}

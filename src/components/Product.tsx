@@ -59,25 +59,24 @@ export function Product() {
     PLACEHOLDER_PRINTS[9], PLACEHOLDER_PRINTS[12],
   ];
 
-  const items = [
-    "15 A5 art prints on 300gsm cream paper",
+  const features = [
+    "15 A5 art prints on 300gsm paper",
     "Signed & numbered certificate",
     "Custom collector packaging",
-    "Free worldwide shipping included",
+    "Free worldwide shipping",
   ];
 
   return (
     <section
       ref={sectionRef}
       id="package"
-      className="relative py-24 sm:py-32 overflow-hidden"
-      style={{ backgroundColor: "#F0EBDC" }}
+      className="bg-paper section-fade-to-dark relative py-24 sm:py-32 overflow-hidden"
     >
-      <div className="px-4 sm:px-8">
-        {/* Massive brutalist heading — edge to edge */}
+      {/* Massive brutalist heading — truly edge-to-edge */}
+      <div className="px-0 overflow-hidden">
         <h2
           ref={headingRef}
-          className="font-tattoo text-[5rem] sm:text-[9rem] md:text-[13rem] lg:text-[17rem] xl:text-[20rem] text-ink uppercase leading-[0.78] tracking-tighter opacity-0"
+          className="font-tattoo text-[6rem] sm:text-[9rem] md:text-[13rem] lg:text-[17rem] xl:text-[20rem] text-ink uppercase leading-[0.78] tracking-tighter opacity-0"
           style={{ marginLeft: "-0.04em" }}
         >
           THE
@@ -92,16 +91,19 @@ export function Product() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 sm:px-10">
-        <div ref={detailsRef} className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start opacity-0">
+        <div
+          ref={detailsRef}
+          className="mt-12 sm:mt-16 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-start opacity-0"
+        >
           {/* Left — product info */}
           <div>
             <p className="font-sans text-ink-soft text-base sm:text-lg leading-relaxed mb-8">
-              15 mini art prints on premium cream stock. Each set is hand-numbered
-              and includes a signed certificate of authenticity.
+              100 numbered sets. Each hand-signed by Tony Decay, printed on
+              heavyweight cream stock. Once they&apos;re gone, they&apos;re gone.
             </p>
 
-            <div className="space-y-3">
-              {items.map((item, i) => (
+            <div className="space-y-2.5">
+              {features.map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-1.5 h-1.5 shrink-0 rounded-full bg-ink" />
                   <span className="font-sans text-sm sm:text-base text-ink-soft">{item}</span>
@@ -110,11 +112,11 @@ export function Product() {
             </div>
 
             <button className="mt-8 font-sans text-sm font-medium uppercase tracking-[0.15em] bg-ink text-paper px-8 py-3.5 hover:bg-royal transition-colors duration-300">
-              Add to cart — ${PRICE_USD}
+              Secure yours - ${PRICE_USD}
             </button>
 
-            <div className="mt-6 text-center sm:text-left">
-              <p className="font-tattoo text-3xl sm:text-4xl text-ink tracking-tight">
+            <div className="mt-12 text-center sm:text-left">
+              <p className="font-tattoo text-3xl text-ink tracking-tight">
                 {TOTAL_INVENTORY}/{TOTAL_INVENTORY}
               </p>
               <p className="font-mono text-[10px] text-ink-faint uppercase tracking-[0.2em] mt-1">
@@ -124,7 +126,7 @@ export function Product() {
           </div>
 
           {/* Right — fanned print cards with scroll animation */}
-          <div className="relative flex justify-center md:justify-end">
+          <div className="relative flex justify-center md:justify-end mt-16">
             <div ref={cardsRef} className="relative w-52 sm:w-60 md:w-72" style={{ aspectRatio: "3/4" }}>
               {featured.map((print, i) => (
                 <div
