@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "Where do you ship to?",
     answer:
-      "Worldwide via DHL. Shipping is included in the $300 price — no extra fees, no surprises.",
+      "Worldwide via DHL. Shipping is included in the $300 price - no extra fees, no surprises.",
   },
   {
     question: "How long does shipping take?",
@@ -22,7 +22,7 @@ const faqs = [
   {
     question: "What payment methods do you accept?",
     answer:
-      "PayPal and credit/debit cards through PayPal checkout. No PayPal account required — you can pay as a guest.",
+      "PayPal and credit/debit cards through PayPal checkout. No PayPal account required - you can pay as a guest.",
   },
   {
     question: "What's your refund policy?",
@@ -137,8 +137,7 @@ export function FAQ() {
     <section
       ref={sectionRef}
       id="faq"
-      className="relative py-28 sm:py-36 overflow-hidden"
-      style={{ backgroundColor: "#0D1B2D" }}
+      className="relative py-28 sm:py-36 overflow-hidden bg-bg section-fade-to-cream"
     >
       <div className="px-4 sm:px-8">
         <h2

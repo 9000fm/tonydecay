@@ -92,18 +92,19 @@ export function FloatingBadge({ visible }: FloatingBadgeProps) {
           </text>
         </svg>
 
-        {/* Center: circular print thumbnail */}
+        {/* Center: zoomed-in Charizard/fire detail */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div
             className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden"
             style={{ border: "1.5px solid rgba(240,235,220,0.3)" }}
           >
             <Image
-              src="/gallery/7.png"
+              src="/gallery/5.png"
               alt=""
-              width={80}
-              height={80}
-              className="w-full h-full object-cover"
+              width={200}
+              height={200}
+              className="w-full h-full object-cover scale-[2.8]"
+              style={{ objectPosition: "55% 35%" }}
             />
           </div>
         </div>

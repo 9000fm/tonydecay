@@ -59,19 +59,19 @@ function Marquee({ prints }: { prints: typeof PLACEHOLDER_PRINTS }) {
     });
   }, [wrapX]);
 
-  // Init
+  // Init — delay slightly to ensure layout is settled
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
-    const id = requestAnimationFrame(() => {
-      halfWidthRef.current = track.scrollWidth / 2;
+    const timeout = setTimeout(() => {
+      halfWidthRef.current = track.scrollWidth / 3;
       gsap.set(track, { x: 0 });
       startAutoScroll();
-    });
+    }, 200);
 
     return () => {
-      cancelAnimationFrame(id);
+      clearTimeout(timeout);
       tweenRef.current?.kill();
     };
   }, [prints.length, startAutoScroll]);
@@ -156,8 +156,8 @@ function Marquee({ prints }: { prints: typeof PLACEHOLDER_PRINTS }) {
     };
   }, [wrapX, startAutoScroll]);
 
-  // Duplicate prints array so the loop is seamless
-  const looped = [...prints, ...prints];
+  // Triple prints array for seamless loop with extra buffer
+  const looped = [...prints, ...prints, ...prints];
 
   return (
     <div
@@ -248,8 +248,7 @@ export function Gallery() {
       ref={sectionRef}
       id="gallery"
       data-nav-dark="true"
-      className="relative py-24 sm:py-32 overflow-hidden"
-      style={{ backgroundColor: "#0D1B2D" }}
+      className="relative py-24 sm:py-32 overflow-hidden bg-bg section-fade-to-cream"
     >
       <div className="text-center mb-12 sm:mb-16 px-0">
         <h2
