@@ -21,8 +21,8 @@
   --color-ink-faint: #8A8170;
 
   /* === Dark sections === */
-  --color-bg: #0a0a0a;
-  --color-bg-alt: #141414;
+  --color-bg: #0D1B2D;
+  --color-bg-alt: #0A1520;
 
   /* === Legacy mappings (transition) === */
   --color-cream: var(--color-paper);
@@ -53,13 +53,14 @@ html {
   overscroll-behavior-y: none;
 }
 
-/* Custom monkey-hand cursor — pixel art pointing finger */
-html, body {
-  cursor: url('/cursor/1.png') 8 4, auto;
-}
-
-a, button, [role="button"], summary, [data-cursor-pointer] {
-  cursor: url('/cursor/1.png') 8 4, pointer;
+/* Custom monkey-hand cursor — desktop only (pixel art pointing finger) */
+@media (pointer: fine) {
+  html, body {
+    cursor: url('/cursor/1.png') 8 4, auto;
+  }
+  a, button, [role="button"], summary, [data-cursor-pointer] {
+    cursor: url('/cursor/2.png') 8 4, pointer;
+  }
 }
 
 html.lenis, html.lenis body {
@@ -131,6 +132,39 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Burger/cart blob — very subtle, slow morph */
+@keyframes blob-wobble {
+  0%       { border-radius: 48% 52% 47% 53% / 51% 48% 52% 49%; }
+  25%      { border-radius: 50% 50% 48% 52% / 49% 51% 50% 50%; }
+  50%      { border-radius: 47% 53% 50% 50% / 52% 48% 49% 51%; }
+  75%      { border-radius: 51% 49% 52% 48% / 50% 50% 51% 49%; }
+  100%     { border-radius: 48% 52% 47% 53% / 51% 48% 52% 49%; }
+}
+
+/* Footer — infinite marquee scroll */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Footer — Y-axis spin for logo */
+@keyframes spin-y {
+  0% { transform: perspective(400px) rotateY(0deg); }
+  100% { transform: perspective(400px) rotateY(360deg); }
+}
+
+/* Floating badge — slow continuous rotation */
+@keyframes badge-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Pokemon dialog arrow — bounces up and down like old RPG prompts */
+@keyframes pokemon-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
 }
 
 .split-word {
