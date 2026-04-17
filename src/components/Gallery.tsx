@@ -1,190 +1,48 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "@/lib/gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
 
-// ─── Auto-scrolling marquee with drag interaction ─────────────────────────
-// Slow auto-scroll right→left. Click/drag to scrub manually — auto-scroll
-// pauses during drag and resumes with momentum after release.
-function Marquee({ prints }: { prints: typeof PLACEHOLDER_PRINTS }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const tweenRef = useRef<gsap.core.Tween | null>(null);
-  const halfWidthRef = useRef(0);
-
-  const drag = useRef({
-    active: false,
-    startX: 0,
-    startTrackX: 0,
-    lastX: 0,
-    lastTime: 0,
-    velocity: 0,
-  });
-
-  // Wrap x into the seamless range [−halfWidth, 0]
-  const wrapX = useCallback((x: number) => {
-    const hw = halfWidthRef.current;
-    if (hw === 0) return x;
-    let wrapped = x % hw;
-    if (wrapped > 0) wrapped -= hw;
-    return wrapped;
-  }, []);
-
-  // Start/resume auto-scroll from current position
-  const startAutoScroll = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const hw = halfWidthRef.current;
-    if (hw === 0) return;
-
-    tweenRef.current?.kill();
-
-    const currentX = wrapX(gsap.getProperty(track, "x") as number);
-    gsap.set(track, { x: currentX });
-
-    // Constant speed: full loop in 90s
-    const remaining = Math.abs(-hw - currentX);
-    const speed = hw / 90;
-    const duration = remaining / speed;
-
-    tweenRef.current = gsap.to(track, {
-      x: -hw,
-      ease: "none",
-      duration,
-      onComplete: () => {
-        gsap.set(track, { x: 0 });
-        startAutoScroll();
-      },
-    });
-  }, [wrapX]);
-
-  // Init — delay slightly to ensure layout is settled
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const timeout = setTimeout(() => {
-      halfWidthRef.current = track.scrollWidth / 3;
-      gsap.set(track, { x: 0 });
-      startAutoScroll();
-    }, 200);
-
-    return () => {
-      clearTimeout(timeout);
-      tweenRef.current?.kill();
-    };
-  }, [prints.length, startAutoScroll]);
-
-  // Pointer handlers for drag
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const container = track.parentElement;
-    if (!container) return;
-
-    const onDown = (e: PointerEvent) => {
-      tweenRef.current?.kill();
-
-      const currentX = gsap.getProperty(track, "x") as number;
-      drag.current = {
-        active: true,
-        startX: e.clientX,
-        startTrackX: currentX,
-        lastX: e.clientX,
-        lastTime: Date.now(),
-        velocity: 0,
-      };
-
-      container.setPointerCapture(e.pointerId);
-      container.style.cursor = "grabbing";
-    };
-
-    const onMove = (e: PointerEvent) => {
-      if (!drag.current.active) return;
-
-      const delta = e.clientX - drag.current.startX;
-      const newX = wrapX(drag.current.startTrackX + delta);
-      gsap.set(track, { x: newX });
-
-      // Track velocity (px/s)
-      const now = Date.now();
-      const dt = now - drag.current.lastTime;
-      if (dt > 4) {
-        drag.current.velocity =
-          ((e.clientX - drag.current.lastX) / dt) * 1000;
-        drag.current.lastX = e.clientX;
-        drag.current.lastTime = now;
-      }
-    };
-
-    const onUp = () => {
-      if (!drag.current.active) return;
-      drag.current.active = false;
-      container.style.cursor = "";
-
-      const velocity = drag.current.velocity;
-
-      // Apply momentum if there's meaningful velocity
-      if (Math.abs(velocity) > 50) {
-        const currentX = gsap.getProperty(track, "x") as number;
-        const momentum = velocity * 0.6;
-        const targetX = wrapX(currentX + momentum);
-
-        gsap.to(track, {
-          x: targetX,
-          duration: 0.8,
-          ease: "power3.out",
-          onComplete: startAutoScroll,
-        });
-      } else {
-        // No momentum, just resume
-        startAutoScroll();
-      }
-    };
-
-    container.addEventListener("pointerdown", onDown);
-    container.addEventListener("pointermove", onMove);
-    container.addEventListener("pointerup", onUp);
-    container.addEventListener("pointercancel", onUp);
-
-    return () => {
-      container.removeEventListener("pointerdown", onDown);
-      container.removeEventListener("pointermove", onMove);
-      container.removeEventListener("pointerup", onUp);
-      container.removeEventListener("pointercancel", onUp);
-    };
-  }, [wrapX, startAutoScroll]);
-
-  // Triple prints array for seamless loop with extra buffer
-  const looped = [...prints, ...prints, ...prints];
+// ─── Row of prints — clean CSS auto-scroll, no JS boost (matches digeart) ───
+function MarqueeRow({
+  prints,
+  direction,
+  duration,
+}: {
+  prints: typeof PLACEHOLDER_PRINTS;
+  direction: "left" | "right";
+  duration: number;
+}) {
+  const sequence = [...prints, ...prints];
+  const animationName =
+    direction === "left" ? "marquee-scroll" : "marquee-scroll-reverse";
 
   return (
-    <div
-      className="relative w-screen overflow-hidden -mx-[calc(50vw-50%)] select-none"
-      style={{ cursor: "grab" }}
-    >
+    <div className="overflow-hidden">
       <div
-        ref={trackRef}
-        className="flex"
-        style={{ willChange: "transform" }}
+        className="flex shrink-0"
+        style={{
+          animation: `${animationName} ${duration}s linear infinite`,
+          width: "max-content",
+          willChange: "transform",
+        }}
       >
-        {looped.map((print, i) => (
+        {sequence.map((print, i) => (
           <div
             key={`${print.id}-${i}`}
-            className="relative shrink-0 group -ml-px first:ml-0"
-            style={{
-              width: "calc((70vh) * 3 / 4)",
-              height: "70vh",
-            }}
+            className="relative shrink-0"
+            style={{ width: "32vw", height: "34vh", maxHeight: 320 }}
           >
             <Image
               src={print.src}
               alt={print.alt}
               fill
-              className="object-cover transition-[filter,opacity] duration-300 group-hover:brightness-110"
-              sizes="(max-width: 640px) 52vh, 60vh"
-              priority={i < 3}
+              unoptimized
+              className="object-cover"
+              sizes="32vw"
               draggable={false}
             />
           </div>
@@ -194,79 +52,165 @@ function Marquee({ prints }: { prints: typeof PLACEHOLDER_PRINTS }) {
   );
 }
 
-// ─── Gallery section ──────────────────────────────────────────────────────
-export function Gallery() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+// ─── Scroll-locked carousel: edge tabs, no numbers ──────────────────────────
+function ScrollLockDeepDive() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
+    const section = sectionRef.current;
+    const track = trackRef.current;
+    if (!section || !track) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
     const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        gsap.fromTo(
-          headingRef.current,
-          { opacity: 0, scale: 1.15, y: 30 },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 1.0,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: headingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-      if (subtitleRef.current) {
-        gsap.fromTo(
-          subtitleRef.current,
-          { opacity: 0, y: 16 },
-          {
-            opacity: 0.6,
-            y: 0,
-            duration: 0.8,
-            delay: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: headingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    }, sectionRef);
+      const totalPrints = PLACEHOLDER_PRINTS.length;
+      const scrollLength = window.innerHeight * (totalPrints - 1) * 0.3;
+
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: `+=${scrollLength}`,
+        pin: true,
+        snap: {
+          snapTo: 1 / (totalPrints - 1),
+          duration: 0.5,
+          ease: "power3.out",
+        },
+        onUpdate: (self) => {
+          const idx = Math.min(
+            totalPrints - 1,
+            Math.round(self.progress * (totalPrints - 1))
+          );
+          setActiveIndex(idx);
+        },
+        invalidateOnRefresh: true,
+      });
+
+      return () => {
+        trigger.kill();
+      };
+    });
 
     return () => ctx.revert();
   }, []);
 
+  // Track slide — smooth deceleration
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    gsap.to(track, {
+      x: -activeIndex * window.innerWidth,
+      duration: 0.65,
+      ease: "power3.out",
+      overwrite: true,
+    });
+  }, [activeIndex]);
+
   return (
-    <section
-      ref={sectionRef}
-      id="gallery"
-      data-nav-dark="true"
-      className="relative py-24 sm:py-32 overflow-hidden bg-bg section-fade-to-cream"
-    >
-      <div className="text-center mb-12 sm:mb-16 px-0">
-        <h2
-          ref={headingRef}
-          className="font-tattoo text-[7rem] sm:text-[12rem] md:text-[18rem] lg:text-[24rem] xl:text-[28rem] text-paper uppercase tracking-tighter leading-[0.72] opacity-0"
+    <div ref={sectionRef} data-deep-dive="true" className="relative h-screen overflow-hidden bg-bg">
+      {/* DESKTOP-only: big counter on the left side */}
+      <div className="hidden md:flex absolute top-[15%] left-8 z-20 pointer-events-none items-baseline">
+        <span
+          className="font-tattoo text-paper uppercase leading-none tracking-tighter"
+          style={{ fontSize: "clamp(6rem, 14vw, 12rem)" }}
         >
-          VOL&nbsp;I
-        </h2>
-        <p
-          ref={subtitleRef}
-          className="font-sans text-paper/60 text-sm sm:text-base uppercase mt-3 opacity-0"
-          style={{ letterSpacing: "0.3em" }}
-        >
-          BY TONY DECAY
-        </p>
+          {String(activeIndex + 1).padStart(2, "0")}
+        </span>
+        <span className="font-tattoo text-paper/50 leading-none tracking-tighter" style={{ fontSize: "clamp(3rem, 7vw, 6rem)" }}>
+          /{String(PLACEHOLDER_PRINTS.length).padStart(2, "0")}
+        </span>
       </div>
 
-      <Marquee prints={PLACEHOLDER_PRINTS} />
+      {/* Track — slides horizontally, each slide contains a print card with edge tabs */}
+      <div
+        ref={trackRef}
+        className="absolute inset-y-0 left-0 flex items-center"
+        style={{ willChange: "transform" }}
+      >
+        {PLACEHOLDER_PRINTS.map((print, i) => (
+          <div
+            key={print.id}
+            className="w-screen h-screen shrink-0 flex items-center justify-center"
+          >
+            {/* Print card wrapper — overflow visible so edge tabs extend beyond */}
+            <div className="relative" style={{ width: "min(94vw, 600px)" }}>
+              {/* The print card itself */}
+              <div className="relative border-2 border-paper bg-bg-alt">
+                <div className="relative w-full" style={{ aspectRatio: "2/3" }}>
+                  <Image
+                    src={print.src}
+                    alt={print.alt}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                    sizes="94vw"
+                    draggable={false}
+                  />
+                </div>
+                <div className="px-3 py-2 flex items-center justify-between">
+                  <span className="font-mono text-paper uppercase" style={{ fontSize: 13, letterSpacing: "0.22em", fontWeight: 600 }}>
+                    Print {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="font-mono text-paper/50 uppercase" style={{ fontSize: 11, letterSpacing: "0.22em" }}>
+                    Vol. I
+                  </span>
+                </div>
+              </div>
+
+              {/* Edge tabs — right side, like file dividers / notebook index marks */}
+              <div
+                className="absolute top-0 right-0 h-full flex flex-col justify-between py-4 pointer-events-none"
+                style={{ transform: "translateX(calc(100% + 4px))" }}
+              >
+                {PLACEHOLDER_PRINTS.map((_, j) => {
+                  const isActive = j === activeIndex;
+                  return (
+                    <div
+                      key={j}
+                      className="transition-all duration-300"
+                      style={{
+                        width: isActive ? 22 : 10,
+                        height: isActive ? 3.5 : 1.5,
+                        backgroundColor: isActive ? "#F7C234" : "rgba(240,235,220,0.3)",
+                        borderRadius: 1,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Gallery section ──────────────────────────────────────────────────────
+export function Gallery() {
+  // Split 15 prints into 3 rows of 5
+  const row1 = PLACEHOLDER_PRINTS.slice(0, 5);
+  const row2 = PLACEHOLDER_PRINTS.slice(5, 10);
+  const row3 = PLACEHOLDER_PRINTS.slice(10, 15);
+
+  return (
+    <section
+      id="gallery"
+      data-nav-dark="true"
+      className="relative bg-bg overflow-hidden"
+    >
+      {/* TEASER — 3-row marquee, no heading, no dividers between prints */}
+      <div>
+        <MarqueeRow prints={row1} direction="left" duration={80} />
+        <MarqueeRow prints={row2} direction="right" duration={80} />
+        <MarqueeRow prints={row3} direction="left" duration={80} />
+      </div>
+
+      {/* DEEP DIVE — scroll-locked horizontal scrub */}
+      <ScrollLockDeepDive />
     </section>
   );
 }

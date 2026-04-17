@@ -1,7 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { gsap } from "@/lib/gsap";
+import { FormEvent, useState } from "react";
 
 interface FormState {
   name: string;
@@ -12,139 +11,131 @@ interface FormState {
 const INITIAL_FORM: FormState = { name: "", email: "", message: "" };
 
 export function Contact() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
   const [formState, setFormState] = useState<FormState>(INITIAL_FORM);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // eslint-disable-next-line no-console
     console.log("Contact form submitted:", formState);
-    // TODO: hook up to backend (Resend / Supabase)
+    // TODO: hook up to backend (Resend)
   };
 
-  const handleChange = (
-    field: keyof FormState,
-    value: string
-  ) => {
+  const handleNewsletter = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // eslint-disable-next-line no-console
+    console.log("Newsletter signup:", newsletterEmail);
+    // TODO: hook up to backend
+  };
+
+  const handleChange = (field: keyof FormState, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        gsap.fromTo(
-          headingRef.current,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: headingRef.current,
-              start: "top 88%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section
-      ref={sectionRef}
       id="contact"
-      className="bg-paper section-fade-to-dark relative overflow-hidden py-24 sm:py-32"
+      className="bg-paper border-b-2 border-ink relative overflow-hidden py-20 sm:py-28"
     >
-      <div className="max-w-2xl mx-auto px-6 sm:px-10">
-        {/* Heading */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        {/* Section label */}
+        <div className="inline-block border-2 border-ink px-3 py-1 font-mono text-ink uppercase mb-8" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
+          Get in Touch
+        </div>
+
         <h2
-          ref={headingRef}
-          className="font-tattoo text-[4rem] sm:text-[6rem] md:text-[8rem] text-ink uppercase tracking-tighter leading-[0.78] opacity-0"
+          className="font-tattoo text-ink uppercase tracking-tighter leading-[0.82]"
+          style={{ fontSize: "clamp(3rem, 11vw, 8rem)" }}
         >
-          GET IN TOUCH
+          LET&apos;S TALK
         </h2>
 
-        {/* Contact form */}
-        <form onSubmit={handleSubmit} className="mt-14 space-y-8">
-          <input
-            type="text"
-            placeholder="Your name"
-            value={formState.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            className="w-full bg-transparent border-b border-ink/20 py-3 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-10 sm:mt-14">
+          {/* Contact form card */}
+          <div className="border-2 border-ink p-6 sm:p-8">
+            <p className="font-mono text-ink uppercase mb-5" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
+              Direct Message
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <input
+                type="text"
+                placeholder="Your name"
+                value={formState.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                className="w-full bg-transparent border-b-2 border-ink/30 py-2.5 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
+              />
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={formState.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                className="w-full bg-transparent border-b-2 border-ink/30 py-2.5 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
+              />
+              <textarea
+                placeholder="What's on your mind?"
+                rows={3}
+                value={formState.message}
+                onChange={(e) => handleChange("message", e.target.value)}
+                className="w-full bg-transparent border-b-2 border-ink/30 py-2.5 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors resize-none"
+              />
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-ink text-paper font-mono uppercase hover:bg-royal transition-colors duration-300"
+                style={{ fontSize: 11, letterSpacing: "0.2em" }}
+              >
+                Send Message
+              </button>
+            </form>
+          </div>
 
-          <input
-            type="email"
-            placeholder="your@email.com"
-            value={formState.email}
-            onChange={(e) => handleChange("email", e.target.value)}
-            className="w-full bg-transparent border-b border-ink/20 py-3 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
-          />
+          {/* Newsletter + IG card */}
+          <div className="space-y-4 sm:space-y-6">
+            <div className="border-2 border-ink p-6 sm:p-8">
+              <p className="font-mono text-ink uppercase mb-2" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
+                Vol. II Notify
+              </p>
+              <p className="font-sans text-ink-soft text-base mb-5">
+                Get notified when the next drop opens. No spam, no fluff.
+              </p>
+              <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  className="flex-1 bg-transparent border-b-2 border-ink/30 py-2.5 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-royal text-paper font-mono uppercase hover:bg-royal-deep transition-colors duration-300"
+                  style={{ fontSize: 11, letterSpacing: "0.2em" }}
+                >
+                  Notify Me
+                </button>
+              </form>
+            </div>
 
-          <textarea
-            placeholder="What's on your mind?"
-            rows={4}
-            value={formState.message}
-            onChange={(e) => handleChange("message", e.target.value)}
-            className="w-full bg-transparent border-b border-ink/20 py-3 font-sans text-base text-ink placeholder:text-ink-faint focus:border-ink focus:outline-none transition-colors resize-none"
-          />
-
-          <button
-            type="submit"
-            className="bg-ink text-paper px-8 py-3.5 font-sans text-sm font-medium uppercase tracking-[0.15em] hover:bg-royal transition-colors"
-          >
-            Send message
-          </button>
-        </form>
-
-        {/* Direct contact fallback */}
-        <p className="font-mono text-xs text-ink-faint uppercase tracking-[0.2em] mt-12 mb-4">
-          Or reach us directly
-        </p>
-
-        <div className="flex flex-wrap items-center gap-6">
-          {/* Instagram DM */}
-          <a
-            href="https://www.instagram.com/tony.decay"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 font-sans text-sm text-ink/60 hover:text-ink transition-colors"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="shrink-0"
-            >
-              <path d="M12 2C9.28 2 8.94 2.01 7.88 2.06C6.81 2.11 6.09 2.28 5.46 2.52C4.8 2.78 4.24 3.12 3.68 3.68C3.12 4.24 2.78 4.8 2.52 5.46C2.28 6.09 2.11 6.81 2.06 7.88C2.01 8.94 2 9.28 2 12C2 14.72 2.01 15.06 2.06 16.12C2.11 17.19 2.28 17.91 2.52 18.54C2.78 19.2 3.12 19.76 3.68 20.32C4.24 20.88 4.8 21.22 5.46 21.48C6.09 21.72 6.81 21.89 7.88 21.94C8.94 21.99 9.28 22 12 22C14.72 22 15.06 21.99 16.12 21.94C17.19 21.89 17.91 21.72 18.54 21.48C19.2 21.22 19.76 20.88 20.32 20.32C20.88 19.76 21.22 19.2 21.48 18.54C21.72 17.91 21.89 17.19 21.94 16.12C21.99 15.06 22 14.72 22 12C22 9.28 21.99 8.94 21.94 7.88C21.89 6.81 21.72 6.09 21.48 5.46C21.22 4.8 20.88 4.24 20.32 3.68C19.76 3.12 19.2 2.78 18.54 2.52C17.91 2.28 17.19 2.11 16.12 2.06C15.06 2.01 14.72 2 12 2ZM12 4.16C14.67 4.16 14.99 4.17 16.04 4.22C17.02 4.26 17.55 4.43 17.9 4.56C18.37 4.74 18.7 4.96 19.05 5.31C19.4 5.66 19.62 5.99 19.8 6.46C19.93 6.81 20.1 7.34 20.14 8.32C20.19 9.38 20.2 9.69 20.2 12.36C20.2 15.03 20.19 15.34 20.14 16.4C20.1 17.38 19.93 17.91 19.8 18.26C19.62 18.73 19.4 19.06 19.05 19.41C18.7 19.76 18.37 19.98 17.9 20.16C17.55 20.29 17.02 20.46 16.04 20.5C14.99 20.55 14.67 20.56 12 20.56C9.33 20.56 9.01 20.55 7.96 20.5C6.98 20.46 6.45 20.29 6.1 20.16C5.63 19.98 5.3 19.76 4.95 19.41C4.6 19.06 4.38 18.73 4.2 18.26C4.07 17.91 3.9 17.38 3.86 16.4C3.81 15.34 3.8 15.03 3.8 12.36C3.8 9.69 3.81 9.38 3.86 8.32C3.9 7.34 4.07 6.81 4.2 6.46C4.38 5.99 4.6 5.66 4.95 5.31C5.3 4.96 5.63 4.74 6.1 4.56C6.45 4.43 6.98 4.26 7.96 4.22C9.01 4.17 9.33 4.16 12 4.16ZM12 6.86C9.16 6.86 6.86 9.16 6.86 12C6.86 14.84 9.16 17.14 12 17.14C14.84 17.14 17.14 14.84 17.14 12C17.14 9.16 14.84 6.86 12 6.86ZM12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9C13.66 9 15 10.34 15 12C15 13.66 13.66 15 12 15ZM18.84 6.62C18.84 7.34 18.26 7.92 17.54 7.92C16.82 7.92 16.24 7.34 16.24 6.62C16.24 5.9 16.82 5.32 17.54 5.32C18.26 5.32 18.84 5.9 18.84 6.62Z" />
-            </svg>
-            Instagram DM
-          </a>
-
-          {/* Email */}
-          <a
-            href="mailto:contact@tonydecay.com"
-            className="inline-flex items-center gap-2 font-sans text-sm text-ink/60 hover:text-ink transition-colors"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="shrink-0"
-            >
-              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            contact@tonydecay.com
-          </a>
+            <div className="border-2 border-ink p-6 sm:p-8">
+              <p className="font-mono text-ink uppercase mb-3" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
+                Elsewhere
+              </p>
+              <a
+                href="https://www.instagram.com/tony.decay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block font-sans text-ink hover:text-royal transition-colors text-lg"
+              >
+                @tony.decay <span className="text-ink-faint">on Instagram -&gt;</span>
+              </a>
+              <a
+                href="mailto:contact@tonydecay.com"
+                className="block mt-2 font-sans text-ink hover:text-royal transition-colors text-lg"
+              >
+                contact@tonydecay.com
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>

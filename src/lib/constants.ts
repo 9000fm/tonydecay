@@ -8,13 +8,13 @@ const PRINT_FILES = ["1", "2", "3beta", "4", "5", "6", "7", "8", "9", "10", "11"
 
 export const PLACEHOLDER_PRINTS = PRINT_FILES.map((n, i) => ({
   id: i + 1,
-  src: `/gallery/${n}.png`,
+  src: `/gallery/${n}.webp`,
   alt: `Print ${i + 1}`,
   title: `Print ${i + 1}`,
 }));
 
 // Hero background
-export const HERO_BG_IMAGE = "/gallery/1.png";
+export const HERO_BG_IMAGE = "/gallery/1.webp";
 
 // Artist avatar still placeholder (no real asset yet)
 export const ARTIST_AVATAR = "https://picsum.photos/seed/tdkartist/400/400";

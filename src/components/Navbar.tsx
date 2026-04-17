@@ -2,92 +2,136 @@
 
 import { useEffect, useState } from "react";
 import { MobileMenu } from "./MobileMenu";
+import { MarqueeBar } from "./MarqueeBar";
 import { useCheckout } from "@/hooks/useCheckout";
+import { useScramble } from "@/hooks/useScramble";
+
+// Each nav element is an INDEPENDENT fixed element — not nested in a shared fixed
+// wrapper — so mix-blend-difference sees the page content as its backdrop.
+// Firma uses scroll-detection → conditional filter + mix-blend so it:
+//   - renders as natural dark signature on cream sections
+//   - flips to white + mix-blend-difference over dark sections for true reactivity
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showNav, setShowNav] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
+  const [atTop, setAtTop] = useState(true);
   const { dispatch } = useCheckout();
+  const menuLabel = useScramble(menuOpen ? "CLOSE" : "MENU");
+
+  // Navbar elements stay hidden through the full close animation (panel covers them)
+  useEffect(() => {
+    if (menuOpen) {
+      setNavHidden(true);
+    } else if (navHidden) {
+      const id = setTimeout(() => setNavHidden(false), 550);
+      return () => clearTimeout(id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuOpen]);
 
   useEffect(() => {
-    // Show nav when past hero morph zone, hide when back at hero top
     let rafId: number | null = null;
     const tick = () => {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        setShowNav(window.scrollY > 600);
+        // Marquee shows while the middle of the hero print is still below the navbar.
+        // Once the user has scrolled past the print's vertical midpoint, marquee hides.
+        const heroPrint = document.querySelector<HTMLElement>("[data-hero-print]");
+        if (heroPrint) {
+          const rect = heroPrint.getBoundingClientRect();
+          setAtTop(rect.top > 90);
+        } else {
+          setAtTop(window.scrollY < 200);
+        }
       });
     };
     tick();
     window.addEventListener("scroll", tick, { passive: true });
+    window.addEventListener("resize", tick);
     return () => {
       if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", tick);
+      window.removeEventListener("resize", tick);
     };
   }, []);
 
+  const navTop = atTop ? 28 : 0;
+
   return (
     <>
-      {/* Cart — independent fixed element, left of burger */}
-      <button
-        onClick={() => dispatch({ type: "OPEN" })}
-        className="fixed top-6 right-[4.5rem] sm:top-8 sm:right-[5.5rem] z-50 flex items-center justify-center w-10 h-10 transition-opacity duration-500"
-        style={{
-          opacity: showNav ? 1 : 0,
-          pointerEvents: showNav ? "auto" : "none",
-          backgroundColor: "#ffffff",
-          mixBlendMode: "difference",
-          animation: "blob-wobble 60s ease-in-out infinite",
-          animationDelay: "-4s",
-          borderRadius: "48% 52% 47% 53% / 51% 48% 52% 49%",
-        }}
-        aria-label="Open cart"
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#000000"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {/* Marquee — conditional render (no fade) */}
+      {!navHidden && (
+        <div
+          className="fixed top-0 left-0 right-0 z-[99] overflow-hidden transition-[max-height] duration-500 ease-out"
+          style={{ maxHeight: atTop ? 28 : 0 }}
         >
-          <circle cx="9" cy="21" r="1" />
-          <circle cx="20" cy="21" r="1" />
-          <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
-        </svg>
-      </button>
+          <MarqueeBar />
+        </div>
+      )}
 
-      {/* Burger — independent fixed element */}
-      <button
-        onClick={() => setMenuOpen(true)}
-        className="fixed top-6 right-6 sm:top-8 sm:right-8 z-50 flex items-center justify-center w-12 h-12 transition-opacity duration-500"
-        style={{
-          opacity: showNav ? 1 : 0,
-          pointerEvents: showNav ? "auto" : "none",
-          backgroundColor: "#ffffff",
-          mixBlendMode: "difference",
-          animation: "blob-wobble 60s ease-in-out infinite",
-          borderRadius: "48% 52% 46% 54% / 50% 47% 53% 50%",
-        }}
-        aria-label="Open menu"
+      {/* LEFT — MENU/CERRAR toggle, same pixel position always, text scramble on change */}
+      <div
+        className="fixed left-0 z-[120] flex items-center h-14 sm:h-16 px-4 sm:px-6 transition-[top] duration-500 ease-out"
+        style={{ top: navTop, mixBlendMode: "difference" }}
       >
-        <svg
-          width="22"
-          height="16"
-          viewBox="0 0 22 16"
-          fill="none"
-          stroke="#000000"
-          strokeWidth="2.4"
-          strokeLinecap="round"
+        <button
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          className="font-mono uppercase focus:outline-none"
+          style={{
+            color: "#ffffff",
+            fontSize: 14,
+            fontWeight: 700,
+            letterSpacing: "0.22em",
+          }}
         >
-          <line x1="2" y1="2.5" x2="20" y2="2.5" />
-          <line x1="2" y1="8" x2="20" y2="8" />
-          <line x1="2" y1="13.5" x2="20" y2="13.5" />
-        </svg>
-      </button>
+          {menuLabel}
+        </button>
+      </div>
+
+      {/* CENTER — Firma, ALWAYS color-reactive (no scroll conditional).
+           filter on parent forces source to pure white, mix-blend-difference inverts against backdrop on every section. */}
+      {!navHidden && (
+        <div
+          className="fixed left-1/2 -translate-x-1/2 z-[101] pointer-events-none flex items-center h-14 sm:h-16 transition-[top] duration-500 ease-out"
+          style={{
+            top: navTop,
+            filter: "brightness(0) invert(1)",
+            mixBlendMode: "difference",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/gallery/Firma.webp"
+            alt="Tony Decay"
+            className="h-12 sm:h-14 w-auto object-contain"
+          />
+        </div>
+      )}
+
+      {/* RIGHT — Pre-Order white pill + mix-blend on wrapper → reads as dark pill on cream, light pill on dark (color-reactive) */}
+      {!navHidden && (
+        <div
+          className="fixed right-0 z-[101] flex items-center h-14 sm:h-16 px-4 sm:px-6 transition-[top] duration-500 ease-out"
+          style={{ top: navTop, mixBlendMode: "difference" }}
+        >
+          <button
+            onClick={() => dispatch({ type: "OPEN" })}
+            className="inline-flex items-center justify-center h-8 px-4 rounded-full font-sans uppercase"
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.10em",
+              fontWeight: 700,
+              backgroundColor: "#ffffff",
+              color: "#000000",
+            }}
+          >
+            PRE-ORDER
+          </button>
+        </div>
+      )}
 
       <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
     </>

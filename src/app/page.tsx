@@ -35,8 +35,8 @@ export default function Home() {
       <main>
         <Hero splashDone={splashDone} />
         <Gallery />
-        <Product />
         <Artist />
+        <Product />
         <FAQ />
         <Contact />
       </main>
