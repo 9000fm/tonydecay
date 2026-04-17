@@ -21,8 +21,8 @@
   --color-ink-faint: #8A8170;
 
   /* === Dark sections === */
-  --color-bg: #0D1B2D;
-  --color-bg-alt: #0A1520;
+  --color-bg: #1E3A5F;
+  --color-bg-alt: #152940;
 
   /* === Legacy mappings (transition) === */
   --color-cream: var(--color-paper);
@@ -53,13 +53,14 @@ html {
   overscroll-behavior-y: none;
 }
 
-/* Custom monkey-hand cursor — desktop only (pixel art pointing finger) */
+/* Custom banana cursors — desktop only */
 @media (pointer: fine) {
-  html, body {
-    cursor: url('/cursor/1.png') 8 4, auto;
-  }
+  * { cursor: url('/cursor/banana-cursor.png') 12 4, auto !important; }
   a, button, [role="button"], summary, [data-cursor-pointer] {
-    cursor: url('/cursor/2.png') 8 4, pointer;
+    cursor: url('/cursor/banana-clicked-cursor.png') 12 4, pointer !important;
+  }
+  *:active {
+    cursor: url('/cursor/banana-cursor.png') 12 4, pointer !important;
   }
 }
 
@@ -143,26 +144,14 @@ body {
   100%     { border-radius: 58% 42% 62% 38% / 42% 58% 38% 62%; }
 }
 
-/* Section transition — soft bleed between sections */
-.section-fade-to-dark::after {
-  content: '';
-  display: block;
-  height: 80px;
-  background: linear-gradient(to bottom, var(--color-paper), var(--color-bg));
-  margin-top: -1px;
-}
-.section-fade-to-cream::after {
-  content: '';
-  display: block;
-  height: 80px;
-  background: linear-gradient(to bottom, var(--color-bg), var(--color-paper));
-  margin-top: -1px;
-}
-
-/* Footer — infinite marquee scroll */
+/* Marquee — infinite horizontal scroll (top bar + 3-row teaser) */
 @keyframes marquee-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+@keyframes marquee-scroll-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
 
 /* Footer — Y-axis spin for logo */
@@ -177,10 +166,20 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* Pokemon dialog arrow — bounces up and down like old RPG prompts */
+/* Pokemon dialog arrow — 4 hard positions (0 → -8 → -16 → -8), each step holds 25% */
 @keyframes pokemon-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
+  0%, 24.99%   { transform: translateY(0); }
+  25%, 49.99%  { transform: translateY(-8px); }
+  50%, 74.99%  { transform: translateY(-16px); }
+  75%, 100%    { transform: translateY(-8px); }
+}
+
+/* TONY DECAY title — shadow color cycles through brand palette */
+@keyframes shadow-cycle {
+  0%, 100% { text-shadow: 5px 5px 0 #2B5DAE; }
+  25% { text-shadow: 5px 5px 0 #D7322E; }
+  50% { text-shadow: 5px 5px 0 #3CB5B5; }
+  75% { text-shadow: 5px 5px 0 #5BAA4F; }
 }
 
 .split-word {
@@ -190,4 +189,34 @@ body {
 
 .split-char {
   display: inline-block;
+}
+
+/* Pixel arrow color — 4 hard color swaps, no yellow */
+@keyframes arrow-colors {
+  0%, 24.99%   { background-color: #1A1A1A; }
+  25%, 49.99%  { background-color: #2B5DAE; }
+  50%, 74.99%  { background-color: #D7322E; }
+  75%, 100%    { background-color: #3CB5B5; }
+}
+
+/* Premium shimmer — thin gold gleam crosses ONCE then text settles to plain ink */
+@keyframes shimmer-sweep {
+  0%   { background-position: 200% 50%; }
+  100% { background-position: -100% 50%; }
+}
+
+.shimmer-ink {
+  background: linear-gradient(
+    105deg,
+    var(--color-ink) 0%,
+    var(--color-ink) 47%,
+    var(--color-gold) 50%,
+    var(--color-ink) 53%,
+    var(--color-ink) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-sweep 5s ease-out 1 forwards;
 }

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 const faqs = [
   {
     question: "What's included in the collection?",
@@ -71,19 +73,31 @@ function AccordionItem({
   }, [isOpen]);
 
   return (
-    <div className="border-t border-paper/10 last:border-b">
+    <div className="border-b-2 border-paper/30 last:border-b-0 px-4 sm:px-6">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-6 sm:py-7 text-left group"
+        className="w-full flex items-center justify-between py-5 sm:py-6 text-left group"
       >
         <span className="font-sans text-base sm:text-lg text-paper/80 group-hover:text-paper transition-colors duration-300 pr-6">
           {faq.question}
         </span>
         <span
-          className="text-paper/40 text-xl shrink-0 transition-transform duration-500 ease-out"
-          style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+          className="text-paper/40 shrink-0 relative inline-block transition-transform duration-300 ease-out"
+          style={{
+            width: 16,
+            height: 16,
+            transform: `rotate(${isOpen ? 45 : 0}deg)`,
+          }}
+          aria-hidden
         >
-          +
+          <span
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-current"
+            style={{ width: 16, height: 1.5 }}
+          />
+          <span
+            className="absolute left-1/2 top-0 -translate-x-1/2 bg-current"
+            style={{ width: 1.5, height: 16 }}
+          />
         </span>
       </button>
       <div ref={contentRef} className="overflow-hidden" style={{ height: 0 }}>
@@ -103,29 +117,6 @@ export function FAQ() {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (headingRef.current) {
-        gsap.fromTo(
-          headingRef.current,
-          { opacity: 0, y: 60 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: headingRef.current,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
   const handleToggle = useCallback(
     (index: number) => {
       setOpenIndex(openIndex === index ? null : index);
@@ -137,26 +128,33 @@ export function FAQ() {
     <section
       ref={sectionRef}
       id="faq"
-      className="relative py-28 sm:py-36 overflow-hidden bg-bg section-fade-to-cream"
+      data-nav-dark="true"
+      className="relative py-20 sm:py-28 overflow-hidden bg-bg border-b-2 border-paper"
     >
-      <div className="px-4 sm:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="inline-block border-2 border-paper px-3 py-1 font-mono text-paper uppercase mb-6 sm:mb-8" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
+          Questions / Answers
+        </div>
         <h2
           ref={headingRef}
-          className="font-tattoo text-[5rem] sm:text-[8rem] md:text-[12rem] lg:text-[16rem] text-paper uppercase tracking-tighter leading-[0.78] opacity-0"
+          className="font-tattoo text-paper uppercase tracking-tighter leading-[0.82]"
+          style={{ fontSize: "clamp(3rem, 12vw, 9rem)" }}
         >
           FAQ
         </h2>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 sm:px-10 mt-12 sm:mt-16">
-        {faqs.map((faq, index) => (
-          <AccordionItem
-            key={faq.question}
-            faq={faq}
-            isOpen={openIndex === index}
-            onToggle={() => handleToggle(index)}
-          />
-        ))}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-10 sm:mt-14">
+        <div className="border-2 border-paper">
+          {faqs.map((faq, index) => (
+            <AccordionItem
+              key={faq.question}
+              faq={faq}
+              isOpen={openIndex === index}
+              onToggle={() => handleToggle(index)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

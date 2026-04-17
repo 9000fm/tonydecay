@@ -9,37 +9,47 @@ interface SplashScreenProps {
 export function SplashScreen({ onEnter }: SplashScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const irisRef = useRef<HTMLDivElement>(null);
+  const firmaRef = useRef<HTMLImageElement>(null);
   const onEnterRef = useRef(onEnter);
   const hasRun = useRef(false);
   onEnterRef.current = onEnter;
 
   useEffect(() => {
-    // Strict mode guard — run once
     if (hasRun.current) return;
     hasRun.current = true;
 
     const container = containerRef.current;
     const iris = irisRef.current;
-    if (!container || !iris) return;
+    const firma = firmaRef.current;
+    if (!container || !iris || !firma) return;
 
-    // Force scroll to top + lock
     window.scrollTo(0, 0);
     const html = document.documentElement;
     html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
-    // Dynamic import GSAP to avoid SSR issues
     import("@/lib/gsap").then(({ gsap }) => {
-      // Iris starts at 0 — box-shadow covers entire screen in dark
-      gsap.set(iris, { width: 0, height: 0 });
+      // First visit = full cinematic timing; return visit = condensed
+      let isFirst = true;
+      try {
+        isFirst = !sessionStorage.getItem("td-visited");
+        if (isFirst) sessionStorage.setItem("td-visited", "1");
+      } catch { /* SSR / private mode fallback — treat as first */ }
 
-      // After a brief dark pause, the iris opens
-      gsap.to(iris, {
-        width: "300vmax",
-        height: "300vmax",
-        duration: 1.8,
-        ease: "power3.inOut",
-        delay: 0.6,
+      const D1 = isFirst ? 2.0 : 0.5;   // dark beat 1
+      const DL = isFirst ? 3.0 : 1.0;    // logo hold
+      const D2 = isFirst ? 2.0 : 0.5;    // dark beat 2
+      const IR = isFirst ? 1.9 : 1.2;    // iris duration
+
+      const tLogoOn = D1;
+      const tLogoOff = D1 + DL;
+      const tIris = tLogoOff + D2;
+
+      gsap.set(container, { backgroundColor: "var(--color-ink)" });
+      gsap.set(firma, { display: "none" });
+      gsap.set(iris, { width: 0, height: 0, boxShadow: "0 0 0 0 transparent" });
+
+      const tl = gsap.timeline({
         onComplete: () => {
           html.style.overflow = "";
           document.body.style.overflow = "";
@@ -47,6 +57,20 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
           onEnterRef.current();
         },
       });
+
+      // Logo appears
+      tl.set(firma, { display: "block" }, tLogoOn);
+      // Logo pops away
+      tl.set(firma, { display: "none" }, tLogoOff);
+      // Container transparent + iris primes + expands
+      tl.set(container, { backgroundColor: "transparent" }, tIris);
+      tl.set(iris, { boxShadow: "0 0 0 100vmax var(--color-ink)" }, tIris);
+      tl.to(iris, {
+        width: "300vmax",
+        height: "300vmax",
+        duration: IR,
+        ease: "power3.inOut",
+      }, tIris);
     });
 
     return () => {
@@ -58,23 +82,31 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[100]"
-      style={{ touchAction: "none" }}
+      className="fixed inset-0 z-[200]"
+      style={{ touchAction: "none", backgroundColor: "var(--color-ink)" }}
       onTouchMove={(e) => e.preventDefault()}
     >
-      {/* The iris: a circle with a massive box-shadow that covers the screen.
-          As the circle grows from 0, the shadow retreats, revealing the hero. */}
+      {/* Iris circle — boxShadow ink covers screen during iris phase, recedes as circle grows */}
       <div
         ref={irisRef}
         className="absolute rounded-full"
         style={{
-          top: "33%",
+          top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: 0,
           height: 0,
-          boxShadow: "0 0 0 100vmax #0D1B2D",
         }}
+      />
+
+      {/* Firma logo — pure WHITE (filter inverts dark source to white) so it's visible on the ink/dark bg */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={firmaRef}
+        src="/gallery/Firma.webp"
+        alt="Tony Decay"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-20 sm:h-24 w-auto object-contain"
+        style={{ display: "none", filter: "brightness(0) invert(1)" }}
       />
     </div>
   );

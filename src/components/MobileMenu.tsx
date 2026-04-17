@@ -10,106 +10,58 @@ interface MobileMenuProps {
 }
 
 const NAV_LINKS = [
-  { label: "COLLECTION", href: "#package" },
-  { label: "ARTIST", href: "#artist" },
+  { label: "WORK", href: "#gallery" },
+  { label: "ABOUT", href: "#artist" },
+  { label: "SHOP", href: "#package" },
+  { label: "FAQ", href: "#faq" },
   { label: "CONTACT", href: "#contact" },
 ];
 
 const MENU_BG = "#1A1A1E";
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  const blobRef = useRef<HTMLDivElement>(null);
-  const solidRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const linksRef = useRef<HTMLAnchorElement[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const blob = blobRef.current;
-    const solid = solidRef.current;
-    const content = contentRef.current;
-    if (!blob || !solid || !content) return;
-    const links = linksRef.current.filter(Boolean);
+    const panel = panelRef.current;
+    if (!panel) return;
 
-    gsap.killTweensOf([blob, solid, content, ...links]);
-
-    const isSm = window.innerWidth >= 640;
-    const offset = isSm ? 32 : 24;
+    gsap.killTweensOf(panel);
 
     if (isOpen) {
       getLenis()?.stop();
       document.body.style.overflow = "hidden";
 
-      const burgerCenterX = window.innerWidth - offset - 24;
-      const burgerCenterY = offset + 24;
-      const maxDist = Math.sqrt(
-        Math.max(burgerCenterX, window.innerWidth - burgerCenterX) ** 2 +
-          Math.max(burgerCenterY, window.innerHeight - burgerCenterY) ** 2
-      );
-      // Extra generous scale to eliminate edge gaps
-      const endScale = (maxDist * 2) / 24;
-
-      gsap.set(blob, {
+      gsap.set(panel, {
         display: "block",
-        top: offset,
-        right: offset,
-        scale: 1,
-        backgroundColor: "#ffffff",
-        mixBlendMode: "difference",
+        top: 0,
+        left: 0,
+        width: 1,
+        height: 1,
+        borderRadius: 0,
       });
-      gsap.set(solid, { display: "block", opacity: 0 });
-      gsap.set(content, { display: "flex", opacity: 0 });
-      gsap.set(links, { opacity: 0, y: 30 });
 
-      const tl = gsap.timeline();
-
-      tl.to(blob, {
-        scale: endScale,
-        duration: 0.7,
+      gsap.to(panel, {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        duration: 0.55,
         ease: "power3.inOut",
       });
-
-      tl.to(
-        solid,
-        { opacity: 1, duration: 0.25, ease: "power2.inOut" },
-        "-=0.15"
-      );
-
-      tl.to(
-        content,
-        { opacity: 1, duration: 0.25, ease: "power2.out" },
-        "-=0.05"
-      );
-
-      tl.to(
-        links,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          stagger: 0.07,
-          ease: "power2.out",
-        },
-        "-=0.15"
-      );
     } else {
       const tl = gsap.timeline({
         onComplete: () => {
-          gsap.set(blob, { display: "none", scale: 1 });
-          gsap.set(solid, { display: "none", opacity: 0 });
-          gsap.set(content, { display: "none" });
+          gsap.set(panel, { display: "none", width: 1, height: 1 });
           getLenis()?.start();
           document.body.style.overflow = "";
         },
       });
 
-      tl.to(content, { opacity: 0, duration: 0.2, ease: "power2.in" });
-      tl.to(links, { opacity: 0, duration: 0.15 }, 0);
-      tl.to(solid, { opacity: 0, duration: 0.2, ease: "power2.in" }, "-=0.05");
-      tl.to(
-        blob,
-        { scale: 1, duration: 0.55, ease: "power3.inOut" },
-        "-=0.15"
-      );
+      tl.to(panel, {
+        width: 1,
+        height: 1,
+        duration: 0.5,
+        ease: "power3.inOut",
+      });
     }
   }, [isOpen]);
 
@@ -135,71 +87,42 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     setTimeout(() => {
       const el = document.querySelector(href);
       if (el) el.scrollIntoView({ behavior: "smooth" });
-    }, 700);
+    }, 550);
   };
 
   return (
-    <>
-      {/* Blob — white + difference blend for color-shifting expansion */}
+    <div
+      ref={panelRef}
+      className="fixed z-[110] hidden overflow-hidden"
+      style={{
+        top: 0,
+        left: 0,
+        width: 1,
+        height: 1,
+        backgroundColor: MENU_BG,
+        borderRadius: 0,
+      }}
+    >
+      {/* Content fills viewport, positioned at final layout — panel overflow:hidden masks it.
+          As panel grows, content is revealed. No animation on the items themselves. */}
       <div
-        ref={blobRef}
-        className="fixed z-[88] hidden"
-        style={{
-          width: 48,
-          height: 48,
-          backgroundColor: "#ffffff",
-          mixBlendMode: "difference",
-          animation: "blob-wobble 18s ease-in-out infinite",
-          borderRadius: "62% 28% 72% 33% / 33% 62% 28% 68%",
-          transformOrigin: "center",
-        }}
-      />
-
-      {/* Solid backdrop — covers any gaps, uses ink charcoal */}
-      <div
-        ref={solidRef}
-        className="fixed inset-0 z-[89] hidden"
-        style={{ backgroundColor: MENU_BG, opacity: 0 }}
-      />
-
-      {/* Menu content */}
-      <div
-        ref={contentRef}
-        className="fixed inset-0 z-[90] hidden flex-col items-center justify-center"
-        style={{ opacity: 0 }}
+        className="flex flex-col items-center justify-center"
+        style={{ width: "100vw", height: "100vh" }}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 sm:top-7 sm:right-7 text-white/70 hover:text-white transition-colors p-3 select-none leading-none"
-          aria-label="Close menu"
-          style={{
-            fontFamily: "var(--font-display), serif",
-            fontSize: "40px",
-            fontWeight: 300,
-          }}
-        >
-          ×
-        </button>
-
-        {/* Nav links — 3 links, generous spacing, hover color-shift */}
-        <nav className="flex flex-col items-center gap-6 sm:gap-8">
-          {NAV_LINKS.map((link, i) => (
+        {/* Nav links — always at final position, no entrance animation */}
+        <nav className="flex flex-col items-center gap-4 sm:gap-5">
+          {NAV_LINKS.map((link) => (
             <a
               key={link.href}
-              ref={(el) => {
-                if (el) linksRef.current[i] = el;
-              }}
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
-              className="font-tattoo text-6xl sm:text-7xl md:text-8xl uppercase leading-none transition-all duration-300"
+              className="font-tattoo text-5xl sm:text-6xl md:text-7xl uppercase leading-none transition-colors duration-300"
               style={{
                 letterSpacing: "0.02em",
                 color: "rgba(255,255,255,0.85)",
-                mixBlendMode: "difference",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.3)";
+                e.currentTarget.style.color = "rgba(255,255,255,0.4)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = "rgba(255,255,255,0.85)";
@@ -210,7 +133,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           ))}
         </nav>
 
-        {/* Instagram icon only — bigger */}
+        {/* Instagram icon */}
         <a
           href="https://www.instagram.com/tony.decay"
           target="_blank"
@@ -219,8 +142,8 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           aria-label="Instagram"
         >
           <svg
-            width="36"
-            height="36"
+            width="52"
+            height="52"
             viewBox="0 0 24 24"
             fill="currentColor"
             aria-hidden="true"
@@ -229,6 +152,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </svg>
         </a>
       </div>
-    </>
+    </div>
   );
 }
