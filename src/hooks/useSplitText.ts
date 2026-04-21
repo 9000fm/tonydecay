@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useCallback } from "react";
 
 interface SplitResult {
   chars: HTMLSpanElement[];
@@ -12,9 +12,7 @@ interface SplitResult {
  * Custom text splitter hook — replaces GSAP's paid SplitText plugin.
  * Wraps characters, words, and lines in <span> elements for animation.
  */
-export function useSplitText(
-  mode: "chars" | "words" | "lines" | "chars,words" = "chars,words"
-) {
+export function useSplitText(mode: "chars" | "words" | "lines" | "chars,words" = "chars,words") {
   const ref = useRef<HTMLElement>(null);
   const splitRef = useRef<SplitResult | null>(null);
 

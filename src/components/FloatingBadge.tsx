@@ -5,6 +5,8 @@ import Image from "next/image";
 import { gsap } from "@/lib/gsap";
 import { useCheckout } from "@/hooks/useCheckout";
 
+const REVEAL_DELAY_MS = 8000; // Hidden countdown: badge appears 8s after scroll threshold crossed
+
 interface FloatingBadgeProps {
   visible: boolean;
 }
@@ -15,38 +17,37 @@ export function FloatingBadge({ visible }: FloatingBadgeProps) {
   const [inDeepDive, setInDeepDive] = useState(false);
   const { dispatch } = useCheckout();
 
-  // Appear after either 12 seconds of engagement OR once user scrolls past the hero —
-  // whichever comes first. Premium pace, doesn't interrupt initial exploration.
+  // Scroll past ~40% of first viewport → start invisible 8s countdown. When it elapses, reveal badge.
   useEffect(() => {
     const badge = badgeRef.current;
     if (!badge || !visible || dismissed) return;
 
     let revealed = false;
+    let delayId: ReturnType<typeof setTimeout> | null = null;
+
     const reveal = () => {
       if (revealed) return;
       revealed = true;
-      gsap.to(badge, {
-        y: 0,
-        duration: 0.7,
-        ease: "power3.out",
-      });
+      gsap.to(badge, { y: 0, duration: 0.7, ease: "power3.out" });
     };
 
-    const timer = setTimeout(reveal, 12000);
     const onScroll = () => {
-      if (window.scrollY > window.innerHeight * 0.5) reveal();
+      if (revealed || delayId !== null) return;
+      if (window.scrollY > window.innerHeight * 0.4) {
+        delayId = setTimeout(reveal, REVEAL_DELAY_MS);
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      clearTimeout(timer);
+      if (delayId !== null) clearTimeout(delayId);
       window.removeEventListener("scroll", onScroll);
     };
   }, [visible, dismissed]);
 
   // Hide when inside the pinned deep-dive gallery so badge doesn't overlap prints
   useEffect(() => {
-    const deepDive = document.querySelector('[data-deep-dive]');
+    const deepDive = document.querySelector("[data-deep-dive]");
     if (!deepDive) return;
 
     let rafId: number | null = null;
@@ -87,24 +88,33 @@ export function FloatingBadge({ visible }: FloatingBadgeProps) {
   return (
     <div
       ref={badgeRef}
-      className={`fixed z-40 cursor-pointer bottom-6 right-6 sm:bottom-8 sm:right-8 ${inDeepDive ? "opacity-0 pointer-events-none" : ""}`}
+      className={`fixed right-6 bottom-6 z-40 cursor-pointer sm:right-8 sm:bottom-8 ${inDeepDive ? "pointer-events-none opacity-0" : ""}`}
       style={{ transform: "translateY(160px)", transition: "opacity 300ms ease" }}
       onClick={handleClick}
     >
       {/* Dismiss button — chevron pointing down (matches slide-down dismiss) */}
       <button
         onClick={handleDismiss}
-        className="absolute -top-1 -right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full"
+        className="absolute -top-1 -right-1 z-10 flex h-5 w-5 items-center justify-center rounded-full"
         style={{ backgroundColor: "var(--color-ink)" }}
         aria-label="Dismiss"
       >
-        <svg width="8" height="5" viewBox="0 0 8 5" fill="none" stroke="#F0EBDC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="8"
+          height="5"
+          viewBox="0 0 8 5"
+          fill="none"
+          stroke="#F0EBDC"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <polyline points="1,1 4,4 7,1" />
         </svg>
       </button>
 
-      {/* Rotating badge — larger, with dark backdrop */}
-      <div className="relative w-24 h-24 sm:w-28 sm:h-28">
+      {/* Rotating badge — dark backdrop, spinning text ring, zoomed print detail at center */}
+      <div className="relative h-24 w-24 sm:h-28 sm:w-28">
         {/* Dark circle backdrop so text is always readable */}
         <div
           className="absolute inset-0 rounded-full"
@@ -113,13 +123,10 @@ export function FloatingBadge({ visible }: FloatingBadgeProps) {
         {/* Spinning text ring */}
         <svg
           viewBox="0 0 120 120"
-          className="relative w-full h-full animate-[badge-spin_20s_linear_infinite]"
+          className="relative h-full w-full animate-[badge-spin_20s_linear_infinite]"
         >
           <defs>
-            <path
-              id="badge-circle"
-              d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0"
-            />
+            <path id="badge-circle" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
           </defs>
           <text
             className="fill-current"
@@ -131,10 +138,10 @@ export function FloatingBadge({ visible }: FloatingBadgeProps) {
           </text>
         </svg>
 
-        {/* Center: zoomed-in Charizard/fire detail */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {/* Center: zoomed-in print detail */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden"
+            className="h-12 w-12 overflow-hidden rounded-full sm:h-14 sm:w-14"
             style={{ border: "1.5px solid rgba(240,235,220,0.3)" }}
           >
             <Image
@@ -143,7 +150,7 @@ export function FloatingBadge({ visible }: FloatingBadgeProps) {
               width={200}
               height={200}
               unoptimized
-              className="w-full h-full object-cover scale-[1.2]"
+              className="h-full w-full scale-[1.2] object-cover"
               style={{ objectPosition: "35% 50%" }}
             />
           </div>

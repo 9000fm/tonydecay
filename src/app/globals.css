@@ -2,26 +2,26 @@
 
 @theme inline {
   /* === Paper / Background (extracted from Tony's prints) === */
-  --color-paper: #F0EBDC;
-  --color-paper-warm: #ECE4D0;
-  --color-paper-dark: #DDD3BD;
+  --color-paper: #f0ebdc;
+  --color-paper-warm: #ece4d0;
+  --color-paper-dark: #ddd3bd;
 
   /* === Bright Print Palette === */
-  --color-royal: #2B5DAE;        /* signature blue from prints */
-  --color-royal-deep: #1E3F7A;
-  --color-coral: #F2A2BC;        /* soft pink */
-  --color-crimson: #D7322E;      /* bright red */
-  --color-gold: #F7C234;         /* warm gold yellow */
-  --color-leaf: #5BAA4F;         /* friendly green */
-  --color-teal: #3CB5B5;         /* bright teal */
+  --color-royal: #2b5dae; /* signature blue from prints */
+  --color-royal-deep: #1e3f7a;
+  --color-coral: #f2a2bc; /* soft pink */
+  --color-crimson: #d7322e; /* bright red */
+  --color-gold: #f7c234; /* warm gold yellow */
+  --color-leaf: #5baa4f; /* friendly green */
+  --color-teal: #3cb5b5; /* bright teal */
 
   /* === Ink (text + outlines) === */
-  --color-ink: #1A1A1A;
-  --color-ink-soft: #4A4438;
-  --color-ink-faint: #8A8170;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #4a4438;
+  --color-ink-faint: #8a8170;
 
   /* === Dark sections === */
-  --color-bg: #1E3A5F;
+  --color-bg: #1e3a5f;
   --color-bg-alt: #152940;
 
   /* === Legacy mappings (transition) === */
@@ -34,11 +34,11 @@
   --color-text-dark: var(--color-ink);
   --color-text-dark-secondary: var(--color-ink-soft);
   --color-accent: var(--color-gold);
-  --color-accent-hover: #D4A11E;
+  --color-accent-hover: #d4a11e;
   --color-border: #27272a;
   --color-border-cream: var(--color-paper-dark);
   --color-cta: var(--color-crimson);
-  --color-cta-hover: #E84A46;
+  --color-cta-hover: #e84a46;
 
   /* === Fonts === */
   --font-display: var(--font-fraunces);
@@ -55,16 +55,29 @@ html {
 
 /* Custom banana cursors — desktop only */
 @media (pointer: fine) {
-  * { cursor: url('/cursor/banana-cursor.png') 12 4, auto !important; }
-  a, button, [role="button"], summary, [data-cursor-pointer] {
-    cursor: url('/cursor/banana-clicked-cursor.png') 12 4, pointer !important;
+  * {
+    cursor:
+      url("/cursor/banana-cursor.png") 12 4,
+      auto !important;
+  }
+  a,
+  button,
+  [role="button"],
+  summary,
+  [data-cursor-pointer] {
+    cursor:
+      url("/cursor/banana-clicked-cursor.png") 12 4,
+      pointer !important;
   }
   *:active {
-    cursor: url('/cursor/banana-cursor.png') 12 4, pointer !important;
+    cursor:
+      url("/cursor/banana-cursor.png") 12 4,
+      pointer !important;
   }
 }
 
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -109,7 +122,8 @@ body {
 }
 
 @media (pointer: coarse) {
-  html, body {
+  html,
+  body {
     -webkit-tap-highlight-color: transparent;
   }
 }
@@ -128,7 +142,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -137,49 +153,96 @@ body {
 
 /* Burger/cart blob — visible Ditto-like morph, medium pace */
 @keyframes blob-wobble {
-  0%       { border-radius: 58% 42% 62% 38% / 42% 58% 38% 62%; }
-  25%      { border-radius: 42% 58% 38% 62% / 62% 38% 58% 42%; }
-  50%      { border-radius: 55% 45% 40% 60% / 38% 62% 42% 58%; }
-  75%      { border-radius: 38% 62% 58% 42% / 55% 45% 60% 40%; }
-  100%     { border-radius: 58% 42% 62% 38% / 42% 58% 38% 62%; }
+  0% {
+    border-radius: 58% 42% 62% 38% / 42% 58% 38% 62%;
+  }
+  25% {
+    border-radius: 42% 58% 38% 62% / 62% 38% 58% 42%;
+  }
+  50% {
+    border-radius: 55% 45% 40% 60% / 38% 62% 42% 58%;
+  }
+  75% {
+    border-radius: 38% 62% 58% 42% / 55% 45% 60% 40%;
+  }
+  100% {
+    border-radius: 58% 42% 62% 38% / 42% 58% 38% 62%;
+  }
 }
 
 /* Marquee — infinite horizontal scroll (top bar + 3-row teaser) */
 @keyframes marquee-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 @keyframes marquee-scroll-reverse {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 /* Footer — Y-axis spin for logo */
 @keyframes spin-y {
-  0% { transform: perspective(400px) rotateY(0deg); }
-  100% { transform: perspective(400px) rotateY(360deg); }
+  0% {
+    transform: perspective(400px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(400px) rotateY(360deg);
+  }
 }
 
 /* Floating badge — slow continuous rotation */
 @keyframes badge-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Pokemon dialog arrow — 4 hard positions (0 → -8 → -16 → -8), each step holds 25% */
 @keyframes pokemon-bounce {
-  0%, 24.99%   { transform: translateY(0); }
-  25%, 49.99%  { transform: translateY(-8px); }
-  50%, 74.99%  { transform: translateY(-16px); }
-  75%, 100%    { transform: translateY(-8px); }
+  0%,
+  24.99% {
+    transform: translateY(0);
+  }
+  25%,
+  49.99% {
+    transform: translateY(-8px);
+  }
+  50%,
+  74.99% {
+    transform: translateY(-16px);
+  }
+  75%,
+  100% {
+    transform: translateY(-8px);
+  }
 }
 
 /* TONY DECAY title — shadow color cycles through brand palette */
 @keyframes shadow-cycle {
-  0%, 100% { text-shadow: 5px 5px 0 #2B5DAE; }
-  25% { text-shadow: 5px 5px 0 #D7322E; }
-  50% { text-shadow: 5px 5px 0 #3CB5B5; }
-  75% { text-shadow: 5px 5px 0 #5BAA4F; }
+  0%,
+  100% {
+    text-shadow: 5px 5px 0 #2b5dae;
+  }
+  25% {
+    text-shadow: 5px 5px 0 #d7322e;
+  }
+  50% {
+    text-shadow: 5px 5px 0 #3cb5b5;
+  }
+  75% {
+    text-shadow: 5px 5px 0 #5baa4f;
+  }
 }
 
 .split-word {
@@ -191,18 +254,50 @@ body {
   display: inline-block;
 }
 
-/* Pixel arrow color — 4 hard color swaps, no yellow */
-@keyframes arrow-colors {
-  0%, 24.99%   { background-color: #1A1A1A; }
-  25%, 49.99%  { background-color: #2B5DAE; }
-  50%, 74.99%  { background-color: #D7322E; }
-  75%, 100%    { background-color: #3CB5B5; }
+/* Pixel arrow — smooth rainbow hue cycle; staggered animation-delay creates a wave down the arrow */
+@keyframes rainbow-cycle {
+  0% {
+    background-color: hsl(0, 85%, 55%);
+  }
+  16% {
+    background-color: hsl(60, 85%, 55%);
+  }
+  33% {
+    background-color: hsl(120, 80%, 48%);
+  }
+  50% {
+    background-color: hsl(180, 80%, 48%);
+  }
+  66% {
+    background-color: hsl(240, 85%, 62%);
+  }
+  83% {
+    background-color: hsl(300, 85%, 60%);
+  }
+  100% {
+    background-color: hsl(360, 85%, 55%);
+  }
 }
 
 /* Premium shimmer — thin gold gleam crosses ONCE then text settles to plain ink */
 @keyframes shimmer-sweep {
-  0%   { background-position: 200% 50%; }
-  100% { background-position: -100% 50%; }
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -100% 50%;
+  }
+}
+
+/* Title shimmer — long idle pause, then a short gold sweep across. Subtle + occasional. */
+@keyframes title-shimmer {
+  0%,
+  72% {
+    background-position: -120% center;
+  }
+  100% {
+    background-position: 220% center;
+  }
 }
 
 .shimmer-ink {

@@ -17,13 +17,12 @@ function MarqueeRow({
   duration: number;
 }) {
   const sequence = [...prints, ...prints];
-  const animationName =
-    direction === "left" ? "marquee-scroll" : "marquee-scroll-reverse";
+  const animationName = direction === "left" ? "marquee-scroll" : "marquee-scroll-reverse";
 
   return (
-    <div className="overflow-hidden">
+    <div className="min-h-0 flex-1 overflow-hidden">
       <div
-        className="flex shrink-0"
+        className="flex h-full shrink-0"
         style={{
           animation: `${animationName} ${duration}s linear infinite`,
           width: "max-content",
@@ -33,8 +32,8 @@ function MarqueeRow({
         {sequence.map((print, i) => (
           <div
             key={`${print.id}-${i}`}
-            className="relative shrink-0"
-            style={{ width: "32vw", height: "34vh", maxHeight: 320 }}
+            className="relative h-full shrink-0"
+            style={{ width: "32vw" }}
           >
             <Image
               src={print.src}
@@ -80,10 +79,7 @@ function ScrollLockDeepDive() {
           ease: "power3.out",
         },
         onUpdate: (self) => {
-          const idx = Math.min(
-            totalPrints - 1,
-            Math.round(self.progress * (totalPrints - 1))
-          );
+          const idx = Math.min(totalPrints - 1, Math.round(self.progress * (totalPrints - 1)));
           setActiveIndex(idx);
         },
         invalidateOnRefresh: true,
@@ -110,16 +106,19 @@ function ScrollLockDeepDive() {
   }, [activeIndex]);
 
   return (
-    <div ref={sectionRef} data-deep-dive="true" className="relative h-screen overflow-hidden bg-bg">
+    <div ref={sectionRef} data-deep-dive="true" className="bg-bg relative h-screen overflow-hidden">
       {/* DESKTOP-only: big counter on the left side */}
-      <div className="hidden md:flex absolute top-[15%] left-8 z-20 pointer-events-none items-baseline">
+      <div className="pointer-events-none absolute top-[15%] left-8 z-20 hidden items-baseline md:flex">
         <span
-          className="font-tattoo text-paper uppercase leading-none tracking-tighter"
+          className="font-tattoo text-paper leading-none tracking-tighter uppercase"
           style={{ fontSize: "clamp(6rem, 14vw, 12rem)" }}
         >
           {String(activeIndex + 1).padStart(2, "0")}
         </span>
-        <span className="font-tattoo text-paper/50 leading-none tracking-tighter" style={{ fontSize: "clamp(3rem, 7vw, 6rem)" }}>
+        <span
+          className="font-tattoo text-paper/50 leading-none tracking-tighter"
+          style={{ fontSize: "clamp(3rem, 7vw, 6rem)" }}
+        >
           /{String(PLACEHOLDER_PRINTS.length).padStart(2, "0")}
         </span>
       </div>
@@ -133,12 +132,12 @@ function ScrollLockDeepDive() {
         {PLACEHOLDER_PRINTS.map((print, i) => (
           <div
             key={print.id}
-            className="w-screen h-screen shrink-0 flex items-center justify-center"
+            className="flex h-screen w-screen shrink-0 items-center justify-center"
           >
             {/* Print card wrapper — overflow visible so edge tabs extend beyond */}
             <div className="relative" style={{ width: "min(94vw, 600px)" }}>
               {/* The print card itself */}
-              <div className="relative border-2 border-paper bg-bg-alt">
+              <div className="border-paper bg-bg-alt relative border-2">
                 <div className="relative w-full" style={{ aspectRatio: "2/3" }}>
                   <Image
                     src={print.src}
@@ -150,11 +149,17 @@ function ScrollLockDeepDive() {
                     draggable={false}
                   />
                 </div>
-                <div className="px-3 py-2 flex items-center justify-between">
-                  <span className="font-mono text-paper uppercase" style={{ fontSize: 13, letterSpacing: "0.22em", fontWeight: 600 }}>
+                <div className="flex items-center justify-between px-3 py-2">
+                  <span
+                    className="text-paper font-mono uppercase"
+                    style={{ fontSize: 13, letterSpacing: "0.22em", fontWeight: 600 }}
+                  >
                     Print {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="font-mono text-paper/50 uppercase" style={{ fontSize: 11, letterSpacing: "0.22em" }}>
+                  <span
+                    className="text-paper/50 font-mono uppercase"
+                    style={{ fontSize: 11, letterSpacing: "0.22em" }}
+                  >
                     Vol. I
                   </span>
                 </div>
@@ -162,7 +167,7 @@ function ScrollLockDeepDive() {
 
               {/* Edge tabs — right side, like file dividers / notebook index marks */}
               <div
-                className="absolute top-0 right-0 h-full flex flex-col justify-between py-4 pointer-events-none"
+                className="pointer-events-none absolute top-0 right-0 flex h-full flex-col justify-between py-4"
                 style={{ transform: "translateX(calc(100% + 4px))" }}
               >
                 {PLACEHOLDER_PRINTS.map((_, j) => {
@@ -197,13 +202,9 @@ export function Gallery() {
   const row3 = PLACEHOLDER_PRINTS.slice(10, 15);
 
   return (
-    <section
-      id="gallery"
-      data-nav-dark="true"
-      className="relative bg-bg overflow-hidden"
-    >
-      {/* TEASER — 3-row marquee, no heading, no dividers between prints */}
-      <div>
+    <section id="gallery" data-nav-dark="true" className="bg-bg relative overflow-hidden">
+      {/* TEASER — 3-row marquee fills exactly one viewport */}
+      <div className="flex h-screen flex-col">
         <MarqueeRow prints={row1} direction="left" duration={80} />
         <MarqueeRow prints={row2} direction="right" duration={80} />
         <MarqueeRow prints={row3} direction="left" duration={80} />
