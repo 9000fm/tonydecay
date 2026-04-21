@@ -254,31 +254,6 @@ body {
   display: inline-block;
 }
 
-/* Pixel arrow — smooth rainbow hue cycle; staggered animation-delay creates a wave down the arrow */
-@keyframes rainbow-cycle {
-  0% {
-    background-color: hsl(0, 85%, 55%);
-  }
-  16% {
-    background-color: hsl(60, 85%, 55%);
-  }
-  33% {
-    background-color: hsl(120, 80%, 48%);
-  }
-  50% {
-    background-color: hsl(180, 80%, 48%);
-  }
-  66% {
-    background-color: hsl(240, 85%, 62%);
-  }
-  83% {
-    background-color: hsl(300, 85%, 60%);
-  }
-  100% {
-    background-color: hsl(360, 85%, 55%);
-  }
-}
-
 /* Premium shimmer — thin gold gleam crosses ONCE then text settles to plain ink */
 @keyframes shimmer-sweep {
   0% {

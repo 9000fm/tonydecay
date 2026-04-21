@@ -131,9 +131,9 @@ export function Navbar() {
             onClick={() => dispatch({ type: "OPEN" })}
             className="inline-flex h-8 items-center justify-center rounded-full px-4 font-sans uppercase"
             style={{
-              fontSize: 10,
-              letterSpacing: "0.10em",
-              fontWeight: 700,
+              fontSize: 11,
+              letterSpacing: "0.14em",
+              fontWeight: 800,
               backgroundColor: "#ffffff",
               color: "#000000",
             }}

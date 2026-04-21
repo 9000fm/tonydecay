@@ -11,7 +11,7 @@ const fraunces = Fraunces({
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 const sigmar = Sigmar({
@@ -38,8 +38,7 @@ export const metadata: Metadata = {
     "100 sets of 15 exclusive mini art prints. Signed and numbered. $300 all-inclusive worldwide shipping.",
   openGraph: {
     title: "Tony Decay — Limited Edition Art Prints",
-    description:
-      "100 sets of 15 exclusive mini art prints. $300 all-inclusive.",
+    description: "100 sets of 15 exclusive mini art prints. $300 all-inclusive.",
     type: "website",
   },
 };
@@ -55,8 +54,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable} ${sigmar.variable} ${jetbrainsMono.variable} ${anton.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${dmSans.variable} ${sigmar.variable} ${jetbrainsMono.variable} ${anton.variable} h-full antialiased`}
+    >
+      <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );
 }
