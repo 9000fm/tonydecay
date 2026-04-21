@@ -11,8 +11,8 @@ interface HeroProps {
 }
 
 const DECK_CYCLE_MS = 5800;
-const DECK_X_STEP = 28;
-const DECK_Y_STEP = -20; // negative = stack peeks up-right
+const DECK_X_STEP = 24;
+const DECK_Y_STEP = -9; // low vertical rise so back cards never hit the PRE-ORDER pill
 const HOVER_LIFT = -32;
 const DECK_SIZE = 10;
 // Stable subtle tilt per card index (card keeps its angle as it cycles)
@@ -36,6 +36,7 @@ export function Hero({}: HeroProps) {
   const deckFloatRef = useRef<HTMLDivElement>(null);
   const prevOrderRef = useRef<number[]>(deckOrder);
   const prevHoveredRef = useRef<number | null>(null);
+  const demotingRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     // Shuffle client-side only — prevents hydration mismatch from Math.random
@@ -112,9 +113,15 @@ export function Hero({}: HeroProps) {
 
       if (wasDemoted) {
         // Slow graceful dissolve: soft fade out first, teleport to back slot, then fade in
-        // while the rest of the stack pushes forward in sync.
+        // while the rest of the stack pushes forward in sync. Guard hover lift while this runs.
+        demotingRef.current.add(cardIdx);
         gsap
-          .timeline({ overwrite: true })
+          .timeline({
+            overwrite: true,
+            onComplete: () => {
+              demotingRef.current.delete(cardIdx);
+            },
+          })
           .set(el, { zIndex: 200 })
           .to(el, {
             opacity: 0,
@@ -144,10 +151,10 @@ export function Hero({}: HeroProps) {
     prevOrderRef.current = curr;
   }, [deckOrder, hoveredIdx]);
 
-  // Hover lift — subtle, doesn't fight the order effect
+  // Hover lift — subtle, doesn't fight the order effect. Skip cards mid-demotion.
   useEffect(() => {
     const prevHover = prevHoveredRef.current;
-    if (prevHover !== null && prevHover !== hoveredIdx) {
+    if (prevHover !== null && prevHover !== hoveredIdx && !demotingRef.current.has(prevHover)) {
       const el = deckCardRefs.current[prevHover];
       const position = deckOrder.indexOf(prevHover);
       if (el && position >= 0) {
@@ -159,7 +166,7 @@ export function Hero({}: HeroProps) {
         });
       }
     }
-    if (hoveredIdx !== null) {
+    if (hoveredIdx !== null && !demotingRef.current.has(hoveredIdx)) {
       const el = deckCardRefs.current[hoveredIdx];
       const position = deckOrder.indexOf(hoveredIdx);
       if (el && position >= 0) {
@@ -185,10 +192,10 @@ export function Hero({}: HeroProps) {
     const ctx = gsap.context(() => {
       if (fanRef.current) {
         const cards = Array.from(fanRef.current.children) as HTMLElement[];
-        // Fan opens to the RIGHT — 7 cards
-        const rotations = [-18, -12, -6, 0, 6, 12, 18];
-        const xOffsets = [-42, -28, -14, 0, 14, 28, 42];
-        const yOffsets = [14, 9, 5, 0, -5, -9, -14];
+        // Fan opens to the RIGHT — 7 cards, tightened for cleaner mobile read
+        const rotations = [-12, -8, -4, 0, 4, 8, 12];
+        const xOffsets = [-26, -17, -9, 0, 9, 17, 26];
+        const yOffsets = [9, 6, 3, 0, -3, -6, -9];
 
         gsap.set(cards, { rotation: 0, x: 0, y: 0 });
         cards.forEach((card, i) => {
@@ -206,8 +213,8 @@ export function Hero({}: HeroProps) {
       if (floatRef.current) {
         // Subtle levitation: lower amplitude, keeps slight rotation wobble.
         gsap.to(floatRef.current, {
-          y: -16,
-          duration: 6,
+          y: -9,
+          duration: 7,
           ease: "sine.inOut",
           yoyo: true,
           repeat: -1,
@@ -229,7 +236,7 @@ export function Hero({}: HeroProps) {
   return (
     <section
       id="home"
-      className="bg-paper relative min-h-screen overflow-hidden pt-[84px] pb-14 sm:pt-[96px] sm:pb-6"
+      className="bg-paper relative min-h-screen overflow-hidden pt-[70px] pb-14 sm:pt-[96px] sm:pb-6"
     >
       <div className="mx-auto max-w-6xl px-2 sm:px-6">
         {/* MOBILE-only: darker cream band behind composition — starts below navbar, fades out at bottom */}
@@ -252,24 +259,16 @@ export function Hero({}: HeroProps) {
 
         {/* MOBILE-only: wordmark at top — color-reactive via difference blend + occasional subtle gold shimmer */}
         <h1
-          className="font-tattoo relative z-20 w-full text-center leading-[0.82] tracking-tighter uppercase sm:hidden"
+          className="font-tattoo text-ink relative z-20 w-full text-center leading-[0.9] tracking-tighter uppercase sm:hidden"
           style={{
-            fontSize: "clamp(4.6rem, 23vw, 12rem)",
-            color: "transparent",
-            background:
-              "linear-gradient(105deg, #ffffff 0%, #ffffff 44%, #F7C234 50%, #ffffff 56%, #ffffff 100%)",
-            backgroundSize: "300% 100%",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            mixBlendMode: "difference",
-            animation: "title-shimmer 9s linear infinite",
+            fontSize: "clamp(4.4rem, 22vw, 12rem)",
           }}
         >
           TONY DECAY
         </h1>
 
         {/* Print fan area — MOBILE only (stamp moved below) */}
-        <div className="relative z-10 -mt-6 flex min-h-[280px] items-center justify-center sm:hidden">
+        <div className="relative z-10 -mt-2 flex min-h-0 items-center justify-center sm:hidden">
           {/* Desktop stamp moved to section-level below */}
           {/* Levitating print fan */}
           <div
@@ -305,7 +304,7 @@ export function Hero({}: HeroProps) {
 
         {/* MOBILE-only: vintage stamp — BELOW fan, ABOVE buttons (scaled ~25% smaller) */}
         <div
-          className="mt-2 mb-4 flex justify-center sm:hidden"
+          className="-mt-4 mb-4 flex justify-center sm:hidden"
           style={{ position: "relative", zIndex: 25 }}
         >
           <div
@@ -412,52 +411,15 @@ export function Hero({}: HeroProps) {
           </a>
         </div>
 
-        {/* Pixel arrow — bigger, smooth rainbow cycle with per-pixel stagger for wave effect */}
+        {/* Pokemon dialog arrow — simple dark triangle, 4-step bob */}
         <div
-          className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 scale-90 flex-col items-center sm:bottom-8 sm:scale-[2.1]"
-          style={{ gap: 0, animation: "pokemon-bounce 1.8s linear infinite" }}
+          className="absolute bottom-4 left-1/2 z-30 -translate-x-1/2 sm:bottom-8"
+          style={{ animation: "pokemon-bounce 1.8s linear infinite" }}
           aria-hidden
         >
-          <span
-            style={{
-              width: 32,
-              height: 6,
-              animation: "rainbow-cycle 2.5s linear infinite",
-              animationDelay: "0s",
-            }}
-          />
-          <span
-            style={{
-              width: 24,
-              height: 6,
-              animation: "rainbow-cycle 2.5s linear infinite",
-              animationDelay: "-0.5s",
-            }}
-          />
-          <span
-            style={{
-              width: 18,
-              height: 6,
-              animation: "rainbow-cycle 2.5s linear infinite",
-              animationDelay: "-1s",
-            }}
-          />
-          <span
-            style={{
-              width: 12,
-              height: 6,
-              animation: "rainbow-cycle 2.5s linear infinite",
-              animationDelay: "-1.5s",
-            }}
-          />
-          <span
-            style={{
-              width: 6,
-              height: 6,
-              animation: "rainbow-cycle 2.5s linear infinite",
-              animationDelay: "-2s",
-            }}
-          />
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="#1A1A1A">
+            <polygon points="0,0 16,0 8,12" />
+          </svg>
         </div>
       </div>
 
@@ -495,8 +457,9 @@ export function Hero({}: HeroProps) {
           >
             Tony Decay
           </h1>
+          <div className="bg-ink/30 mt-5 mb-4 h-px w-32" />
           <h2
-            className="text-ink mt-3 font-sans font-black uppercase"
+            className="text-ink font-sans font-black uppercase"
             style={{
               fontSize: "clamp(3.2rem, 6vw, 5.4rem)",
               lineHeight: 0.88,
@@ -565,9 +528,9 @@ export function Hero({}: HeroProps) {
           </div>
         </div>
 
-        {/* RIGHT: interactive print deck */}
-        <div className="relative col-span-7 flex h-[44rem] items-end justify-center pt-20">
-          <div ref={deckFloatRef} data-hero-print className="relative h-[29rem] w-[22rem]">
+        {/* RIGHT: interactive print deck — centered with type block, sized to the card (no dead space above) */}
+        <div className="relative col-span-7 flex items-center justify-center">
+          <div ref={deckFloatRef} data-hero-print className="relative h-[32rem] w-[24rem]">
             {heroFan.map((print, i) => {
               const position = deckOrder.indexOf(i);
               const isTop = position === 0;
@@ -595,8 +558,8 @@ export function Hero({}: HeroProps) {
                     fill
                     unoptimized
                     priority={i < 2}
-                    className="pointer-events-none object-contain select-none"
-                    sizes="352px"
+                    className="pointer-events-none object-cover select-none"
+                    sizes="384px"
                     draggable={false}
                   />
                 </div>
