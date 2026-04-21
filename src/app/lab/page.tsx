@@ -31,6 +31,18 @@ const LAB_NAV: { id: string; label: string }[] = [
   { id: "lab-06", label: "06 · GALLERY DESKTOP" },
   { id: "lab-07", label: "07 · ARCHIVE" },
   { id: "lab-08", label: "08 · MENUS" },
+  { id: "lab-09", label: "09 · WORK WALL" },
+  { id: "lab-10", label: "10 · STUDIO" },
+  { id: "lab-11", label: "11 · PRESS" },
+  { id: "lab-12", label: "12 · ROADMAP" },
+  { id: "lab-13", label: "13 · COLLECTOR IDX" },
+  { id: "lab-14", label: "14 · FIELD GUIDE" },
+  { id: "lab-15", label: "15 · REFERENCES" },
+  { id: "lab-16", label: "16 · GUESTBOOK" },
+  { id: "lab-17", label: "17 · SIZE GUIDE" },
+  { id: "lab-18", label: "18 · DEEP SPECS" },
+  { id: "lab-19", label: "19 · OPEN CALL" },
+  { id: "lab-20", label: "20 · LETTERS" },
 ];
 
 function LabNav() {
@@ -131,6 +143,42 @@ export default function LabPage() {
         </div>
         <div id="lab-08">
           <V08MenuVariants />
+        </div>
+        <div id="lab-09">
+          <V09WorkWall />
+        </div>
+        <div id="lab-10">
+          <V10Studio />
+        </div>
+        <div id="lab-11">
+          <V11Press />
+        </div>
+        <div id="lab-12">
+          <V12Roadmap />
+        </div>
+        <div id="lab-13">
+          <V13CollectorIndex />
+        </div>
+        <div id="lab-14">
+          <V14FieldGuide />
+        </div>
+        <div id="lab-15">
+          <V15References />
+        </div>
+        <div id="lab-16">
+          <V16Guestbook />
+        </div>
+        <div id="lab-17">
+          <V17SizeGuide />
+        </div>
+        <div id="lab-18">
+          <V18DeepSpecs />
+        </div>
+        <div id="lab-19">
+          <V19OpenCall />
+        </div>
+        <div id="lab-20">
+          <V20Letters />
         </div>
         <LabFooter />
       </main>
@@ -2409,6 +2457,2046 @@ function V08MenuVariants() {
         <MenuVariantB />
         <MenuVariantC />
         <MenuVariantD />
+      </div>
+    </section>
+  );
+}
+
+/* ================== 09 · WORK WALL ==================
+   Portfolio scrapbook wall — curated pieces from Tony's broader practice.
+   Fills the WORK menu gap. Dense mosaic of taped cards with filter chips. */
+
+function V09WorkWall() {
+  const categories = ["ALL", "FLASH", "PRINT", "TATTOO", "STUDY"];
+  const wallPrints = [
+    { idx: 0, size: "lg", rot: -2, top: "2%", left: "3%" },
+    { idx: 3, size: "md", rot: 1.5, top: "4%", left: "30%" },
+    { idx: 6, size: "sm", rot: -1, top: "6%", left: "52%" },
+    { idx: 8, size: "md", rot: 2, top: "3%", left: "68%" },
+    { idx: 1, size: "sm", rot: -2.5, top: "36%", left: "4%" },
+    { idx: 5, size: "lg", rot: 1, top: "30%", left: "22%" },
+    { idx: 11, size: "md", rot: -1.5, top: "38%", left: "52%" },
+    { idx: 13, size: "sm", rot: 2.5, top: "36%", left: "78%" },
+    { idx: 2, size: "md", rot: -1, top: "66%", left: "6%" },
+    { idx: 7, size: "sm", rot: 1.5, top: "70%", left: "30%" },
+    { idx: 10, size: "lg", rot: -2, top: "64%", left: "48%" },
+    { idx: 9, size: "sm", rot: 2, top: "70%", left: "76%" },
+  ];
+  const sizeMap: Record<string, { w: number; tilt: string }> = {
+    sm: { w: 140, tilt: "sm" },
+    md: { w: 180, tilt: "md" },
+    lg: { w: 220, tilt: "lg" },
+  };
+
+  return (
+    <section>
+      <VariantLabel
+        num="09"
+        name="WORK WALL"
+        desc="Portfolio scrapbook wall — Tony's broader practice beyond the 15-print set. Fills the missing WORK menu item. Dense taped collage with filter chips, mixed sizes, varied tilts. Each card has tape or a thumbtack."
+        bestIf="Want a dedicated WORK section that showcases depth."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#ECE4D0",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+        }}
+      >
+        {/* Header */}
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "#d7322e",
+              }}
+            >
+              — selected
+            </span>
+            <h3
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: "clamp(3rem, 9vw, 6rem)",
+                color: "#1a1a1a",
+                lineHeight: 0.9,
+                letterSpacing: "0.01em",
+              }}
+            >
+              WORK /{" "}
+              <span
+                style={{
+                  fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                  color: "#d7322e",
+                }}
+                title="sakuhin — works / body of work"
+              >
+                作品
+              </span>
+            </h3>
+          </div>
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 10,
+              letterSpacing: "0.28em",
+              fontWeight: 800,
+              color: "rgba(26,26,26,0.55)",
+            }}
+          >
+            127 PIECES CATALOGUED
+          </span>
+        </div>
+
+        {/* Filter chips */}
+        <div className="mb-6 flex flex-wrap gap-2">
+          {categories.map((cat, i) => (
+            <span
+              key={cat}
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.24em",
+                fontWeight: 800,
+                padding: "6px 12px",
+                background: i === 0 ? "#1a1a1a" : "transparent",
+                color: i === 0 ? "#F7C234" : "#1a1a1a",
+                border: "2px solid #1a1a1a",
+                boxShadow: i === 0 ? "3px 3px 0 #d7322e" : "none",
+                cursor: "pointer",
+              }}
+            >
+              {cat}
+            </span>
+          ))}
+        </div>
+
+        {/* Wall */}
+        <div
+          className="relative"
+          style={{
+            width: "100%",
+            height: 720,
+            background: "rgba(26,26,26,0.03)",
+            border: "1px dashed rgba(26,26,26,0.25)",
+          }}
+        >
+          {wallPrints.map((p, i) => {
+            const pr = PLACEHOLDER_PRINTS[p.idx];
+            const dims = sizeMap[p.size];
+            const hasTape = i % 3 !== 0;
+            return (
+              <figure
+                key={`${pr.id}-${i}`}
+                className="absolute"
+                style={{
+                  top: p.top,
+                  left: p.left,
+                  width: dims.w,
+                  transform: `rotate(${p.rot}deg)`,
+                  zIndex: i + 1,
+                }}
+              >
+                {hasTape && (
+                  <div
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      top: -9,
+                      left: "50%",
+                      transform: `translateX(-50%) rotate(${i % 2 === 0 ? -4 : 4}deg)`,
+                      width: Math.min(dims.w * 0.45, 80),
+                      height: 14,
+                      background: "rgba(247,194,52,0.55)",
+                      border: "1px solid rgba(26,26,26,0.28)",
+                      zIndex: 2,
+                    }}
+                  />
+                )}
+                {!hasTape && (
+                  <svg
+                    aria-hidden
+                    className="absolute left-1/2 -translate-x-1/2"
+                    style={{ top: -10, width: 20, height: 22, zIndex: 2 }}
+                    viewBox="0 0 20 22"
+                  >
+                    <ellipse cx="10" cy="16" rx="7" ry="2.2" fill="rgba(26,26,26,0.25)" />
+                    <circle
+                      cx="10"
+                      cy="8"
+                      r="6"
+                      fill="#d7322e"
+                      stroke="#1a1a1a"
+                      strokeWidth="1.2"
+                    />
+                    <circle cx="7.5" cy="6" r="1.5" fill="rgba(255,255,255,0.55)" />
+                  </svg>
+                )}
+                <div
+                  style={{
+                    background: "#fffef8",
+                    padding: 6,
+                    border: "1px solid rgba(26,26,26,0.25)",
+                    boxShadow: "3px 5px 10px rgba(26,26,26,0.22)",
+                  }}
+                >
+                  <div className="relative" style={{ aspectRatio: "3 / 4" }}>
+                    <Image src={pr.src} alt={pr.alt} fill sizes="240px" className="object-cover" />
+                  </div>
+                </div>
+              </figure>
+            );
+          })}
+        </div>
+
+        <p
+          className="mt-5 text-center"
+          style={{
+            fontFamily: "var(--font-display), serif",
+            fontStyle: "italic",
+            fontSize: 14,
+            color: "rgba(26,26,26,0.55)",
+          }}
+        >
+          scroll — the wall is alive.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 10 · IN THE STUDIO ==================
+   Process doc — 4 polaroid stages on composition paper, handwritten notes,
+   red margin rule. Reinforces the "hand-pulled, no AI" story. */
+
+function V10Studio() {
+  const stages = [
+    { n: 1, title: "SKETCH", idx: 6, note: "pencil on cream — blocking the flash." },
+    { n: 2, title: "INK", idx: 9, note: "fine-liner, no eraser from here." },
+    { n: 3, title: "PULL", idx: 2, note: "one pass per layer. one try." },
+    { n: 4, title: "SIGN", idx: 11, note: "numbered x / 100, hand-signed." },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="10"
+        name="IN THE STUDIO"
+        desc="Process / making doc. Four polaroid stages laid out left→right on composition paper with red left-margin rule. Handwritten crimson annotations per stage. Reinforces hand-pulled, no AI positioning."
+        bestIf="Want transparency / trust content on the live homepage."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#f0ebdc",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px 40px 72px",
+          position: "relative",
+        }}
+      >
+        {/* Horizontal rules */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(26,26,26,0.12) 31px, rgba(26,26,26,0.12) 32px)",
+          }}
+        />
+        {/* Red left margin rule */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0"
+          style={{ left: 56, width: 1.5, background: "rgba(215,50,46,0.7)" }}
+        />
+
+        <div className="relative mb-6">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — process
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+              letterSpacing: "0.01em",
+            }}
+          >
+            IN THE STUDIO /{" "}
+            <span
+              style={{
+                fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                color: "#d7322e",
+              }}
+              title="seisaku — making / production"
+            >
+              制作
+            </span>
+          </h3>
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.28em",
+              fontWeight: 800,
+              color: "rgba(26,26,26,0.55)",
+            }}
+          >
+            EST. 48 HRS PER SET · NO AI · NO RERUNS
+          </span>
+        </div>
+
+        <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          {stages.map((s, i) => (
+            <figure
+              key={s.n}
+              className="relative"
+              style={{
+                background: "#fffef8",
+                padding: "10px 10px 36px",
+                border: "1px solid rgba(26,26,26,0.25)",
+                boxShadow: "3px 5px 12px rgba(26,26,26,0.22)",
+                transform: `rotate(${i % 2 === 0 ? -1.5 : 1.5}deg)`,
+              }}
+            >
+              <div
+                aria-hidden
+                className="absolute left-1/2 -translate-x-1/2"
+                style={{
+                  top: -10,
+                  width: 64,
+                  height: 14,
+                  background: "rgba(247,194,52,0.6)",
+                  border: "1px solid rgba(26,26,26,0.28)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  left: 6,
+                  padding: "3px 8px",
+                  background: "#F7C234",
+                  color: "#1a1a1a",
+                  border: "2px solid #1a1a1a",
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.2em",
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  zIndex: 2,
+                }}
+              >
+                0{s.n} · {s.title}
+              </div>
+              <div className="relative" style={{ aspectRatio: "3 / 4" }}>
+                <Image
+                  src={PLACEHOLDER_PRINTS[s.idx].src}
+                  alt={PLACEHOLDER_PRINTS[s.idx].alt}
+                  fill
+                  sizes="200px"
+                  className="object-cover"
+                />
+              </div>
+              <figcaption
+                style={{
+                  position: "absolute",
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  textAlign: "center",
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 13,
+                  color: "rgba(26,26,26,0.65)",
+                }}
+              >
+                {s.note}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 11 · PRESS WALL ==================
+   Editorial "featured in" wall — mock magazine covers on bulletin board with
+   thumbtacks and pull-quotes. Third-party social proof layer. */
+
+function V11Press() {
+  const features = [
+    {
+      pub: "FAMITSU",
+      issue: "№327 / 2025",
+      color: "#d7322e",
+      quote: "haunted genius of hand-print",
+      tack: "#F7C234",
+    },
+    {
+      pub: "DENGEKI",
+      issue: "№14 / 2025",
+      color: "#2b5dae",
+      quote: "flash you can taste",
+      tack: "#d7322e",
+    },
+    {
+      pub: "SHOGAKUKAN",
+      issue: "APR / 2026",
+      color: "#3cb5b5",
+      quote: "the year's most physical release",
+      tack: "#5baa4f",
+    },
+    {
+      pub: "NINGENDO",
+      issue: "VOL.18",
+      color: "#f7c234",
+      quote: "a cartridge for grown-ups",
+      tack: "#d7322e",
+    },
+    {
+      pub: "INK ZINE",
+      issue: "ISSUE 5",
+      color: "#5baa4f",
+      quote: "hand-pulled, heart-pressed",
+      tack: "#2b5dae",
+    },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="11"
+        name="PRESS WALL"
+        desc="Featured-in wall on a cork-style bulletin board. 5 mock magazine covers pinned with thumbtacks, pull-quote per cover, press-kit link at bottom. Third-party editorial social proof — different job from IG likes or FAQ."
+        bestIf="Want editorial validation / press layer."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#C7A676",
+          backgroundImage: "radial-gradient(rgba(26,26,26,0.1) 1px, transparent 1.4px)",
+          backgroundSize: "8px 8px",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+        }}
+      >
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "#1a1a1a",
+              }}
+            >
+              — featured in
+            </span>
+            <h3
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+                color: "#f0ebdc",
+                lineHeight: 0.9,
+                letterSpacing: "0.01em",
+                textShadow: "3px 3px 0 #1a1a1a",
+              }}
+            >
+              PRESS /{" "}
+              <span
+                style={{ fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif" }}
+                title="keisai — featured / printed in"
+              >
+                掲載
+              </span>
+            </h3>
+          </div>
+          <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 10,
+              letterSpacing: "0.28em",
+              fontWeight: 800,
+              color: "#1a1a1a",
+              background: "#F7C234",
+              padding: "8px 12px",
+              border: "2px solid #1a1a1a",
+              boxShadow: "3px 3px 0 #1a1a1a",
+              textDecoration: "none",
+            }}
+          >
+            ▸ DOWNLOAD PRESS KIT
+          </a>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gap: 32,
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          }}
+        >
+          {features.map((f, i) => (
+            <div
+              key={f.pub}
+              className="relative"
+              style={{
+                transform: `rotate(${(i % 2 === 0 ? -1 : 1) * (1 + (i % 3) * 0.3)}deg)`,
+              }}
+            >
+              <svg
+                aria-hidden
+                className="absolute left-1/2 -translate-x-1/2"
+                style={{ top: -14, width: 22, height: 24, zIndex: 3 }}
+                viewBox="0 0 22 24"
+              >
+                <ellipse cx="11" cy="18" rx="7" ry="2.2" fill="rgba(26,26,26,0.25)" />
+                <circle cx="11" cy="9" r="7" fill={f.tack} stroke="#1a1a1a" strokeWidth="1.4" />
+                <circle cx="8.5" cy="7" r="1.8" fill="rgba(255,255,255,0.55)" />
+              </svg>
+              {/* Mock magazine cover */}
+              <div
+                style={{
+                  aspectRatio: "3 / 4",
+                  background: f.color,
+                  border: "3px solid #1a1a1a",
+                  boxShadow: "4px 6px 0 rgba(26,26,26,0.35)",
+                  padding: 14,
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-tattoo), sans-serif",
+                    fontSize: 22,
+                    color: "#f0ebdc",
+                    lineHeight: 0.9,
+                    textShadow: "2px 2px 0 #1a1a1a",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  {f.pub}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 9,
+                    letterSpacing: "0.24em",
+                    fontWeight: 800,
+                    color: "rgba(240,235,220,0.82)",
+                    marginTop: 3,
+                  }}
+                >
+                  {f.issue}
+                </div>
+                {/* Cover art mock — a tilted print */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: "30% 10% 10% 10%",
+                    background: "#fffef8",
+                    border: "2px solid #1a1a1a",
+                    padding: 4,
+                    transform: `rotate(${i % 2 === 0 ? -3 : 3}deg)`,
+                  }}
+                >
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={PLACEHOLDER_PRINTS[(i * 2) % PLACEHOLDER_PRINTS.length].src}
+                      alt=""
+                      fill
+                      sizes="180px"
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                style={{
+                  marginTop: 10,
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 13,
+                  lineHeight: 1.4,
+                  color: "#1a1a1a",
+                  textAlign: "center",
+                }}
+              >
+                &ldquo;{f.quote}&rdquo;
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 12 · VOLUME ROADMAP ==================
+   Drop calendar / upcoming volumes as a game-map route. Turns this from a
+   one-off drop into an implied collectible series. */
+
+function V12Roadmap() {
+  const nodes = [
+    { label: "VOL.00", state: "ARCHIVED", color: "#7c7266", date: "demo / 2024" },
+    { label: "VOL.01", state: "SHIPPING", color: "#F7C234", date: "JUNE 2026", current: true },
+    { label: "VOL.02", state: "TBA", color: "rgba(240,235,220,0.15)", date: "Q4 2026" },
+    { label: "VOL.03", state: "???", color: "rgba(240,235,220,0.08)", date: "20XX" },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="12"
+        name="VOLUME ROADMAP"
+        desc="Drop calendar as a Pokemon-style route map. 4 milestone badges along a dotted path — past / shipping / upcoming / ???. Converts one-time buyers into series subscribers. Newsletter cartridge signup at the bottom."
+        bestIf="Want to seed collector anticipation for Vol.02+."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#152940",
+          backgroundImage: "radial-gradient(rgba(247,194,52,0.12) 1px, transparent 1.4px)",
+          backgroundSize: "10px 10px",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+          color: "#f0ebdc",
+        }}
+      >
+        <div className="mb-10">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#F7C234",
+            }}
+          >
+            — roadmap
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#f0ebdc",
+              lineHeight: 0.9,
+              letterSpacing: "0.01em",
+            }}
+          >
+            VOLUMES /{" "}
+            <span
+              style={{
+                fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                color: "#F7C234",
+              }}
+              title="yotei — schedule / upcoming"
+            >
+              予定
+            </span>
+          </h3>
+        </div>
+
+        {/* Route */}
+        <div className="relative" style={{ height: 240 }}>
+          <svg
+            className="absolute inset-0 h-full w-full"
+            viewBox="0 0 800 240"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            <path
+              d="M 80 170 Q 220 80, 330 140 T 540 130 T 740 160"
+              fill="none"
+              stroke="#F7C234"
+              strokeWidth="3"
+              strokeDasharray="6 6"
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="relative grid h-full grid-cols-4 items-end" style={{ paddingInline: 0 }}>
+            {nodes.map((n) => (
+              <div key={n.label} className="relative flex flex-col items-center justify-end">
+                {n.current && (
+                  <span
+                    style={{
+                      fontFamily: "var(--font-display), serif",
+                      fontStyle: "italic",
+                      fontSize: 14,
+                      color: "#F7C234",
+                      marginBottom: 4,
+                      transform: "rotate(-3deg)",
+                    }}
+                  >
+                    ← you are here
+                  </span>
+                )}
+                <div
+                  style={{
+                    width: 96,
+                    height: 96,
+                    borderRadius: "50%",
+                    background: n.color,
+                    border: "3px solid #1a1a1a",
+                    boxShadow: n.current
+                      ? "4px 4px 0 #d7322e, 4px 4px 0 2px #1a1a1a"
+                      : "3px 3px 0 rgba(26,26,26,0.6)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: "var(--font-tattoo), sans-serif",
+                    color: n.current ? "#1a1a1a" : "rgba(240,235,220,0.72)",
+                    lineHeight: 1,
+                  }}
+                >
+                  <span style={{ fontSize: 18, letterSpacing: "0.02em" }}>{n.label}</span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontFamily: "var(--font-mono), monospace",
+                      letterSpacing: "0.2em",
+                      marginTop: 4,
+                      fontWeight: 800,
+                      opacity: 0.85,
+                    }}
+                  >
+                    {n.state}
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.22em",
+                    fontWeight: 800,
+                    color: "rgba(240,235,220,0.65)",
+                    marginTop: 10,
+                  }}
+                >
+                  {n.date}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Newsletter cartridge */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+          <span
+            style={{
+              fontFamily: "var(--font-display), serif",
+              fontStyle: "italic",
+              fontSize: 16,
+              color: "rgba(240,235,220,0.8)",
+            }}
+          >
+            get the drop-day ping →
+          </span>
+          <div
+            style={{
+              background: "#f0ebdc",
+              border: "3px solid #1a1a1a",
+              padding: "10px 16px",
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 13,
+              color: "rgba(26,26,26,0.45)",
+              letterSpacing: "0.1em",
+              minWidth: 260,
+              boxShadow: "4px 4px 0 #F7C234",
+            }}
+          >
+            email@address.com
+          </div>
+          <button
+            style={{
+              padding: "10px 20px",
+              background: "#F7C234",
+              border: "3px solid #1a1a1a",
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: 18,
+              color: "#1a1a1a",
+              letterSpacing: "0.02em",
+              boxShadow: "4px 4px 0 #d7322e, 4px 4px 0 2px #1a1a1a",
+              cursor: "pointer",
+              lineHeight: 1,
+            }}
+          >
+            INSERT CARTRIDGE
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 13 · COLLECTOR INDEX ==================
+   100 numbered slots as a 10x10 grid. Sold = stamped CLAIMED, available = clean.
+   Visible scarcity without shouty urgency. */
+
+function V13CollectorIndex() {
+  // Mock: 47 sold, 53 remaining. Stable deterministic pattern so no hydration drift.
+  const sold = new Set([
+    1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 19, 22, 25, 27, 28, 31, 33, 34, 36, 38, 40, 41, 43, 45, 47,
+    49, 50, 52, 54, 56, 58, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 88, 91, 94,
+  ]);
+  const count = sold.size;
+
+  return (
+    <section>
+      <VariantLabel
+        num="13"
+        name="COLLECTOR INDEX"
+        desc="100 numbered slots in a 10x10 grid. Sold = faded + CLAIMED stamp; available = active. Visible scarcity without shouty urgency stamps — the grid itself is the urgency signal."
+        bestIf="Want scarcity visible without fake-FOMO."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#ECE4D0",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+        }}
+      >
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "#d7322e",
+              }}
+            >
+              — edition of 100
+            </span>
+            <h3
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+                color: "#1a1a1a",
+                lineHeight: 0.9,
+              }}
+            >
+              COLLECTOR INDEX
+            </h3>
+          </div>
+          <div className="text-right">
+            <div
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: 44,
+                color: "#d7322e",
+                lineHeight: 1,
+              }}
+            >
+              {count} <span style={{ color: "rgba(26,26,26,0.3)" }}>/ 100</span>
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.28em",
+                fontWeight: 800,
+                color: "rgba(26,26,26,0.55)",
+                marginTop: 2,
+              }}
+            >
+              SECURED
+            </div>
+          </div>
+        </div>
+
+        <div className="grid" style={{ gridTemplateColumns: "repeat(10, 1fr)", gap: 6 }}>
+          {Array.from({ length: 100 }, (_, i) => {
+            const n = i + 1;
+            const isSold = sold.has(n);
+            return (
+              <div
+                key={n}
+                style={{
+                  position: "relative",
+                  aspectRatio: "1 / 1",
+                  background: isSold ? "rgba(26,26,26,0.08)" : "#fffef8",
+                  border: "1.5px solid #1a1a1a",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.1em",
+                  fontWeight: 800,
+                  color: isSold ? "rgba(26,26,26,0.35)" : "#1a1a1a",
+                }}
+              >
+                {String(n).padStart(3, "0")}
+                {isSold && (
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%) rotate(-12deg)",
+                      fontFamily: "var(--font-tattoo), sans-serif",
+                      fontSize: 8,
+                      letterSpacing: "0.1em",
+                      color: "#d7322e",
+                      background: "rgba(215,50,46,0.12)",
+                      padding: "1px 4px",
+                      border: "1px solid rgba(215,50,46,0.5)",
+                      lineHeight: 1,
+                    }}
+                  >
+                    CLAIMED
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 14 · FIELD GUIDE ==================
+   Pokedex-style entry per print. Left: big print. Right: print stats in
+   faux-Pokedex layout — N°, name, habitat, description, techniques. */
+
+function V14FieldGuide() {
+  const entry = {
+    n: "N°007",
+    name: "OAK'S LAB",
+    title: "Starter Kit",
+    habitat: "studio / lima",
+    techniques: ["FLASH LINE", "2-COLOR PULL", "HALFTONE DOT"],
+    description:
+      "The starter print. First trade. First tattoo most collectors remember — cartridge-era Oak's Lab reimagined with traditional flash linework.",
+  };
+
+  return (
+    <section>
+      <VariantLabel
+        num="14"
+        name="FIELD GUIDE"
+        desc="Pokedex-style entry per print. Shown with one print as example. Big cover on left; stat block on right with N° / name / title / habitat / techniques / description. Each of the 15 prints gets its own entry."
+        bestIf="Want a deep-dive / catalog experience per print."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#ECE4D0",
+          border: "3px solid #1a1a1a",
+          padding: 28,
+        }}
+      >
+        <div className="mb-6">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — field guide
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            FIELD GUIDE /{" "}
+            <span
+              style={{
+                fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                color: "#d7322e",
+              }}
+              title="zukan — illustrated guide / encyclopedia"
+            >
+              図鑑
+            </span>
+          </h3>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[5fr_7fr]">
+          <div
+            className="relative"
+            style={{
+              background: "#fffef8",
+              border: "4px solid #1a1a1a",
+              boxShadow: "7px 7px 0 #d7322e, 7px 7px 0 2px #1a1a1a",
+            }}
+          >
+            <div className="relative" style={{ aspectRatio: "3 / 4" }}>
+              <Image
+                src={PLACEHOLDER_PRINTS[6].src}
+                alt={PLACEHOLDER_PRINTS[6].alt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover"
+              />
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                padding: "6px 12px",
+                background: "#d7322e",
+                color: "#f0ebdc",
+                border: "2px solid #1a1a1a",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 12,
+                letterSpacing: "0.2em",
+                fontWeight: 800,
+                boxShadow: "3px 3px 0 #1a1a1a",
+              }}
+            >
+              {entry.n}
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: "#f0ebdc",
+              border: "3px solid #1a1a1a",
+              padding: 24,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "rgba(26,26,26,0.55)",
+              }}
+            >
+              NAME
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: 40,
+                color: "#1a1a1a",
+                lineHeight: 1,
+                marginBottom: 4,
+              }}
+            >
+              {entry.name}
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-display), serif",
+                fontStyle: "italic",
+                fontSize: 16,
+                color: "#d7322e",
+                marginBottom: 18,
+              }}
+            >
+              — {entry.title}
+            </div>
+
+            <dl style={{ margin: 0 }}>
+              <div className="mb-4 flex items-baseline gap-4">
+                <dt
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.3em",
+                    fontWeight: 800,
+                    color: "rgba(26,26,26,0.55)",
+                    minWidth: 110,
+                  }}
+                >
+                  HABITAT
+                </dt>
+                <dd
+                  style={{
+                    fontFamily: "var(--font-display), serif",
+                    fontStyle: "italic",
+                    fontSize: 16,
+                    color: "#1a1a1a",
+                    margin: 0,
+                  }}
+                >
+                  {entry.habitat}
+                </dd>
+              </div>
+              <div className="mb-4 flex items-baseline gap-4">
+                <dt
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.3em",
+                    fontWeight: 800,
+                    color: "rgba(26,26,26,0.55)",
+                    minWidth: 110,
+                  }}
+                >
+                  TECHNIQUES
+                </dt>
+                <dd className="m-0 flex flex-wrap gap-2">
+                  {entry.techniques.map((t) => (
+                    <span
+                      key={t}
+                      style={{
+                        fontFamily: "var(--font-mono), monospace",
+                        fontSize: 9,
+                        letterSpacing: "0.22em",
+                        fontWeight: 800,
+                        padding: "3px 8px",
+                        background: "#1a1a1a",
+                        color: "#F7C234",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </dd>
+              </div>
+              <div>
+                <dt
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.3em",
+                    fontWeight: 800,
+                    color: "rgba(26,26,26,0.55)",
+                    marginBottom: 6,
+                  }}
+                >
+                  DESCRIPTION
+                </dt>
+                <dd
+                  style={{
+                    fontFamily: "var(--font-display), serif",
+                    fontSize: 16,
+                    lineHeight: 1.55,
+                    color: "#1a1a1a",
+                    margin: 0,
+                  }}
+                >
+                  {entry.description}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <p
+          className="mt-6 text-center"
+          style={{
+            fontFamily: "var(--font-display), serif",
+            fontStyle: "italic",
+            fontSize: 14,
+            color: "rgba(26,26,26,0.5)",
+          }}
+        >
+          ← prev · 1/15 · next →
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 15 · REFERENCES SHELF ==================
+   Tony's reference items — cartridges, cards, magazines, stickers lined up
+   on a shelf. Context / authenticity layer. */
+
+function V15References() {
+  const items = [
+    { title: "Pokemon Red", sub: "gen 1, 1996", color: "#d7322e", icon: "🎴" },
+    { title: "Famitsu", sub: "1998 backissue", color: "#2b5dae", icon: "📖" },
+    { title: "Flash binder", sub: "studio shelf", color: "#5baa4f", icon: "📚" },
+    { title: "Sticker stack", sub: "90s arcade", color: "#F7C234", icon: "⭐" },
+    { title: "Traveler's notebook", sub: "2022-now", color: "#3cb5b5", icon: "📓" },
+    { title: "Game Boy Color", sub: "bought 2019", color: "#D4A5FF", icon: "🎮" },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="15"
+        name="REFERENCES SHELF"
+        desc="Tony's actual reference items — cartridges, magazines, flash binders, stickers — shown as a lined-up shelf with captions. Context / authenticity layer showing where the work comes from."
+        bestIf="Want to show source material / build trust."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#f0ebdc",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+        }}
+      >
+        <div className="mb-8">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — desk contents
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            REFERENCES
+          </h3>
+        </div>
+
+        <div
+          className="grid gap-5"
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}
+        >
+          {items.map((item, i) => (
+            <div
+              key={item.title}
+              style={{
+                position: "relative",
+                transform: `rotate(${(i % 2 === 0 ? -1 : 1) * 1.2}deg)`,
+              }}
+            >
+              <div
+                style={{
+                  aspectRatio: "3 / 4",
+                  background: item.color,
+                  border: "3px solid #1a1a1a",
+                  boxShadow: "4px 5px 0 #1a1a1a",
+                  padding: 14,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "var(--font-tattoo), sans-serif",
+                    fontSize: 22,
+                    lineHeight: 0.95,
+                    color: item.color === "#F7C234" ? "#1a1a1a" : "#f0ebdc",
+                    textShadow: item.color === "#F7C234" ? "none" : "2px 2px 0 #1a1a1a",
+                  }}
+                >
+                  {item.title}
+                </div>
+                <div style={{ fontSize: 48 }}>{item.icon}</div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 9,
+                    letterSpacing: "0.22em",
+                    fontWeight: 800,
+                    color: item.color === "#F7C234" ? "#1a1a1a" : "#f0ebdc",
+                    opacity: 0.85,
+                  }}
+                >
+                  {item.sub}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 16 · GUESTBOOK ==================
+   Collector wall — first name + city + chosen icon per buyer. Yearbook
+   style community signal. */
+
+function V16Guestbook() {
+  const entries = [
+    { name: "Max", city: "Tokyo, JP", icon: "★" },
+    { name: "Ana", city: "Lima, PE", icon: "♥" },
+    { name: "Rafa", city: "Madrid, ES", icon: "♦" },
+    { name: "Yui", city: "Osaka, JP", icon: "☾" },
+    { name: "Jordan", city: "Brooklyn, US", icon: "✦" },
+    { name: "Sofi", city: "Buenos Aires", icon: "♣" },
+    { name: "Leo", city: "Berlin, DE", icon: "☀" },
+    { name: "Mika", city: "Kyoto, JP", icon: "✿" },
+    { name: "Pablo", city: "Mexico City", icon: "✱" },
+    { name: "Ren", city: "Seoul, KR", icon: "✴" },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="16"
+        name="GUESTBOOK"
+        desc="Wall of collector first names + cities + a chosen icon each. Yearbook style. Varied handwritten-feel fonts + subtle tilts per entry. Live community signal that IS NOT IG likes."
+        bestIf="Want community / peer-owned social proof."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#fffef8",
+          backgroundImage:
+            "repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(26,26,26,0.08) 31px, rgba(26,26,26,0.08) 32px)",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px 40px 64px",
+          position: "relative",
+        }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0"
+          style={{ left: 48, width: 1.5, background: "rgba(215,50,46,0.7)" }}
+        />
+
+        <div className="relative mb-6">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — who bought
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            GUESTBOOK
+          </h3>
+          <p
+            style={{
+              fontFamily: "var(--font-display), serif",
+              fontStyle: "italic",
+              fontSize: 15,
+              color: "rgba(26,26,26,0.6)",
+              marginTop: 6,
+            }}
+          >
+            {entries.length} collectors signed so far.
+          </p>
+        </div>
+
+        <div className="relative grid gap-x-10 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
+          {entries.map((e, i) => (
+            <div
+              key={e.name + i}
+              className="flex items-baseline gap-3"
+              style={{
+                transform: `rotate(${i % 2 === 0 ? -0.4 : 0.6}deg)`,
+                borderBottom: "1px dashed rgba(26,26,26,0.3)",
+                paddingBottom: 6,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 22,
+                  color: "#1a1a1a",
+                  lineHeight: 1,
+                }}
+              >
+                {e.name}
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.18em",
+                  color: "rgba(26,26,26,0.55)",
+                }}
+              >
+                {e.city}
+              </span>
+              <span
+                style={{
+                  fontSize: 18,
+                  color: ["#d7322e", "#2b5dae", "#5baa4f", "#F7C234", "#3cb5b5"][i % 5],
+                  marginLeft: "auto",
+                }}
+              >
+                {e.icon}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 17 · SIZE GUIDE ==================
+   Framed-on-wall mockup showing print at scale. Hand-drawn wall w/ measurements. */
+
+function V17SizeGuide() {
+  return (
+    <section>
+      <VariantLabel
+        num="17"
+        name="SIZE GUIDE"
+        desc="Framed wall mockup showing how an A5 print sits when hung. Hand-drawn wall outlines with measurements (148×210mm), a framed print, and a silhouette person for scale. Buyer confidence for the physical object."
+        bestIf="Want buyers to know what they're getting physically."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#ECE4D0",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+        }}
+      >
+        <div className="mb-6">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — physical size
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            SIZE GUIDE
+          </h3>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[6fr_4fr]">
+          {/* Wall mockup */}
+          <div
+            className="relative"
+            style={{
+              aspectRatio: "4 / 3",
+              background: "#fffef8",
+              border: "3px solid #1a1a1a",
+              padding: 20,
+              overflow: "hidden",
+            }}
+          >
+            {/* Horizontal floor line */}
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                bottom: 40,
+                left: 0,
+                right: 0,
+                height: 2,
+                background: "#1a1a1a",
+              }}
+            />
+            {/* Person silhouette for scale */}
+            <svg
+              aria-hidden
+              style={{ position: "absolute", bottom: 42, left: 40 }}
+              width="60"
+              height="140"
+              viewBox="0 0 60 140"
+            >
+              <circle cx="30" cy="18" r="12" fill="#1a1a1a" />
+              <rect x="22" y="30" width="16" height="60" fill="#1a1a1a" />
+              <rect x="22" y="88" width="7" height="50" fill="#1a1a1a" />
+              <rect x="31" y="88" width="7" height="50" fill="#1a1a1a" />
+            </svg>
+            {/* Framed print */}
+            <div
+              style={{
+                position: "absolute",
+                top: "22%",
+                left: "45%",
+                width: 140,
+                height: 198, // A5 ratio ish
+                background: "#1a1a1a",
+                padding: 8,
+                boxShadow: "5px 5px 0 rgba(26,26,26,0.25)",
+              }}
+            >
+              <div className="relative h-full w-full">
+                <Image
+                  src={PLACEHOLDER_PRINTS[5].src}
+                  alt=""
+                  fill
+                  sizes="140px"
+                  className="object-cover"
+                />
+              </div>
+              {/* Measurement arrows */}
+              <span
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  bottom: -28,
+                  left: 0,
+                  right: 0,
+                  textAlign: "center",
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.22em",
+                  fontWeight: 800,
+                  color: "#d7322e",
+                }}
+              >
+                ← 148 mm →
+              </span>
+              <span
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: -54,
+                  transform: "translateY(-50%) rotate(90deg)",
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.22em",
+                  fontWeight: 800,
+                  color: "#d7322e",
+                }}
+              >
+                ← 210 mm →
+              </span>
+            </div>
+          </div>
+
+          {/* Spec notes */}
+          <div>
+            <div className="mb-5">
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.3em",
+                  fontWeight: 800,
+                  color: "rgba(26,26,26,0.55)",
+                }}
+              >
+                PAPER SIZE
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-tattoo), sans-serif",
+                  fontSize: 38,
+                  lineHeight: 1,
+                  color: "#1a1a1a",
+                }}
+              >
+                A5 · 148×210mm
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 13,
+                  color: "rgba(26,26,26,0.65)",
+                  marginTop: 4,
+                }}
+              >
+                ≈ 5.8 × 8.3 inches
+              </div>
+            </div>
+            <div className="mb-5">
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.3em",
+                  fontWeight: 800,
+                  color: "rgba(26,26,26,0.55)",
+                }}
+              >
+                FITS FRAME
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontSize: 16,
+                  color: "#1a1a1a",
+                  lineHeight: 1.5,
+                }}
+              >
+                IKEA RIBBA 5×7&quot;, standard A5 magnetic, any custom A5 mount.
+              </div>
+            </div>
+            <div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.3em",
+                  fontWeight: 800,
+                  color: "rgba(26,26,26,0.55)",
+                }}
+              >
+                SHIPS IN
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontSize: 16,
+                  color: "#1a1a1a",
+                  lineHeight: 1.5,
+                }}
+              >
+                Rigid mailer box, foam-wrapped. No folds, no creases.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 18 · DEEP SPECS ==================
+   Full technical spec sheet. For collectors who want the data. */
+
+function V18DeepSpecs() {
+  const specs = [
+    { k: "PAPER", v: "Fedrigoni 300gsm cream" },
+    { k: "INK", v: "Pantone archival, 4-color registration" },
+    { k: "DIMENSIONS", v: "A5 · 148 × 210 mm · 5.8 × 8.3 in" },
+    { k: "EDITION", v: "100 numbered sets · 15 prints each · 1,500 total" },
+    { k: "SIGNATURE", v: "Hand-signed by Tony Decay, ink" },
+    { k: "NUMBERING", v: "x / 100 · stamped + handwritten" },
+    { k: "CERTIFICATE", v: "Printed on 180gsm, embossed studio seal" },
+    { k: "PACKAGING", v: "Rigid mailer · foam-wrap · crease-proof" },
+    { k: "SHIPPING", v: "DHL worldwide, 5-7 business days" },
+    { k: "WEIGHT", v: "750g / 1.65 lb packed" },
+    { k: "PROVENANCE", v: "Studio: Lima, PE · Pulled: May 2026" },
+    { k: "NO", v: "AI, reruns, digital copies, secondary market" },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="18"
+        name="DEEP SPECS"
+        desc="Full technical spec sheet for collectors who care about the data. Two-column list of paper / ink / edition / signature / numbering / certificate / packaging / shipping / weight / provenance / no-go items."
+        bestIf="Want to satisfy the serious-collector persona."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#1a1a1a",
+          border: "3px solid #F7C234",
+          padding: "40px 28px",
+          color: "#f0ebdc",
+        }}
+      >
+        <div className="mb-8">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#F7C234",
+            }}
+          >
+            — collector specs
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#f0ebdc",
+              lineHeight: 0.9,
+            }}
+          >
+            DEEP SPECS
+          </h3>
+        </div>
+
+        <dl
+          className="grid gap-x-10 gap-y-0 md:grid-cols-2"
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+          }}
+        >
+          {specs.map((s) => (
+            <div
+              key={s.k}
+              className="flex items-baseline gap-6 py-3"
+              style={{ borderBottom: "1px dashed rgba(240,235,220,0.25)" }}
+            >
+              <dt
+                style={{
+                  fontSize: 10,
+                  letterSpacing: "0.28em",
+                  fontWeight: 800,
+                  color: "#F7C234",
+                  minWidth: 120,
+                }}
+              >
+                {s.k}
+              </dt>
+              <dd
+                style={{
+                  fontSize: 13,
+                  color: "rgba(240,235,220,0.88)",
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                {s.v}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 19 · OPEN CALL ==================
+   Tattoo booking / commission request. Studio services + inquiry form. */
+
+function V19OpenCall() {
+  const services = [
+    { label: "WALK-IN FLASH", price: "from $180", note: "pre-drawn designs, 1-2 hrs" },
+    { label: "CUSTOM TATTOO", price: "from $450", note: "book 2-4 weeks ahead" },
+    { label: "COMMISSION", price: "quote", note: "original illustration / print" },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="19"
+        name="OPEN CALL"
+        desc="Tattoo booking + commission request. Three service tiers (WALK-IN FLASH / CUSTOM / COMMISSION), inquiry form with session type selector, studio address. Lead-capture for non-print customers."
+        bestIf="Want to turn visitors into tattoo clients / commission leads."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#ECE4D0",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+        }}
+      >
+        <div className="mb-8">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — booking
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            OPEN CALL
+          </h3>
+          <p
+            style={{
+              fontFamily: "var(--font-display), serif",
+              fontStyle: "italic",
+              fontSize: 16,
+              color: "rgba(26,26,26,0.65)",
+              marginTop: 6,
+            }}
+          >
+            Studio: Miraflores, Lima · by appointment
+          </p>
+        </div>
+
+        <div
+          className="mb-10 grid gap-4"
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+        >
+          {services.map((s) => (
+            <div
+              key={s.label}
+              style={{
+                background: "#fffef8",
+                border: "3px solid #1a1a1a",
+                boxShadow: "4px 4px 0 #d7322e",
+                padding: 20,
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.3em",
+                  fontWeight: 800,
+                  color: "rgba(26,26,26,0.55)",
+                }}
+              >
+                {s.label}
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-tattoo), sans-serif",
+                  fontSize: 32,
+                  color: "#d7322e",
+                  lineHeight: 1,
+                  margin: "4px 0",
+                }}
+              >
+                {s.price}
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 14,
+                  color: "rgba(26,26,26,0.65)",
+                }}
+              >
+                {s.note}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Inquiry form stub */}
+        <div
+          style={{
+            background: "#f0ebdc",
+            border: "3px solid #1a1a1a",
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.28em",
+              fontWeight: 800,
+              color: "#d7322e",
+              marginBottom: 16,
+            }}
+          >
+            REQUEST A SESSION →
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {["name", "email", "session type", "tell me your idea"].map((f, i) => (
+              <div
+                key={f}
+                style={{
+                  background: "#fffef8",
+                  border: "2px solid #1a1a1a",
+                  padding: "10px 14px",
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 12,
+                  color: "rgba(26,26,26,0.4)",
+                  letterSpacing: "0.08em",
+                  gridColumn: i === 3 ? "1 / -1" : undefined,
+                  minHeight: i === 3 ? 80 : undefined,
+                }}
+              >
+                {f}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ================== 20 · LETTERS (FAQ EDITORIAL) ==================
+   Alternative FAQ treatment — magazine "letters to the editor" column with
+   sassy Tony Decay replies. Personality + voice. */
+
+function V20Letters() {
+  const letters = [
+    {
+      from: "Max, Tokyo",
+      q: "Will there ever be a Vol.02?",
+      a: "Yes. I'm not telling you when. Check VOLUMES.",
+    },
+    {
+      from: "Ana, Lima",
+      q: "Can I get just one print, not the set?",
+      a: "No. It's a set or nothing. That's the whole idea.",
+    },
+    {
+      from: "Rafa, Madrid",
+      q: "Are these AI-generated?",
+      a: "No. I would not do that to you. Or to myself.",
+    },
+    {
+      from: "Leo, Berlin",
+      q: "What's the signing like? Pretty?",
+      a: "Reader: it's ink. On paper. 100 times. My hand hurts.",
+    },
+  ];
+
+  return (
+    <section>
+      <VariantLabel
+        num="20"
+        name="LETTERS"
+        desc="Alternative FAQ — as a magazine 'letters to the editor' column. Reader question + brief signed reply from Tony. Personality + voice. Could replace or complement the current FAQ."
+        bestIf="Want a FAQ that feels like voice, not UX."
+      />
+      <div
+        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        style={{
+          background: "#fffef8",
+          border: "3px solid #1a1a1a",
+          padding: "40px 28px",
+          position: "relative",
+        }}
+      >
+        <div className="mb-8">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — letters column
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            LETTERS TO THE EDITOR
+          </h3>
+        </div>
+
+        <div
+          className="grid gap-6"
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}
+        >
+          {letters.map((l, i) => (
+            <div
+              key={i}
+              style={{
+                borderLeft: "4px solid #d7322e",
+                paddingLeft: 18,
+                paddingBlock: 8,
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.26em",
+                  fontWeight: 800,
+                  color: "rgba(26,26,26,0.55)",
+                  marginBottom: 4,
+                }}
+              >
+                FROM · {l.from}
+              </div>
+              <p
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontSize: 18,
+                  lineHeight: 1.45,
+                  color: "#1a1a1a",
+                  margin: 0,
+                  marginBottom: 10,
+                }}
+              >
+                &ldquo;{l.q}&rdquo;
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 16,
+                  lineHeight: 1.5,
+                  color: "rgba(26,26,26,0.8)",
+                  margin: 0,
+                }}
+              >
+                — {l.a}
+              </p>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 9,
+                  letterSpacing: "0.24em",
+                  fontWeight: 800,
+                  color: "#d7322e",
+                  marginTop: 10,
+                }}
+              >
+                —TD
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p
+          className="mt-10 text-center"
+          style={{
+            fontFamily: "var(--font-display), serif",
+            fontStyle: "italic",
+            fontSize: 15,
+            color: "rgba(26,26,26,0.55)",
+          }}
+        >
+          send your own → hello@tonydecay.com
+        </p>
       </div>
     </section>
   );
