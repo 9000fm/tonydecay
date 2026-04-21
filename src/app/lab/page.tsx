@@ -38,7 +38,6 @@ const LAB_NAV: { id: string; label: string }[] = [
   { id: "lab-12", label: "12 · ROADMAP" },
   { id: "lab-13", label: "13 · COLLECTOR IDX" },
   { id: "lab-14", label: "14 · FIELD GUIDE" },
-  { id: "lab-15", label: "15 · REFERENCES" },
   { id: "lab-16", label: "16 · GUESTBOOK" },
   { id: "lab-17", label: "17 · SIZE GUIDE" },
   { id: "lab-18", label: "18 · DEEP SPECS" },
@@ -46,6 +45,43 @@ const LAB_NAV: { id: string; label: string }[] = [
   { id: "lab-20", label: "20 · LETTERS" },
 ];
 
+/* Floating skip-to-top button — appears after 600px scroll. */
+function SkipToTop() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  if (!show) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      style={{
+        position: "fixed",
+        bottom: 24,
+        right: 24,
+        zIndex: 60,
+        background: "#F7C234",
+        color: "#1a1a1a",
+        border: "2px solid #1a1a1a",
+        padding: "10px 14px",
+        fontFamily: "var(--font-mono), monospace",
+        fontSize: 10,
+        letterSpacing: "0.28em",
+        fontWeight: 800,
+        boxShadow: "3px 3px 0 #1a1a1a",
+        cursor: "pointer",
+        lineHeight: 1,
+      }}
+    >
+      ↑ TOP
+    </button>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function LabNav() {
   return (
     <nav
@@ -139,7 +175,6 @@ const LAB_ROUTES = [
       { href: "#lab-12", label: "12 · VOLUME ROADMAP", status: "here" },
       { href: "#lab-13", label: "13 · COLLECTOR INDEX", status: "here" },
       { href: "#lab-14", label: "14 · FIELD GUIDE", status: "here" },
-      { href: "#lab-15", label: "15 · REFERENCES SHELF", status: "here" },
       { href: "#lab-16", label: "16 · GUESTBOOK", status: "here" },
       { href: "#lab-17", label: "17 · SIZE GUIDE", status: "here" },
       { href: "#lab-18", label: "18 · DEEP SPECS", status: "here" },
@@ -285,7 +320,7 @@ export default function LabPage() {
 
         <LabHeader />
         <LabIndex />
-        <LabNav />
+        <SkipToTop />
         <div id="lab-01">
           <V01Xerox />
         </div>
@@ -327,9 +362,6 @@ export default function LabPage() {
         </div>
         <div id="lab-14">
           <V14FieldGuide />
-        </div>
-        <div id="lab-15">
-          <V15References />
         </div>
         <div id="lab-16">
           <V16Guestbook />
@@ -3793,116 +3825,7 @@ function V14FieldGuide() {
   );
 }
 
-/* ================== 15 · REFERENCES SHELF ==================
-   Tony's reference items — cartridges, cards, magazines, stickers lined up
-   on a shelf. Context / authenticity layer. */
-
-function V15References() {
-  const items = [
-    { title: "Pokemon Red", sub: "gen 1, 1996", color: "#d7322e", icon: "🎴" },
-    { title: "Famitsu", sub: "1998 backissue", color: "#2b5dae", icon: "📖" },
-    { title: "Flash binder", sub: "studio shelf", color: "#5baa4f", icon: "📚" },
-    { title: "Sticker stack", sub: "90s arcade", color: "#F7C234", icon: "⭐" },
-    { title: "Traveler's notebook", sub: "2022-now", color: "#3cb5b5", icon: "📓" },
-    { title: "Game Boy Color", sub: "bought 2019", color: "#D4A5FF", icon: "🎮" },
-  ];
-
-  return (
-    <section>
-      <VariantLabel
-        num="15"
-        name="REFERENCES SHELF"
-        desc="Tony's actual reference items — cartridges, magazines, flash binders, stickers — shown as a lined-up shelf with captions. Context / authenticity layer showing where the work comes from."
-        bestIf="Want to show source material / build trust."
-      />
-      <div
-        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
-        style={{
-          background: "#f0ebdc",
-          border: "3px solid #1a1a1a",
-          padding: "40px 28px",
-        }}
-      >
-        <div className="mb-8">
-          <span
-            style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 11,
-              letterSpacing: "0.3em",
-              fontWeight: 800,
-              color: "#d7322e",
-            }}
-          >
-            — desk contents
-          </span>
-          <h3
-            style={{
-              fontFamily: "var(--font-tattoo), sans-serif",
-              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
-              color: "#1a1a1a",
-              lineHeight: 0.9,
-            }}
-          >
-            REFERENCES
-          </h3>
-        </div>
-
-        <div
-          className="grid gap-5"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}
-        >
-          {items.map((item, i) => (
-            <div
-              key={item.title}
-              style={{
-                position: "relative",
-                transform: `rotate(${(i % 2 === 0 ? -1 : 1) * 1.2}deg)`,
-              }}
-            >
-              <div
-                style={{
-                  aspectRatio: "3 / 4",
-                  background: item.color,
-                  border: "3px solid #1a1a1a",
-                  boxShadow: "4px 5px 0 #1a1a1a",
-                  padding: 14,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "var(--font-tattoo), sans-serif",
-                    fontSize: 22,
-                    lineHeight: 0.95,
-                    color: item.color === "#F7C234" ? "#1a1a1a" : "#f0ebdc",
-                    textShadow: item.color === "#F7C234" ? "none" : "2px 2px 0 #1a1a1a",
-                  }}
-                >
-                  {item.title}
-                </div>
-                <div style={{ fontSize: 48 }}>{item.icon}</div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize: 9,
-                    letterSpacing: "0.22em",
-                    fontWeight: 800,
-                    color: item.color === "#F7C234" ? "#1a1a1a" : "#f0ebdc",
-                    opacity: 0.85,
-                  }}
-                >
-                  {item.sub}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+/* V15 REFERENCES SHELF — removed per user direction (off-brand). */
 
 /* ================== 16 · GUESTBOOK ==================
    Collector wall — first name + city + chosen icon per buyer. Yearbook
