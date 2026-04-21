@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, DM_Sans, Sigmar, JetBrains_Mono, Anton } from "next/font/google";
+import { Fraunces, DM_Sans, Sigmar, JetBrains_Mono, Anton, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -32,6 +32,12 @@ const anton = Anton({
   weight: ["400"],
 });
 
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-jp",
+  subsets: ["latin"],
+  weight: ["700", "900"],
+});
+
 export const metadata: Metadata = {
   title: "Tony Decay — Limited Edition Art Prints",
   description:
@@ -56,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${dmSans.variable} ${sigmar.variable} ${jetbrainsMono.variable} ${anton.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${dmSans.variable} ${sigmar.variable} ${jetbrainsMono.variable} ${anton.variable} ${notoSansJP.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>

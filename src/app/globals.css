@@ -46,6 +46,7 @@
   --font-arcade: var(--font-sigmar);
   --font-mono: var(--font-jetbrains-mono);
   --font-tattoo: var(--font-anton);
+  --font-jp: var(--font-noto-jp);
 }
 
 html {
@@ -114,6 +115,10 @@ body {
 
 .font-tattoo {
   font-family: var(--font-tattoo);
+}
+
+.font-jp {
+  font-family: var(--font-jp);
 }
 
 ::selection {
@@ -254,6 +259,44 @@ body {
   display: inline-block;
 }
 
+/* Red CTA arrow — subtle horizontal nudge, alternate so it rocks */
+@keyframes arrow-wiggle {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(4px);
+  }
+}
+
+/* COLLECT YOURS button padding — scales with breakpoints (arbitrary padding
+   utilities were failing on this button; explicit class sidesteps any JIT issue) */
+.cta-collect-pad {
+  padding: 24px 40px;
+}
+@media (min-width: 640px) {
+  .cta-collect-pad {
+    padding: 32px 60px;
+  }
+}
+@media (min-width: 1024px) {
+  .cta-collect-pad {
+    padding: 44px 84px;
+  }
+}
+
+/* Starburst shine — bright bar sweeps diagonally across the star, long idle
+   pause between passes. Used inside the PRE-ORDER star, clipped to polygon. */
+@keyframes star-shine-sweep {
+  0%,
+  55% {
+    transform: translateX(-70px) rotate(18deg);
+  }
+  100% {
+    transform: translateX(130px) rotate(18deg);
+  }
+}
+
 /* Premium shimmer — thin gold gleam crosses ONCE then text settles to plain ink */
 @keyframes shimmer-sweep {
   0% {
@@ -289,4 +332,20 @@ body {
   background-clip: text;
   color: transparent;
   animation: shimmer-sweep 5s ease-out 1 forwards;
+}
+
+/* Gameboy/Pokemon-style pixel arrow — hard step animation, no easing. Nudges
+   right + flickers opacity in a 2-frame pattern, producing that 8-bit "no
+   interpolation" feel next to a CTA. */
+@keyframes pixel-arrow-pulse {
+  0%,
+  49.99% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50%,
+  99.99% {
+    transform: translateX(3px);
+    opacity: 0.75;
+  }
 }
