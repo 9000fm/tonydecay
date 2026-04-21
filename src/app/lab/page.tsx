@@ -38,10 +38,10 @@ const LAB_NAV: { id: string; label: string }[] = [
   { id: "lab-12", label: "12 · ROADMAP" },
   { id: "lab-13", label: "13 · COLLECTOR IDX" },
   { id: "lab-14", label: "14 · FIELD GUIDE" },
-  { id: "lab-16", label: "16 · GUESTBOOK" },
+  { id: "lab-16", label: "16 · READER MAIL" },
   { id: "lab-17", label: "17 · SIZE GUIDE" },
   { id: "lab-18", label: "18 · DEEP SPECS" },
-  { id: "lab-19", label: "19 · OPEN CALL" },
+  { id: "lab-19", label: "19 · BOOKING" },
   { id: "lab-20", label: "20 · LETTERS" },
 ];
 
@@ -175,10 +175,10 @@ const LAB_ROUTES = [
       { href: "#lab-12", label: "12 · VOLUME ROADMAP", status: "here" },
       { href: "#lab-13", label: "13 · COLLECTOR INDEX", status: "here" },
       { href: "#lab-14", label: "14 · FIELD GUIDE", status: "here" },
-      { href: "#lab-16", label: "16 · GUESTBOOK", status: "here" },
+      { href: "#lab-16", label: "16 · READER MAIL", status: "here" },
       { href: "#lab-17", label: "17 · SIZE GUIDE", status: "here" },
       { href: "#lab-18", label: "18 · DEEP SPECS", status: "here" },
-      { href: "#lab-19", label: "19 · OPEN CALL", status: "here" },
+      { href: "#lab-19", label: "19 · BOOKING / 予約受付", status: "here" },
       { href: "#lab-20", label: "20 · LETTERS (FAQ)", status: "here" },
     ],
   },
@@ -2672,7 +2672,7 @@ function V09WorkWall() {
     { idx: 6, size: "sm", rot: -1, top: "6%", left: "52%" },
     { idx: 8, size: "md", rot: 2, top: "3%", left: "68%" },
     { idx: 1, size: "sm", rot: -2.5, top: "36%", left: "4%" },
-    { idx: 5, size: "lg", rot: 1, top: "30%", left: "22%" },
+    { idx: 5, size: "lg", rot: 1, top: "30%", left: "22%", featured: true },
     { idx: 11, size: "md", rot: -1.5, top: "38%", left: "52%" },
     { idx: 13, size: "sm", rot: 2.5, top: "36%", left: "78%" },
     { idx: 2, size: "md", rot: -1, top: "66%", left: "6%" },
@@ -2680,18 +2680,19 @@ function V09WorkWall() {
     { idx: 10, size: "lg", rot: -2, top: "64%", left: "48%" },
     { idx: 9, size: "sm", rot: 2, top: "70%", left: "76%" },
   ];
-  const sizeMap: Record<string, { w: number; tilt: string }> = {
-    sm: { w: 140, tilt: "sm" },
-    md: { w: 180, tilt: "md" },
-    lg: { w: 220, tilt: "lg" },
+  const sizeMap: Record<string, { w: number }> = {
+    sm: { w: 140 },
+    md: { w: 180 },
+    lg: { w: 220 },
   };
+  const tackColors = ["#d7322e", "#2b5dae", "#5baa4f", "#F7C234"];
 
   return (
     <section>
       <VariantLabel
         num="09"
         name="WORK WALL"
-        desc="Portfolio scrapbook wall — Tony's broader practice beyond the 15-print set. Fills the missing WORK menu item. Dense taped collage with filter chips, mixed sizes, varied tilts. Each card has tape or a thumbtack."
+        desc="Portfolio scrapbook wall — Tony's broader practice beyond the 15-print set. Fills the missing WORK menu item. Now carries the homepage arcade grammar: gold N°XX pixel tabs per card, brand-color thumbtacks cycling crimson/royal/leaf/gold, handwritten SELECTED arrow pointing into the wall, one NEW! crimson stamp on the featured card."
         bestIf="Want a dedicated WORK section that showcases depth."
       />
       <div
@@ -2702,8 +2703,8 @@ function V09WorkWall() {
           padding: "40px 28px",
         }}
       >
-        {/* Header */}
-        <div className="mb-6 flex items-end justify-between">
+        {/* Header with handwritten annotation */}
+        <div className="relative mb-6 flex items-end justify-between">
           <div>
             <span
               style={{
@@ -2783,10 +2784,46 @@ function V09WorkWall() {
             border: "1px dashed rgba(26,26,26,0.25)",
           }}
         >
+          {/* Handwritten "← new favorite" annotation pointing at featured card */}
+          <svg
+            aria-hidden
+            className="pointer-events-none absolute"
+            style={{ top: "18%", left: "40%", width: 160, height: 70, zIndex: 30 }}
+            viewBox="0 0 160 70"
+          >
+            <path
+              d="M 150 30 Q 100 8, 40 38"
+              fill="none"
+              stroke="#d7322e"
+              strokeWidth="2"
+              strokeDasharray="5 4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 40 38 l 10 -4 m -10 4 l 6 8"
+              fill="none"
+              stroke="#d7322e"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <text
+              x="60"
+              y="18"
+              fontFamily="var(--font-display), serif"
+              fontStyle="italic"
+              fontSize="15"
+              fill="#d7322e"
+            >
+              new favorite
+            </text>
+          </svg>
+
           {wallPrints.map((p, i) => {
             const pr = PLACEHOLDER_PRINTS[p.idx];
             const dims = sizeMap[p.size];
             const hasTape = i % 3 !== 0;
+            const tackColor = tackColors[i % tackColors.length];
+            const label = String(p.idx + 1).padStart(2, "0");
             return (
               <figure
                 key={`${pr.id}-${i}`}
@@ -2796,9 +2833,67 @@ function V09WorkWall() {
                   left: p.left,
                   width: dims.w,
                   transform: `rotate(${p.rot}deg)`,
-                  zIndex: i + 1,
+                  zIndex: p.featured ? 20 : i + 1,
                 }}
               >
+                {/* N°XX gold pixel tab on top-left corner */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -10,
+                    left: 4,
+                    padding: "3px 8px",
+                    background: "#F7C234",
+                    color: "#1a1a1a",
+                    border: "2px solid #1a1a1a",
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 9,
+                    letterSpacing: "0.18em",
+                    fontWeight: 800,
+                    lineHeight: 1,
+                    zIndex: 3,
+                    boxShadow: "2px 2px 0 #1a1a1a",
+                  }}
+                >
+                  N°{label}
+                </div>
+
+                {/* NEW! crimson stamp on featured card */}
+                {p.featured && (
+                  <svg
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      top: -18,
+                      right: -18,
+                      width: 72,
+                      height: 72,
+                      zIndex: 4,
+                      transform: "rotate(14deg)",
+                    }}
+                    viewBox="0 0 100 100"
+                  >
+                    <polygon
+                      points="50,4 58,18 74,10 72,28 90,26 80,40 96,50 80,58 92,72 74,72 82,88 64,82 62,98 50,86 38,98 36,82 18,88 26,72 8,72 24,58 8,50 24,40 14,26 32,28 30,10 46,18"
+                      fill="#d7322e"
+                      stroke="#1a1a1a"
+                      strokeWidth={2.5}
+                      strokeLinejoin="round"
+                    />
+                    <text
+                      x="50"
+                      y="58"
+                      textAnchor="middle"
+                      fontFamily="var(--font-tattoo), sans-serif"
+                      fontWeight={800}
+                      fontSize="22"
+                      fill="#f0ebdc"
+                    >
+                      NEW!
+                    </text>
+                  </svg>
+                )}
+
                 {hasTape && (
                   <div
                     aria-hidden
@@ -2819,19 +2914,19 @@ function V09WorkWall() {
                   <svg
                     aria-hidden
                     className="absolute left-1/2 -translate-x-1/2"
-                    style={{ top: -10, width: 20, height: 22, zIndex: 2 }}
-                    viewBox="0 0 20 22"
+                    style={{ top: -12, width: 22, height: 24, zIndex: 2 }}
+                    viewBox="0 0 22 24"
                   >
-                    <ellipse cx="10" cy="16" rx="7" ry="2.2" fill="rgba(26,26,26,0.25)" />
+                    <ellipse cx="11" cy="18" rx="7" ry="2.2" fill="rgba(26,26,26,0.25)" />
                     <circle
-                      cx="10"
-                      cy="8"
-                      r="6"
-                      fill="#d7322e"
+                      cx="11"
+                      cy="9"
+                      r="7"
+                      fill={tackColor}
                       stroke="#1a1a1a"
-                      strokeWidth="1.2"
+                      strokeWidth="1.3"
                     />
-                    <circle cx="7.5" cy="6" r="1.5" fill="rgba(255,255,255,0.55)" />
+                    <circle cx="8.5" cy="7" r="1.8" fill="rgba(255,255,255,0.55)" />
                   </svg>
                 )}
                 <div
@@ -3000,14 +3095,41 @@ function V10Studio() {
               >
                 0{s.n} · {s.title}
               </div>
-              <div className="relative" style={{ aspectRatio: "3 / 4" }}>
-                <Image
-                  src={PLACEHOLDER_PRINTS[s.idx].src}
-                  alt={PLACEHOLDER_PRINTS[s.idx].alt}
-                  fill
-                  sizes="200px"
-                  className="object-cover"
-                />
+              {/* PLACEHOLDER block — real studio photo goes here */}
+              <div
+                className="relative flex flex-col items-center justify-center"
+                style={{
+                  aspectRatio: "3 / 4",
+                  background: "rgba(26,26,26,0.08)",
+                  border: "2px dashed rgba(215,50,46,0.55)",
+                  padding: 12,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 9,
+                    letterSpacing: "0.28em",
+                    fontWeight: 800,
+                    color: "#d7322e",
+                    marginBottom: 6,
+                  }}
+                >
+                  PLACEHOLDER
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-display), serif",
+                    fontStyle: "italic",
+                    fontSize: 13,
+                    lineHeight: 1.35,
+                    color: "rgba(26,26,26,0.7)",
+                    textAlign: "center",
+                  }}
+                >
+                  {s.title.toLowerCase()} photo
+                  <br />→ drop real studio shot here
+                </span>
               </div>
               <figcaption
                 style={{
@@ -3032,65 +3154,27 @@ function V10Studio() {
   );
 }
 
-/* ================== 11 · PRESS WALL ==================
-   Editorial "featured in" wall — mock magazine covers on bulletin board with
-   thumbtacks and pull-quotes. Third-party social proof layer. */
+/* ================== 11 · ARCHIVE / SPACEWORLD '97 ==================
+   Re-thought from PRESS WALL. No press yet, don't fake it. Instead: one
+   aspirational speculative cover spread + an honest note that this becomes
+   real when press lands. Vintage magazine-archive vibe. */
 
 function V11Press() {
-  const features = [
-    {
-      pub: "FAMITSU",
-      issue: "№327 / 2025",
-      color: "#d7322e",
-      quote: "haunted genius of hand-print",
-      tack: "#F7C234",
-    },
-    {
-      pub: "DENGEKI",
-      issue: "№14 / 2025",
-      color: "#2b5dae",
-      quote: "flash you can taste",
-      tack: "#d7322e",
-    },
-    {
-      pub: "SHOGAKUKAN",
-      issue: "APR / 2026",
-      color: "#3cb5b5",
-      quote: "the year's most physical release",
-      tack: "#5baa4f",
-    },
-    {
-      pub: "NINGENDO",
-      issue: "VOL.18",
-      color: "#f7c234",
-      quote: "a cartridge for grown-ups",
-      tack: "#d7322e",
-    },
-    {
-      pub: "INK ZINE",
-      issue: "ISSUE 5",
-      color: "#5baa4f",
-      quote: "hand-pulled, heart-pressed",
-      tack: "#2b5dae",
-    },
-  ];
-
   return (
     <section>
       <VariantLabel
         num="11"
-        name="PRESS WALL"
-        desc="Featured-in wall on a cork-style bulletin board. 5 mock magazine covers pinned with thumbtacks, pull-quote per cover, press-kit link at bottom. Third-party editorial social proof — different job from IG likes or FAQ."
-        bestIf="Want editorial validation / press layer."
+        name="ARCHIVE / SPACEWORLD '97"
+        desc="Rethought from PRESS WALL — there's no real press yet, so faking 5 fake covers is dishonest. Instead: one hero speculative cover in the old Spaceworld '97 archive style + two inside-page thumbs + an italic 'TBD' note. When real press lands, this section turns into the genuine version. Aspirational placeholder, not fake social proof."
+        bestIf="Want an honest press slot that doesn't lie."
       />
       <div
         className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
         style={{
-          background: "#C7A676",
-          backgroundImage: "radial-gradient(rgba(26,26,26,0.1) 1px, transparent 1.4px)",
-          backgroundSize: "8px 8px",
+          background: "#ECE4D0",
           border: "3px solid #1a1a1a",
           padding: "40px 28px",
+          position: "relative",
         }}
       >
         <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
@@ -3101,148 +3185,197 @@ function V11Press() {
                 fontSize: 11,
                 letterSpacing: "0.3em",
                 fontWeight: 800,
-                color: "#1a1a1a",
+                color: "#d7322e",
               }}
             >
-              — featured in
+              — archive / TBD
             </span>
             <h3
               style={{
                 fontFamily: "var(--font-tattoo), sans-serif",
                 fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
-                color: "#f0ebdc",
+                color: "#1a1a1a",
                 lineHeight: 0.9,
                 letterSpacing: "0.01em",
-                textShadow: "3px 3px 0 #1a1a1a",
               }}
             >
-              PRESS /{" "}
-              <span
-                style={{ fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif" }}
-                title="keisai — featured / printed in"
-              >
-                掲載
-              </span>
+              SPACEWORLD &apos;97
             </h3>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.28em",
+                fontWeight: 800,
+                color: "rgba(26,26,26,0.55)",
+                marginTop: 6,
+                display: "inline-block",
+              }}
+            >
+              SPECULATIVE COVER · UNRELEASED
+            </span>
           </div>
-          <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 10,
-              letterSpacing: "0.28em",
-              fontWeight: 800,
-              color: "#1a1a1a",
-              background: "#F7C234",
-              padding: "8px 12px",
-              border: "2px solid #1a1a1a",
-              boxShadow: "3px 3px 0 #1a1a1a",
-              textDecoration: "none",
-            }}
-          >
-            ▸ DOWNLOAD PRESS KIT
-          </a>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gap: 32,
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-          }}
-        >
-          {features.map((f, i) => (
+        <div className="grid gap-8 lg:grid-cols-[5fr_4fr]">
+          {/* Hero speculative cover */}
+          <div
+            className="relative"
+            style={{
+              aspectRatio: "3 / 4",
+              background: "#d7322e",
+              border: "4px solid #1a1a1a",
+              boxShadow: "8px 8px 0 #1a1a1a",
+              padding: 24,
+              overflow: "hidden",
+            }}
+          >
             <div
-              key={f.pub}
-              className="relative"
               style={{
-                transform: `rotate(${(i % 2 === 0 ? -1 : 1) * (1 + (i % 3) * 0.3)}deg)`,
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.32em",
+                fontWeight: 800,
+                color: "#F7C234",
               }}
             >
-              <svg
-                aria-hidden
-                className="absolute left-1/2 -translate-x-1/2"
-                style={{ top: -14, width: 22, height: 24, zIndex: 3 }}
-                viewBox="0 0 22 24"
-              >
-                <ellipse cx="11" cy="18" rx="7" ry="2.2" fill="rgba(26,26,26,0.25)" />
-                <circle cx="11" cy="9" r="7" fill={f.tack} stroke="#1a1a1a" strokeWidth="1.4" />
-                <circle cx="8.5" cy="7" r="1.8" fill="rgba(255,255,255,0.55)" />
-              </svg>
-              {/* Mock magazine cover */}
-              <div
-                style={{
-                  aspectRatio: "3 / 4",
-                  background: f.color,
-                  border: "3px solid #1a1a1a",
-                  boxShadow: "4px 6px 0 rgba(26,26,26,0.35)",
-                  padding: 14,
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
+              SPACEWORLD ’97 · VOL.0 · ¥500
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: 58,
+                lineHeight: 0.9,
+                color: "#f0ebdc",
+                textShadow: "3px 3px 0 #1a1a1a",
+                letterSpacing: "0.02em",
+                marginTop: 8,
+              }}
+            >
+              TONY <span style={{ color: "#F7C234" }}>の</span>
+              <br />
+              DECAY
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                inset: "52% 12% 10% 12%",
+                background: "#fffef8",
+                border: "3px solid #1a1a1a",
+                padding: 5,
+                transform: "rotate(-2deg)",
+              }}
+            >
+              <div className="relative h-full w-full">
+                <Image
+                  src={PLACEHOLDER_PRINTS[5].src}
+                  alt=""
+                  fill
+                  sizes="300px"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+            {/* Corner stamp */}
+            <div
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                padding: "4px 10px",
+                background: "#F7C234",
+                border: "2px solid #1a1a1a",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 9,
+                letterSpacing: "0.22em",
+                fontWeight: 800,
+                color: "#1a1a1a",
+                transform: "rotate(6deg)",
+                boxShadow: "2px 2px 0 #1a1a1a",
+              }}
+            >
+              SPECULATIVE
+            </div>
+          </div>
+
+          {/* Right — inside-pages + honest note */}
+          <div className="flex flex-col justify-between gap-6">
+            <div className="grid grid-cols-2 gap-4">
+              {[3, 9].map((idx, i) => (
                 <div
+                  key={idx}
                   style={{
-                    fontFamily: "var(--font-tattoo), sans-serif",
-                    fontSize: 22,
-                    color: "#f0ebdc",
-                    lineHeight: 0.9,
-                    textShadow: "2px 2px 0 #1a1a1a",
-                    letterSpacing: "0.02em",
-                  }}
-                >
-                  {f.pub}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize: 9,
-                    letterSpacing: "0.24em",
-                    fontWeight: 800,
-                    color: "rgba(240,235,220,0.82)",
-                    marginTop: 3,
-                  }}
-                >
-                  {f.issue}
-                </div>
-                {/* Cover art mock — a tilted print */}
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: "30% 10% 10% 10%",
+                    aspectRatio: "3 / 4",
                     background: "#fffef8",
                     border: "2px solid #1a1a1a",
-                    padding: 4,
-                    transform: `rotate(${i % 2 === 0 ? -3 : 3}deg)`,
+                    boxShadow: "3px 3px 0 #1a1a1a",
+                    padding: 6,
+                    transform: `rotate(${i === 0 ? -1.5 : 1.5}deg)`,
+                    position: "relative",
                   }}
                 >
                   <div className="relative h-full w-full">
                     <Image
-                      src={PLACEHOLDER_PRINTS[(i * 2) % PLACEHOLDER_PRINTS.length].src}
+                      src={PLACEHOLDER_PRINTS[idx].src}
                       alt=""
                       fill
                       sizes="180px"
                       className="object-cover"
                     />
                   </div>
+                  <span
+                    style={{
+                      position: "absolute",
+                      bottom: -14,
+                      left: 8,
+                      fontFamily: "var(--font-mono), monospace",
+                      fontSize: 8,
+                      letterSpacing: "0.24em",
+                      fontWeight: 800,
+                      color: "rgba(26,26,26,0.6)",
+                    }}
+                  >
+                    P.{i === 0 ? "04" : "07"}
+                  </span>
                 </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                background: "#f0ebdc",
+                border: "2px dashed rgba(215,50,46,0.6)",
+                padding: 20,
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.3em",
+                  fontWeight: 800,
+                  color: "#d7322e",
+                  marginBottom: 8,
+                }}
+              >
+                — EDITOR&apos;S NOTE
               </div>
               <p
                 style={{
-                  marginTop: 10,
                   fontFamily: "var(--font-display), serif",
                   fontStyle: "italic",
-                  fontSize: 13,
-                  lineHeight: 1.4,
+                  fontSize: 15,
+                  lineHeight: 1.55,
                   color: "#1a1a1a",
-                  textAlign: "center",
+                  margin: 0,
                 }}
               >
-                &ldquo;{f.quote}&rdquo;
+                When real press lands, this section turns into actual covers, real pull-quotes, real
+                bylines. Until then — this is an aspirational placeholder. No fake magazines, no
+                invented reviews.
               </p>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
@@ -3448,24 +3581,23 @@ function V12Roadmap() {
 }
 
 /* ================== 13 · COLLECTOR INDEX ==================
-   100 numbered slots as a 10x10 grid. Sold = stamped CLAIMED, available = clean.
-   Visible scarcity without shouty urgency. */
+   Rethought from 10×10 grid (too big) → compact stat block: progress bar +
+   last-5-slot chips. Same scarcity signal, a fraction of the footprint. */
 
 function V13CollectorIndex() {
-  // Mock: 47 sold, 53 remaining. Stable deterministic pattern so no hydration drift.
-  const sold = new Set([
-    1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 19, 22, 25, 27, 28, 31, 33, 34, 36, 38, 40, 41, 43, 45, 47,
-    49, 50, 52, 54, 56, 58, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 88, 91, 94,
-  ]);
-  const count = sold.size;
+  const SOLD = 47;
+  const TOTAL = 100;
+  const pct = (SOLD / TOTAL) * 100;
+  // Next 5 available slots shown as chips
+  const nextAvail = [48, 49, 51, 53, 55];
 
   return (
     <section>
       <VariantLabel
         num="13"
         name="COLLECTOR INDEX"
-        desc="100 numbered slots in a 10x10 grid. Sold = faded + CLAIMED stamp; available = active. Visible scarcity without shouty urgency stamps — the grid itself is the urgency signal."
-        bestIf="Want scarcity visible without fake-FOMO."
+        desc="Rethought — no more 10×10 grid (too big, too loud). Now a compact stat block: big 47/100 counter + gold progress bar + preview of next available slot numbers. Same scarcity signal, fraction of the footprint. Full 100-grid moves to a 'view all slots →' modal."
+        bestIf="Want scarcity visible without taking over the page."
       />
       <div
         className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
@@ -3475,103 +3607,147 @@ function V13CollectorIndex() {
           padding: "40px 28px",
         }}
       >
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div className="mb-6">
+          <span
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 11,
+              letterSpacing: "0.3em",
+              fontWeight: 800,
+              color: "#d7322e",
+            }}
+          >
+            — edition of 100
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+              color: "#1a1a1a",
+              lineHeight: 0.9,
+            }}
+          >
+            COLLECTOR INDEX
+          </h3>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[3fr_4fr]">
+          {/* Left — big count */}
           <div>
-            <span
-              style={{
-                fontFamily: "var(--font-mono), monospace",
-                fontSize: 11,
-                letterSpacing: "0.3em",
-                fontWeight: 800,
-                color: "#d7322e",
-              }}
-            >
-              — edition of 100
-            </span>
-            <h3
+            <div
               style={{
                 fontFamily: "var(--font-tattoo), sans-serif",
-                fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
-                color: "#1a1a1a",
+                fontSize: "clamp(72px, 14vw, 140px)",
+                color: "#d7322e",
                 lineHeight: 0.9,
               }}
             >
-              COLLECTOR INDEX
-            </h3>
-          </div>
-          <div className="text-right">
-            <div
-              style={{
-                fontFamily: "var(--font-tattoo), sans-serif",
-                fontSize: 44,
-                color: "#d7322e",
-                lineHeight: 1,
-              }}
-            >
-              {count} <span style={{ color: "rgba(26,26,26,0.3)" }}>/ 100</span>
+              {SOLD}
+              <span style={{ color: "rgba(26,26,26,0.25)", fontSize: "0.5em" }}> / {TOTAL}</span>
             </div>
             <div
               style={{
                 fontFamily: "var(--font-mono), monospace",
-                fontSize: 10,
-                letterSpacing: "0.28em",
+                fontSize: 12,
+                letterSpacing: "0.3em",
                 fontWeight: 800,
-                color: "rgba(26,26,26,0.55)",
-                marginTop: 2,
+                color: "rgba(26,26,26,0.6)",
+                marginTop: 6,
               }}
             >
-              SECURED
+              SECURED · {TOTAL - SOLD} REMAINING
             </div>
           </div>
-        </div>
 
-        <div className="grid" style={{ gridTemplateColumns: "repeat(10, 1fr)", gap: 6 }}>
-          {Array.from({ length: 100 }, (_, i) => {
-            const n = i + 1;
-            const isSold = sold.has(n);
-            return (
+          {/* Right — progress bar + next slots */}
+          <div>
+            <div
+              style={{
+                position: "relative",
+                height: 32,
+                background: "#fffef8",
+                border: "2px solid #1a1a1a",
+                boxShadow: "4px 4px 0 #1a1a1a",
+                overflow: "hidden",
+                marginBottom: 22,
+              }}
+            >
               <div
-                key={n}
                 style={{
-                  position: "relative",
-                  aspectRatio: "1 / 1",
-                  background: isSold ? "rgba(26,26,26,0.08)" : "#fffef8",
-                  border: "1.5px solid #1a1a1a",
+                  position: "absolute",
+                  inset: 0,
+                  right: `${100 - pct}%`,
+                  background: "#F7C234",
+                  borderRight: "2px solid #1a1a1a",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.1em",
+                  fontSize: 11,
+                  letterSpacing: "0.28em",
                   fontWeight: 800,
-                  color: isSold ? "rgba(26,26,26,0.35)" : "#1a1a1a",
+                  color: "#1a1a1a",
+                  zIndex: 2,
                 }}
               >
-                {String(n).padStart(3, "0")}
-                {isSold && (
-                  <span
-                    aria-hidden
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%) rotate(-12deg)",
-                      fontFamily: "var(--font-tattoo), sans-serif",
-                      fontSize: 8,
-                      letterSpacing: "0.1em",
-                      color: "#d7322e",
-                      background: "rgba(215,50,46,0.12)",
-                      padding: "1px 4px",
-                      border: "1px solid rgba(215,50,46,0.5)",
-                      lineHeight: 1,
-                    }}
-                  >
-                    CLAIMED
-                  </span>
-                )}
+                {pct.toFixed(0)}% CLAIMED
               </div>
-            );
-          })}
+            </div>
+
+            <div
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "rgba(26,26,26,0.55)",
+                marginBottom: 10,
+              }}
+            >
+              NEXT AVAILABLE SLOTS
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {nextAvail.map((n) => (
+                <span
+                  key={n}
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 13,
+                    letterSpacing: "0.18em",
+                    fontWeight: 800,
+                    padding: "8px 14px",
+                    background: "#fffef8",
+                    color: "#1a1a1a",
+                    border: "2px solid #1a1a1a",
+                    boxShadow: "2px 2px 0 #1a1a1a",
+                  }}
+                >
+                  N°{String(n).padStart(3, "0")}
+                </span>
+              ))}
+              <span
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.26em",
+                  fontWeight: 800,
+                  padding: "8px 14px",
+                  background: "transparent",
+                  color: "#d7322e",
+                  border: "2px dashed #d7322e",
+                  cursor: "pointer",
+                }}
+              >
+                VIEW ALL 100 →
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -3827,125 +4003,209 @@ function V14FieldGuide() {
 
 /* V15 REFERENCES SHELF — removed per user direction (off-brand). */
 
-/* ================== 16 · GUESTBOOK ==================
-   Collector wall — first name + city + chosen icon per buyer. Yearbook
-   style community signal. */
+/* ================== 16 · READER MAIL ==================
+   Renamed from GUESTBOOK + rethought. Each collector is now a postcard taped
+   to a corkboard, not a yearbook list line. Editorial, physical, less LinkedIn. */
 
 function V16Guestbook() {
-  const entries = [
-    { name: "Max", city: "Tokyo, JP", icon: "★" },
-    { name: "Ana", city: "Lima, PE", icon: "♥" },
-    { name: "Rafa", city: "Madrid, ES", icon: "♦" },
-    { name: "Yui", city: "Osaka, JP", icon: "☾" },
-    { name: "Jordan", city: "Brooklyn, US", icon: "✦" },
-    { name: "Sofi", city: "Buenos Aires", icon: "♣" },
-    { name: "Leo", city: "Berlin, DE", icon: "☀" },
-    { name: "Mika", city: "Kyoto, JP", icon: "✿" },
-    { name: "Pablo", city: "Mexico City", icon: "✱" },
-    { name: "Ren", city: "Seoul, KR", icon: "✴" },
+  const postcards = [
+    {
+      name: "Max",
+      city: "Tokyo, JP",
+      stamp: "#d7322e",
+      note: "Got N°017. Framed it in the hallway — first thing you see.",
+      rot: -2,
+    },
+    {
+      name: "Ana",
+      city: "Lima, PE",
+      stamp: "#2b5dae",
+      note: "Tattooed the Tangela from #03 last week. Turned heads at the café.",
+      rot: 1.5,
+    },
+    {
+      name: "Jordan",
+      city: "Brooklyn, US",
+      stamp: "#5baa4f",
+      note: "Took 3 weeks to arrive, worth the wait. The paper weight is no joke.",
+      rot: -1,
+    },
+    {
+      name: "Yui",
+      city: "Osaka, JP",
+      stamp: "#F7C234",
+      note: "小学館スタイル、完璧です。よくやりました。",
+      rot: 2,
+    },
+    {
+      name: "Sofi",
+      city: "Buenos Aires",
+      stamp: "#3cb5b5",
+      note: "Bought two sets. One for me, one framed as a gift.",
+      rot: -1.5,
+    },
+    {
+      name: "Leo",
+      city: "Berlin, DE",
+      stamp: "#d7322e",
+      note: "Still mad I missed Vol.00. Putting my email in for Vol.02.",
+      rot: 1,
+    },
   ];
 
   return (
     <section>
       <VariantLabel
         num="16"
-        name="GUESTBOOK"
-        desc="Wall of collector first names + cities + a chosen icon each. Yearbook style. Varied handwritten-feel fonts + subtle tilts per entry. Live community signal that IS NOT IG likes."
-        bestIf="Want community / peer-owned social proof."
+        name="READER MAIL"
+        desc="Renamed from GUESTBOOK + rethought. Each buyer is a postcard taped to a corkboard with a real sentence from them, not a yearbook list line. Editorial, physical, less LinkedIn. Matches the LETTERS (V20) column's physical-mail vibe."
+        bestIf="Want community signal as peer-owned narrative, not likes."
       />
       <div
         className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
         style={{
-          background: "#fffef8",
-          backgroundImage:
-            "repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(26,26,26,0.08) 31px, rgba(26,26,26,0.08) 32px)",
+          background: "#C7A676",
+          backgroundImage: "radial-gradient(rgba(26,26,26,0.09) 1px, transparent 1.3px)",
+          backgroundSize: "8px 8px",
           border: "3px solid #1a1a1a",
-          padding: "40px 28px 40px 64px",
-          position: "relative",
+          padding: "40px 28px",
         }}
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0"
-          style={{ left: 48, width: 1.5, background: "rgba(215,50,46,0.7)" }}
-        />
-
-        <div className="relative mb-6">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "#1a1a1a",
+              }}
+            >
+              — reader mail
+            </span>
+            <h3
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+                color: "#1a1a1a",
+                lineHeight: 0.9,
+              }}
+            >
+              FROM COLLECTORS
+            </h3>
+          </div>
           <span
             style={{
               fontFamily: "var(--font-mono), monospace",
-              fontSize: 11,
-              letterSpacing: "0.3em",
+              fontSize: 10,
+              letterSpacing: "0.28em",
               fontWeight: 800,
-              color: "#d7322e",
+              color: "rgba(26,26,26,0.7)",
             }}
           >
-            — who bought
+            {postcards.length} POSTCARDS · 47 TOTAL
           </span>
-          <h3
-            style={{
-              fontFamily: "var(--font-tattoo), sans-serif",
-              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
-              color: "#1a1a1a",
-              lineHeight: 0.9,
-            }}
-          >
-            GUESTBOOK
-          </h3>
-          <p
-            style={{
-              fontFamily: "var(--font-display), serif",
-              fontStyle: "italic",
-              fontSize: 15,
-              color: "rgba(26,26,26,0.6)",
-              marginTop: 6,
-            }}
-          >
-            {entries.length} collectors signed so far.
-          </p>
         </div>
 
-        <div className="relative grid gap-x-10 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
-          {entries.map((e, i) => (
+        <div
+          style={{
+            display: "grid",
+            gap: 28,
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          }}
+        >
+          {postcards.map((p, i) => (
             <div
-              key={e.name + i}
-              className="flex items-baseline gap-3"
+              key={p.name + i}
               style={{
-                transform: `rotate(${i % 2 === 0 ? -0.4 : 0.6}deg)`,
-                borderBottom: "1px dashed rgba(26,26,26,0.3)",
-                paddingBottom: 6,
+                position: "relative",
+                background: "#fffef8",
+                padding: "18px 18px 14px",
+                border: "1px solid rgba(26,26,26,0.3)",
+                boxShadow: "4px 6px 14px rgba(26,26,26,0.25)",
+                transform: `rotate(${p.rot}deg)`,
               }}
             >
-              <span
+              {/* Thumbtack */}
+              <svg
+                aria-hidden
+                className="absolute left-1/2 -translate-x-1/2"
+                style={{ top: -13, width: 22, height: 24, zIndex: 3 }}
+                viewBox="0 0 22 24"
+              >
+                <ellipse cx="11" cy="18" rx="7" ry="2.2" fill="rgba(26,26,26,0.25)" />
+                <circle cx="11" cy="9" r="7" fill={p.stamp} stroke="#1a1a1a" strokeWidth="1.4" />
+                <circle cx="8.5" cy="7" r="1.8" fill="rgba(255,255,255,0.55)" />
+              </svg>
+              {/* Postcard header — from line */}
+              <div
+                className="mb-3 flex items-baseline justify-between gap-3"
+                style={{ borderBottom: "1px dashed rgba(26,26,26,0.3)", paddingBottom: 6 }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 9,
+                    letterSpacing: "0.26em",
+                    fontWeight: 800,
+                    color: "rgba(26,26,26,0.5)",
+                  }}
+                >
+                  FROM ·
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-display), serif",
+                    fontStyle: "italic",
+                    fontSize: 20,
+                    color: "#1a1a1a",
+                    flex: 1,
+                  }}
+                >
+                  {p.name}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.2em",
+                    color: "rgba(26,26,26,0.55)",
+                  }}
+                >
+                  {p.city}
+                </span>
+              </div>
+              {/* Note */}
+              <p
                 style={{
                   fontFamily: "var(--font-display), serif",
-                  fontStyle: "italic",
-                  fontSize: 22,
-                  color: "#1a1a1a",
-                  lineHeight: 1,
+                  fontSize: 15,
+                  lineHeight: 1.45,
+                  color: "rgba(26,26,26,0.85)",
+                  margin: 0,
                 }}
               >
-                {e.name}
-              </span>
-              <span
+                &ldquo;{p.note}&rdquo;
+              </p>
+              {/* Postmark */}
+              <div
                 style={{
+                  position: "absolute",
+                  bottom: 10,
+                  right: 12,
+                  padding: "2px 6px",
+                  border: "1.5px solid rgba(215,50,46,0.5)",
                   fontFamily: "var(--font-mono), monospace",
-                  fontSize: 11,
-                  letterSpacing: "0.18em",
-                  color: "rgba(26,26,26,0.55)",
+                  fontSize: 8,
+                  letterSpacing: "0.22em",
+                  fontWeight: 800,
+                  color: "rgba(215,50,46,0.55)",
+                  transform: "rotate(-6deg)",
                 }}
               >
-                {e.city}
-              </span>
-              <span
-                style={{
-                  fontSize: 18,
-                  color: ["#d7322e", "#2b5dae", "#5baa4f", "#F7C234", "#3cb5b5"][i % 5],
-                  marginLeft: "auto",
-                }}
-              >
-                {e.icon}
-              </span>
+                RECEIVED
+              </div>
             </div>
           ))}
         </div>
@@ -3955,7 +4215,8 @@ function V16Guestbook() {
 }
 
 /* ================== 17 · SIZE GUIDE ==================
-   Framed-on-wall mockup showing print at scale. Hand-drawn wall w/ measurements. */
+   Re-styled to concept-card / spec-sheet aesthetic. Drop the wall illustration,
+   lead with a big A5 measurement badge and crisp spec rows. */
 
 function V17SizeGuide() {
   return (
@@ -3963,8 +4224,8 @@ function V17SizeGuide() {
       <VariantLabel
         num="17"
         name="SIZE GUIDE"
-        desc="Framed wall mockup showing how an A5 print sits when hung. Hand-drawn wall outlines with measurements (148×210mm), a framed print, and a silhouette person for scale. Buyer confidence for the physical object."
-        bestIf="Want buyers to know what they're getting physically."
+        desc="Re-styled — the wall-illustration mockup is gone. Now a spec-sheet layout: big A5 measurement badge on the left with crimson dimension arrows, clean spec rows on the right (DIMENSIONS / FITS FRAME / SHIPS IN / WEIGHT). Feels like a technical data page in a print mag, not a sketchnote."
+        bestIf="Want physical specs clear without illustrating a wall."
       />
       <div
         className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
@@ -3974,7 +4235,7 @@ function V17SizeGuide() {
           padding: "40px 28px",
         }}
       >
-        <div className="mb-6">
+        <div className="mb-8">
           <span
             style={{
               fontFamily: "var(--font-mono), monospace",
@@ -3998,184 +4259,140 @@ function V17SizeGuide() {
           </h3>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[6fr_4fr]">
-          {/* Wall mockup */}
+        <div className="grid gap-10 lg:grid-cols-[5fr_5fr]">
+          {/* Left — A5 measurement badge */}
           <div
-            className="relative"
+            className="relative mx-auto"
             style={{
-              aspectRatio: "4 / 3",
+              aspectRatio: "148 / 210",
+              maxWidth: 280,
+              width: "100%",
               background: "#fffef8",
-              border: "3px solid #1a1a1a",
-              padding: 20,
-              overflow: "hidden",
+              border: "4px solid #1a1a1a",
+              boxShadow: "8px 8px 0 #F7C234, 8px 8px 0 2px #1a1a1a",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {/* Horizontal floor line */}
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                bottom: 40,
-                left: 0,
-                right: 0,
-                height: 2,
-                background: "#1a1a1a",
-              }}
-            />
-            {/* Person silhouette for scale */}
-            <svg
-              aria-hidden
-              style={{ position: "absolute", bottom: 42, left: 40 }}
-              width="60"
-              height="140"
-              viewBox="0 0 60 140"
-            >
-              <circle cx="30" cy="18" r="12" fill="#1a1a1a" />
-              <rect x="22" y="30" width="16" height="60" fill="#1a1a1a" />
-              <rect x="22" y="88" width="7" height="50" fill="#1a1a1a" />
-              <rect x="31" y="88" width="7" height="50" fill="#1a1a1a" />
-            </svg>
-            {/* Framed print */}
-            <div
-              style={{
-                position: "absolute",
-                top: "22%",
-                left: "45%",
-                width: 140,
-                height: 198, // A5 ratio ish
-                background: "#1a1a1a",
-                padding: 8,
-                boxShadow: "5px 5px 0 rgba(26,26,26,0.25)",
-              }}
-            >
-              <div className="relative h-full w-full">
-                <Image
-                  src={PLACEHOLDER_PRINTS[5].src}
-                  alt=""
-                  fill
-                  sizes="140px"
-                  className="object-cover"
-                />
-              </div>
-              {/* Measurement arrows */}
-              <span
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  bottom: -28,
-                  left: 0,
-                  right: 0,
-                  textAlign: "center",
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.22em",
-                  fontWeight: 800,
-                  color: "#d7322e",
-                }}
-              >
-                ← 148 mm →
-              </span>
-              <span
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  right: -54,
-                  transform: "translateY(-50%) rotate(90deg)",
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.22em",
-                  fontWeight: 800,
-                  color: "#d7322e",
-                }}
-              >
-                ← 210 mm →
-              </span>
-            </div>
-          </div>
-
-          {/* Spec notes */}
-          <div>
-            <div className="mb-5">
-              <div
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.3em",
-                  fontWeight: 800,
-                  color: "rgba(26,26,26,0.55)",
-                }}
-              >
-                PAPER SIZE
-              </div>
+            <div className="text-center">
               <div
                 style={{
                   fontFamily: "var(--font-tattoo), sans-serif",
-                  fontSize: 38,
-                  lineHeight: 1,
+                  fontSize: 110,
+                  lineHeight: 0.85,
                   color: "#1a1a1a",
+                  letterSpacing: "0.02em",
                 }}
               >
-                A5 · 148×210mm
+                A5
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono), monospace",
+                  fontSize: 13,
+                  letterSpacing: "0.28em",
+                  fontWeight: 800,
+                  color: "#d7322e",
+                  marginTop: 10,
+                }}
+              >
+                148 × 210 mm
               </div>
               <div
                 style={{
                   fontFamily: "var(--font-display), serif",
                   fontStyle: "italic",
-                  fontSize: 13,
-                  color: "rgba(26,26,26,0.65)",
+                  fontSize: 14,
+                  color: "rgba(26,26,26,0.6)",
                   marginTop: 4,
                 }}
               >
-                ≈ 5.8 × 8.3 inches
+                5.8 × 8.3 inches
               </div>
             </div>
-            <div className="mb-5">
+
+            {/* Dimension arrows */}
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: -22,
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.28em",
+                fontWeight: 800,
+                color: "#d7322e",
+              }}
+            >
+              ← 148 mm →
+            </span>
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: "50%",
+                right: -60,
+                transform: "translateY(-50%) rotate(90deg)",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.28em",
+                fontWeight: 800,
+                color: "#d7322e",
+              }}
+            >
+              ← 210 mm →
+            </span>
+          </div>
+
+          {/* Right — spec rows */}
+          <div className="flex flex-col justify-center gap-6">
+            {[
+              {
+                k: "DIMENSIONS",
+                v: "148 × 210 mm / 5.8 × 8.3 in (A5)",
+              },
+              {
+                k: "FITS FRAME",
+                v: "IKEA RIBBA 5×7″, standard A5 magnetic, any custom A5 mount",
+              },
+              {
+                k: "SHIPS IN",
+                v: "Rigid mailer box, foam-wrapped. No folds, no creases.",
+              },
+              { k: "WEIGHT", v: "750 g / 1.65 lb packed, 15-print set" },
+            ].map((row) => (
               <div
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.3em",
-                  fontWeight: 800,
-                  color: "rgba(26,26,26,0.55)",
-                }}
+                key={row.k}
+                style={{ borderBottom: "1px dashed rgba(26,26,26,0.3)", paddingBottom: 12 }}
               >
-                FITS FRAME
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.32em",
+                    fontWeight: 800,
+                    color: "#d7322e",
+                    marginBottom: 6,
+                  }}
+                >
+                  {row.k}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display), serif",
+                    fontSize: 17,
+                    lineHeight: 1.45,
+                    color: "#1a1a1a",
+                  }}
+                >
+                  {row.v}
+                </div>
               </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display), serif",
-                  fontSize: 16,
-                  color: "#1a1a1a",
-                  lineHeight: 1.5,
-                }}
-              >
-                IKEA RIBBA 5×7&quot;, standard A5 magnetic, any custom A5 mount.
-              </div>
-            </div>
-            <div>
-              <div
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.3em",
-                  fontWeight: 800,
-                  color: "rgba(26,26,26,0.55)",
-                }}
-              >
-                SHIPS IN
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-display), serif",
-                  fontSize: 16,
-                  color: "#1a1a1a",
-                  lineHeight: 1.5,
-                }}
-              >
-                Rigid mailer box, foam-wrapped. No folds, no creases.
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -4213,10 +4430,9 @@ function V18DeepSpecs() {
       <div
         className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
         style={{
-          background: "#1a1a1a",
-          border: "3px solid #F7C234",
-          padding: "40px 28px",
-          color: "#f0ebdc",
+          background: "#ECE4D0",
+          border: "3px solid #1a1a1a",
+          padding: "40px 36px",
         }}
       >
         <div className="mb-8">
@@ -4226,7 +4442,7 @@ function V18DeepSpecs() {
               fontSize: 11,
               letterSpacing: "0.3em",
               fontWeight: 800,
-              color: "#F7C234",
+              color: "#d7322e",
             }}
           >
             — collector specs
@@ -4235,43 +4451,54 @@ function V18DeepSpecs() {
             style={{
               fontFamily: "var(--font-tattoo), sans-serif",
               fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
-              color: "#f0ebdc",
+              color: "#1a1a1a",
               lineHeight: 0.9,
             }}
           >
             DEEP SPECS
           </h3>
+          <p
+            style={{
+              fontFamily: "var(--font-display), serif",
+              fontStyle: "italic",
+              fontSize: 15,
+              color: "rgba(26,26,26,0.6)",
+              marginTop: 6,
+              maxWidth: 520,
+            }}
+          >
+            Restyled to cream paper + magazine-sidebar layout. Keys in crimson mono micro-caps,
+            values in Fraunces italic. Reads like a print-mag spec column.
+          </p>
         </div>
 
-        <dl
-          className="grid gap-x-10 gap-y-0 md:grid-cols-2"
-          style={{
-            fontFamily: "var(--font-mono), monospace",
-          }}
-        >
+        <dl className="grid gap-x-14 gap-y-0 md:grid-cols-2">
           {specs.map((s) => (
             <div
               key={s.k}
-              className="flex items-baseline gap-6 py-3"
-              style={{ borderBottom: "1px dashed rgba(240,235,220,0.25)" }}
+              className="py-4"
+              style={{ borderBottom: "1px solid rgba(26,26,26,0.18)" }}
             >
               <dt
                 style={{
+                  fontFamily: "var(--font-mono), monospace",
                   fontSize: 10,
-                  letterSpacing: "0.28em",
+                  letterSpacing: "0.32em",
                   fontWeight: 800,
-                  color: "#F7C234",
-                  minWidth: 120,
+                  color: "#d7322e",
+                  marginBottom: 5,
                 }}
               >
                 {s.k}
               </dt>
               <dd
                 style={{
-                  fontSize: 13,
-                  color: "rgba(240,235,220,0.88)",
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 16,
+                  color: "#1a1a1a",
                   margin: 0,
-                  lineHeight: 1.5,
+                  lineHeight: 1.45,
                 }}
               >
                 {s.v}
@@ -4284,22 +4511,41 @@ function V18DeepSpecs() {
   );
 }
 
-/* ================== 19 · OPEN CALL ==================
-   Tattoo booking / commission request. Studio services + inquiry form. */
+/* ================== 19 · BOOKING / 予約受付 ==================
+   Renamed from OPEN CALL. Service tiers now render as ticket stubs (notched
+   sides), inquiry form uses the site's real field styling. */
 
 function V19OpenCall() {
   const services = [
-    { label: "WALK-IN FLASH", price: "from $180", note: "pre-drawn designs, 1-2 hrs" },
-    { label: "CUSTOM TATTOO", price: "from $450", note: "book 2-4 weeks ahead" },
-    { label: "COMMISSION", price: "quote", note: "original illustration / print" },
+    {
+      label: "WALK-IN FLASH",
+      jp: "フラッシュ",
+      price: "from $180",
+      note: "pre-drawn designs, 1-2 hrs",
+      color: "#F7C234",
+    },
+    {
+      label: "CUSTOM TATTOO",
+      jp: "オーダー",
+      price: "from $450",
+      note: "book 2-4 weeks ahead",
+      color: "#d7322e",
+    },
+    {
+      label: "COMMISSION",
+      jp: "委託",
+      price: "quote",
+      note: "original illustration / print",
+      color: "#3cb5b5",
+    },
   ];
 
   return (
     <section>
       <VariantLabel
         num="19"
-        name="OPEN CALL"
-        desc="Tattoo booking + commission request. Three service tiers (WALK-IN FLASH / CUSTOM / COMMISSION), inquiry form with session type selector, studio address. Lead-capture for non-print customers."
+        name="BOOKING / 予約受付"
+        desc="Renamed from OPEN CALL. Three service tiers render as ticket-stub cards (notched sides via clip-path). Inquiry form uses real site field styling — yellow borders, mono placeholders, crimson label. Studio address in small caps."
         bestIf="Want to turn visitors into tattoo clients / commission leads."
       />
       <div
@@ -4310,62 +4556,89 @@ function V19OpenCall() {
           padding: "40px 28px",
         }}
       >
-        <div className="mb-8">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "#d7322e",
+              }}
+            >
+              — booking
+            </span>
+            <h3
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
+                color: "#1a1a1a",
+                lineHeight: 0.9,
+              }}
+            >
+              BOOKING /{" "}
+              <span
+                style={{
+                  fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                  color: "#d7322e",
+                }}
+                title="yoyaku uketsuke — receiving appointments"
+              >
+                予約受付
+              </span>
+            </h3>
+          </div>
           <span
             style={{
               fontFamily: "var(--font-mono), monospace",
-              fontSize: 11,
-              letterSpacing: "0.3em",
+              fontSize: 10,
+              letterSpacing: "0.28em",
               fontWeight: 800,
-              color: "#d7322e",
+              color: "rgba(26,26,26,0.6)",
             }}
           >
-            — booking
+            STUDIO · MIRAFLORES, LIMA · BY APPT
           </span>
-          <h3
-            style={{
-              fontFamily: "var(--font-tattoo), sans-serif",
-              fontSize: "clamp(2.6rem, 8vw, 5.5rem)",
-              color: "#1a1a1a",
-              lineHeight: 0.9,
-            }}
-          >
-            OPEN CALL
-          </h3>
-          <p
-            style={{
-              fontFamily: "var(--font-display), serif",
-              fontStyle: "italic",
-              fontSize: 16,
-              color: "rgba(26,26,26,0.65)",
-              marginTop: 6,
-            }}
-          >
-            Studio: Miraflores, Lima · by appointment
-          </p>
         </div>
 
         <div
-          className="mb-10 grid gap-4"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+          className="mb-10 grid gap-6"
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))" }}
         >
           {services.map((s) => (
             <div
               key={s.label}
               style={{
-                background: "#fffef8",
-                border: "3px solid #1a1a1a",
-                boxShadow: "4px 4px 0 #d7322e",
-                padding: 20,
+                position: "relative",
+                background: s.color,
+                padding: "22px 28px",
+                clipPath:
+                  "polygon(0% 10%, 4% 0%, 100% 0%, 100% 10%, 96% 50%, 100% 90%, 100% 100%, 4% 100%, 0% 90%, 4% 50%)",
+                color: s.color === "#F7C234" ? "#1a1a1a" : "#f0ebdc",
+                textShadow: s.color === "#F7C234" ? "none" : "2px 2px 0 #1a1a1a",
+                boxShadow: "4px 4px 0 #1a1a1a",
               }}
             >
               <div
                 style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.3em",
-                  fontWeight: 800,
-                  color: "rgba(26,26,26,0.55)",
+                  fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                  fontSize: 15,
+                  fontWeight: 900,
+                  letterSpacing: "0.04em",
+                  color: s.color === "#F7C234" ? "rgba(26,26,26,0.7)" : "rgba(240,235,220,0.8)",
+                  textShadow: "none",
+                }}
+              >
+                {s.jp}
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-tattoo), sans-serif",
+                  fontSize: 24,
+                  lineHeight: 1,
+                  marginTop: 4,
+                  letterSpacing: "0.02em",
                 }}
               >
                 {s.label}
@@ -4374,9 +4647,8 @@ function V19OpenCall() {
                 style={{
                   fontFamily: "var(--font-tattoo), sans-serif",
                   fontSize: 32,
-                  color: "#d7322e",
                   lineHeight: 1,
-                  margin: "4px 0",
+                  marginTop: 10,
                 }}
               >
                 {s.price}
@@ -4385,8 +4657,10 @@ function V19OpenCall() {
                 style={{
                   fontFamily: "var(--font-display), serif",
                   fontStyle: "italic",
-                  fontSize: 14,
-                  color: "rgba(26,26,26,0.65)",
+                  fontSize: 13,
+                  marginTop: 6,
+                  textShadow: "none",
+                  opacity: 0.9,
                 }}
               >
                 {s.note}
@@ -4395,46 +4669,103 @@ function V19OpenCall() {
           ))}
         </div>
 
-        {/* Inquiry form stub */}
+        {/* Inquiry form */}
         <div
           style={{
             background: "#f0ebdc",
             border: "3px solid #1a1a1a",
-            padding: 20,
+            boxShadow: "5px 5px 0 #d7322e, 5px 5px 0 2px #1a1a1a",
+            padding: 24,
           }}
         >
-          <div
-            style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 11,
-              letterSpacing: "0.28em",
-              fontWeight: 800,
-              color: "#d7322e",
-              marginBottom: 16,
-            }}
-          >
-            REQUEST A SESSION →
+          <div className="mb-5 flex items-baseline justify-between">
+            <div
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "#d7322e",
+              }}
+            >
+              REQUEST A SESSION →
+            </div>
+            <span
+              style={{
+                fontFamily: "var(--font-display), serif",
+                fontStyle: "italic",
+                fontSize: 13,
+                color: "rgba(26,26,26,0.55)",
+              }}
+            >
+              reply within 2 business days
+            </span>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
-            {["name", "email", "session type", "tell me your idea"].map((f, i) => (
-              <div
-                key={f}
+            {[
+              { k: "name", p: "your name" },
+              { k: "email", p: "email" },
+              { k: "session type", p: "flash / custom / commission" },
+              {
+                k: "tell me your idea",
+                p: "reference links, size, placement, timing...",
+                big: true,
+              },
+            ].map((f) => (
+              <label
+                key={f.k}
                 style={{
-                  background: "#fffef8",
-                  border: "2px solid #1a1a1a",
-                  padding: "10px 14px",
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 12,
-                  color: "rgba(26,26,26,0.4)",
-                  letterSpacing: "0.08em",
-                  gridColumn: i === 3 ? "1 / -1" : undefined,
-                  minHeight: i === 3 ? 80 : undefined,
+                  display: "block",
+                  gridColumn: f.big ? "1 / -1" : undefined,
                 }}
               >
-                {f}
-              </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 9,
+                    letterSpacing: "0.3em",
+                    fontWeight: 800,
+                    color: "#d7322e",
+                    marginBottom: 4,
+                  }}
+                >
+                  {f.k.toUpperCase()}
+                </div>
+                <div
+                  style={{
+                    background: "#fffef8",
+                    border: "2px solid #1a1a1a",
+                    boxShadow: "2px 2px 0 #F7C234",
+                    padding: "10px 14px",
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 12,
+                    color: "rgba(26,26,26,0.4)",
+                    letterSpacing: "0.06em",
+                    minHeight: f.big ? 92 : undefined,
+                  }}
+                >
+                  {f.p}
+                </div>
+              </label>
             ))}
           </div>
+          <button
+            style={{
+              marginTop: 16,
+              padding: "12px 22px",
+              background: "#F7C234",
+              border: "3px solid #1a1a1a",
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: 22,
+              letterSpacing: "0.02em",
+              color: "#1a1a1a",
+              boxShadow: "4px 4px 0 #d7322e, 4px 4px 0 2px #1a1a1a",
+              cursor: "pointer",
+              lineHeight: 1,
+            }}
+          >
+            SEND INQUIRY
+          </button>
         </div>
       </div>
     </section>
@@ -4512,66 +4843,142 @@ function V20Letters() {
 
         <div
           className="grid gap-6"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}
+          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}
         >
           {letters.map((l, i) => (
-            <div
+            <article
               key={i}
+              className="relative"
               style={{
-                borderLeft: "4px solid #d7322e",
-                paddingLeft: 18,
-                paddingBlock: 8,
+                background: "#fffef8",
+                border: "1px solid rgba(26,26,26,0.3)",
+                boxShadow: "4px 6px 14px rgba(26,26,26,0.2)",
+                padding: "22px 24px 60px",
+                transform: `rotate(${i % 2 === 0 ? -0.6 : 0.6}deg)`,
               }}
             >
+              {/* Envelope address block + postmark */}
               <div
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.26em",
-                  fontWeight: 800,
-                  color: "rgba(26,26,26,0.55)",
-                  marginBottom: 4,
-                }}
+                className="mb-4 flex items-start justify-between gap-4"
+                style={{ borderBottom: "1px dashed rgba(26,26,26,0.3)", paddingBottom: 10 }}
               >
-                FROM · {l.from}
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-mono), monospace",
+                      fontSize: 9,
+                      letterSpacing: "0.3em",
+                      fontWeight: 800,
+                      color: "rgba(26,26,26,0.5)",
+                    }}
+                  >
+                    FROM
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-display), serif",
+                      fontStyle: "italic",
+                      fontSize: 18,
+                      color: "#1a1a1a",
+                      marginTop: 2,
+                    }}
+                  >
+                    {l.from}
+                  </div>
+                </div>
+                {/* Postmark circle */}
+                <div
+                  aria-hidden
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: "50%",
+                    border: "1.5px solid rgba(215,50,46,0.6)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transform: "rotate(-8deg)",
+                    flexShrink: 0,
+                    color: "rgba(215,50,46,0.65)",
+                    fontFamily: "var(--font-mono), monospace",
+                    fontWeight: 800,
+                    lineHeight: 1,
+                    textAlign: "center",
+                  }}
+                >
+                  <span style={{ fontSize: 7, letterSpacing: "0.22em" }}>RECEIVED</span>
+                  <span style={{ fontSize: 9, letterSpacing: "0.1em", marginTop: 2 }}>JUN ’26</span>
+                </div>
               </div>
+
+              {/* Question */}
               <p
                 style={{
                   fontFamily: "var(--font-display), serif",
-                  fontSize: 18,
+                  fontSize: 19,
                   lineHeight: 1.45,
                   color: "#1a1a1a",
                   margin: 0,
-                  marginBottom: 10,
+                  marginBottom: 14,
                 }}
               >
                 &ldquo;{l.q}&rdquo;
               </p>
-              <p
-                style={{
-                  fontFamily: "var(--font-display), serif",
-                  fontStyle: "italic",
-                  fontSize: 16,
-                  lineHeight: 1.5,
-                  color: "rgba(26,26,26,0.8)",
-                  margin: 0,
-                }}
-              >
-                — {l.a}
-              </p>
-              <div
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 9,
-                  letterSpacing: "0.24em",
-                  fontWeight: 800,
-                  color: "#d7322e",
-                  marginTop: 10,
-                }}
-              >
-                —TD
+
+              {/* Reply — indented with crimson bar */}
+              <div style={{ borderLeft: "3px solid #d7322e", paddingLeft: 14 }}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-display), serif",
+                    fontStyle: "italic",
+                    fontSize: 16,
+                    lineHeight: 1.55,
+                    color: "rgba(26,26,26,0.85)",
+                    margin: 0,
+                  }}
+                >
+                  {l.a}
+                </p>
               </div>
-            </div>
+
+              {/* Wax seal — crimson disk with TD initials */}
+              <svg
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  bottom: 16,
+                  right: 20,
+                  width: 52,
+                  height: 52,
+                  filter: "drop-shadow(2px 2px 0 rgba(26,26,26,0.25))",
+                }}
+                viewBox="0 0 52 52"
+              >
+                <circle cx="26" cy="26" r="23" fill="#d7322e" stroke="#1a1a1a" strokeWidth="1.2" />
+                <circle
+                  cx="26"
+                  cy="26"
+                  r="18"
+                  fill="none"
+                  stroke="rgba(240,235,220,0.35)"
+                  strokeWidth="0.8"
+                  strokeDasharray="2 2"
+                />
+                <text
+                  x="26"
+                  y="32"
+                  textAnchor="middle"
+                  fontFamily="var(--font-tattoo), sans-serif"
+                  fontWeight={700}
+                  fontSize="20"
+                  fill="#f0ebdc"
+                  letterSpacing="0.04em"
+                >
+                  TD
+                </text>
+              </svg>
+            </article>
           ))}
         </div>
 
