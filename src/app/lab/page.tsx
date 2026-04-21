@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
 import { Product } from "@/components/Product";
@@ -100,6 +101,170 @@ function LabNav() {
   );
 }
 
+/* CLI-style index of split /lab/* routes. Themes organized by category.
+   Sits at the top of /lab and links out to focused route pages. */
+const LAB_ROUTES = [
+  {
+    group: "HEADERS",
+    items: [
+      {
+        href: "/lab/headers",
+        label: "scroll / starburst / BUY / burger combos",
+        status: "live",
+      },
+    ],
+  },
+  {
+    group: "THEMES",
+    items: [
+      { href: "#lab-01", label: "01 · XEROX treatment", status: "here" },
+      { href: "#lab-02", label: "02 · TAPED treatment", status: "here" },
+      { href: "#lab-03", label: "03 · INK treatment", status: "here" },
+      { href: "#lab-04", label: "04 · MARGIN treatment", status: "here" },
+    ],
+  },
+  {
+    group: "GALLERY",
+    items: [
+      { href: "#lab-05", label: "05 · mobile stack variants", status: "here" },
+      { href: "#lab-06", label: "06 · desktop arcade", status: "here" },
+    ],
+  },
+  {
+    group: "SECTIONS",
+    items: [
+      { href: "#lab-09", label: "09 · WORK WALL", status: "here" },
+      { href: "#lab-10", label: "10 · IN THE STUDIO", status: "here" },
+      { href: "#lab-11", label: "11 · PRESS WALL", status: "here" },
+      { href: "#lab-12", label: "12 · VOLUME ROADMAP", status: "here" },
+      { href: "#lab-13", label: "13 · COLLECTOR INDEX", status: "here" },
+      { href: "#lab-14", label: "14 · FIELD GUIDE", status: "here" },
+      { href: "#lab-15", label: "15 · REFERENCES SHELF", status: "here" },
+      { href: "#lab-16", label: "16 · GUESTBOOK", status: "here" },
+      { href: "#lab-17", label: "17 · SIZE GUIDE", status: "here" },
+      { href: "#lab-18", label: "18 · DEEP SPECS", status: "here" },
+      { href: "#lab-19", label: "19 · OPEN CALL", status: "here" },
+      { href: "#lab-20", label: "20 · LETTERS (FAQ)", status: "here" },
+    ],
+  },
+  {
+    group: "MENU",
+    items: [{ href: "#lab-08", label: "08 · menu variants (A/B/C/D)", status: "here" }],
+  },
+  {
+    group: "ARCHIVE",
+    items: [{ href: "#lab-07", label: "07 · demoted / orphan components", status: "here" }],
+  },
+  {
+    group: "PENDING",
+    items: [
+      { href: "#", label: "checkout modal variants", status: "todo" },
+      { href: "#", label: "contact section rewrite", status: "todo" },
+    ],
+  },
+];
+
+function LabIndex() {
+  return (
+    <section
+      className="mx-auto max-w-6xl px-6 pt-10 pb-14 sm:px-10"
+      style={{ borderBottom: "1px dashed rgba(240,235,220,0.25)" }}
+    >
+      <div
+        className="mb-6"
+        style={{
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: 11,
+          letterSpacing: "0.32em",
+          fontWeight: 800,
+          color: "#F7C234",
+        }}
+      >
+        $ lab --list
+      </div>
+      <div
+        className="grid gap-x-10 gap-y-8"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}
+      >
+        {LAB_ROUTES.map((group) => (
+          <div key={group.group}>
+            <div
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.32em",
+                fontWeight: 800,
+                color: "rgba(240,235,220,0.55)",
+                marginBottom: 8,
+                borderBottom: "1px solid rgba(240,235,220,0.15)",
+                paddingBottom: 4,
+              }}
+            >
+              {group.group}/
+            </div>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+              {group.items.map((item, i) => {
+                const isExternal = item.href.startsWith("/lab/");
+                const isTodo = item.status === "todo";
+                const Inner = (
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      gap: 8,
+                      padding: "6px 0",
+                      fontFamily: "var(--font-mono), monospace",
+                      fontSize: 12,
+                      letterSpacing: "0.04em",
+                      color: isTodo ? "rgba(240,235,220,0.35)" : "rgba(240,235,220,0.85)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span style={{ color: "#F7C234" }}>
+                      {isExternal ? "→" : isTodo ? "○" : "·"}
+                    </span>
+                    <span style={{ flex: 1 }}>{item.label}</span>
+                    <span
+                      style={{
+                        fontSize: 9,
+                        letterSpacing: "0.2em",
+                        fontWeight: 800,
+                        color:
+                          item.status === "live"
+                            ? "#5baa4f"
+                            : item.status === "todo"
+                              ? "rgba(240,235,220,0.35)"
+                              : "rgba(240,235,220,0.5)",
+                      }}
+                    >
+                      [{item.status}]
+                    </span>
+                  </span>
+                );
+                return (
+                  <li key={i}>
+                    {isTodo ? (
+                      Inner
+                    ) : isExternal ? (
+                      <Link href={item.href} style={{ textDecoration: "none" }}>
+                        {Inner}
+                      </Link>
+                    ) : (
+                      <a href={item.href} style={{ textDecoration: "none" }}>
+                        {Inner}
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function LabPage() {
   return (
     <CheckoutProvider>
@@ -119,6 +284,7 @@ export default function LabPage() {
         </svg>
 
         <LabHeader />
+        <LabIndex />
         <LabNav />
         <div id="lab-01">
           <V01Xerox />

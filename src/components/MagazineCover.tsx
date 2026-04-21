@@ -88,7 +88,9 @@ function PreOrderStarburst({
         transform: `rotate(${rotate}deg)`,
       }}
     >
-      <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
+      {/* viewBox shifted y+20 so the star's top points get cropped — gives a
+           "stamp popping out of the page" feel (popup effect). */}
+      <svg viewBox="0 20 100 100" width={size} height={size} aria-hidden>
         <defs>
           <clipPath id={clipId}>
             <polygon points={STAR_POINTS} />
@@ -529,7 +531,7 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
               zIndex: 10,
             }}
           >
-            <PreOrderStarburst onClick={() => dispatch({ type: "OPEN" })} size={240} />
+            <PreOrderStarburst onClick={() => dispatch({ type: "OPEN" })} size={200} />
           </div>
         </div>
       </div>
