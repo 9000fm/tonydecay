@@ -88,9 +88,7 @@ function PreOrderStarburst({
         transform: `rotate(${rotate}deg)`,
       }}
     >
-      {/* viewBox shifted y+20 so the star's top points get cropped — gives a
-           "stamp popping out of the page" feel (popup effect). */}
-      <svg viewBox="0 20 100 100" width={size} height={size} aria-hidden>
+      <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
         <defs>
           <clipPath id={clipId}>
             <polygon points={STAR_POINTS} />
@@ -461,7 +459,7 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
             padding: "54px 28px 14px",
           }}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:pr-[236px]">
             <div
               style={{
                 fontFamily: "var(--font-mono), monospace",
@@ -519,16 +517,17 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
             </div>
           </div>
 
-          {/* Desktop starburst — absolutely positioned so its 240px size can
-             protrude below the masthead's ink bottom border into the gallery
-             section without making the masthead itself taller. */}
+          {/* Desktop starburst — z-index 100 lifts it above the pink marquee
+             (z-[81]) so the star's top crown peeks up past the marquee bottom
+             edge. Top pulled from 54 → 16 so the crown actually extends into
+             the marquee band. Stamp-slapped-on-top "popup" feel. */}
           <div
             className="hidden lg:block"
             style={{
               position: "absolute",
-              right: 28,
-              top: 54,
-              zIndex: 10,
+              right: 88,
+              top: 36,
+              zIndex: 100,
             }}
           >
             <PreOrderStarburst onClick={() => dispatch({ type: "OPEN" })} size={200} />
