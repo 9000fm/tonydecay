@@ -1,6 +1,7 @@
 # Tony Decay - Brand Guidelines
 
 ## Identity
+
 - Premium limited-edition art print collection (Vol. I - 100 sets at $300)
 - Tone: gallery meets tattoo shop. Serious, collectible, underground.
 - Visual language: zine / blueprint. Heavy wireframe aesthetic (Salt&Bits). Sharp cuts between dark and cream.
@@ -11,44 +12,47 @@
 All tokens live in `src/app/globals.css` as `--color-*` vars and are exposed as Tailwind classes (`bg-paper`, `text-ink`, `border-royal`, etc.). Never hardcode hex in `style={{}}` for a color that exists here.
 
 ### Surfaces
-| Token         | Hex       | Usage                                      |
-|---------------|-----------|--------------------------------------------|
-| `bg`          | `#0D1B2D` | Dark sections (Gallery, Artist, FAQ, Footer) |
-| `bg-alt`      | `#0A1520` | Nested dark cards, deep-dive stage         |
-| `paper`       | `#F0EBDC` | Light sections (Hero, Product, Contact)    |
-| `paper-warm`  | `#ECE4D0` | Featured print backdrop (Hero wireframe box) |
-| `paper-dark`  | `#DDD3BD` | Scrollbar thumb, subtle light accents      |
+
+| Token        | Hex       | Usage                                        |
+| ------------ | --------- | -------------------------------------------- |
+| `bg`         | `#0D1B2D` | Dark sections (Gallery, Artist, FAQ, Footer) |
+| `bg-alt`     | `#0A1520` | Nested dark cards, deep-dive stage           |
+| `paper`      | `#F0EBDC` | Light sections (Hero, Product, Contact)      |
+| `paper-warm` | `#ECE4D0` | Featured print backdrop (Hero wireframe box) |
+| `paper-dark` | `#DDD3BD` | Scrollbar thumb, subtle light accents        |
 
 ### Ink (text on light)
-| Token        | Hex       | Usage                          |
-|--------------|-----------|--------------------------------|
-| `ink`        | `#1A1A1A` | Primary text, borders, wordmark |
-| `ink-soft`   | `#4A4438` | Body copy, sub-text            |
-| `ink-faint`  | `#8A8170` | Captions, disabled state       |
 
-### Bright print palette
+| Token       | Hex       | Usage                           |
+| ----------- | --------- | ------------------------------- |
+| `ink`       | `#1A1A1A` | Primary text, borders, wordmark |
+| `ink-soft`  | `#4A4438` | Body copy, sub-text             |
+| `ink-faint` | `#8A8170` | Captions, disabled state        |
+
+    ### Bright print palette
+
 Extracted from the actual prints. Used sparingly as accents.
-| Token          | Hex       | Role                                    |
+| Token | Hex | Role |
 |----------------|-----------|-----------------------------------------|
-| `royal`        | `#2B5DAE` | **PRIMARY CTA.** PRE-ORDER, RESERVE YOURS, SHOP NOW pills. Hover link color on dark. |
-| `royal-deep`   | `#1E3F7A` | Hover state for royal pills             |
-| `crimson`      | `#D7322E` | Emphasis only (not a CTA anymore)       |
-| `coral`        | `#F2A2BC` | Soft accent (reserved)                  |
-| `gold`         | `#F7C234` | Selection highlight, occasional accent  |
-| `leaf`         | `#5BAA4F` | Occasional accent                       |
-| `teal`         | `#3CB5B5` | Occasional accent                       |
+| `royal` | `#2B5DAE` | **PRIMARY CTA.** PRE-ORDER, RESERVE YOURS, SHOP NOW pills. Hover link color on dark. |
+| `royal-deep` | `#1E3F7A` | Hover state for royal pills |
+| `crimson` | `#D7322E` | Emphasis only (not a CTA anymore) |
+| `coral` | `#F2A2BC` | Soft accent (reserved) |
+| `gold` | `#F7C234` | Selection highlight, occasional accent |
+| `leaf` | `#5BAA4F` | Occasional accent |
+| `teal` | `#3CB5B5` | Occasional accent |
 
 ## Fonts
 
 5 families. Every font has a specific job. Don't cross lanes.
 
-| Role      | Family          | Where it's used                                          |
-|-----------|-----------------|----------------------------------------------------------|
+| Role      | Family          | Where it's used                                                    |
+| --------- | --------------- | ------------------------------------------------------------------ |
 | Display   | Anton (tattoo)  | All big headings: TONY DECAY, VOL. I, FAQ, SAY HI, Footer wordmark |
-| Body      | DM Sans         | Body copy, form fields, menu items                       |
-| Mono      | JetBrains Mono  | Marquee, labels, counters, CTA pill text, meta rows      |
-| Editorial | Fraunces italic | Artist quote (single use — pull-quote card)              |
-| Arcade    | Sigmar          | Rare decorative accent — reserve for one special moment  |
+| Body      | DM Sans         | Body copy, form fields, menu items                                 |
+| Mono      | JetBrains Mono  | Marquee, labels, counters, CTA pill text, meta rows                |
+| Editorial | Fraunces italic | Artist quote (single use — pull-quote card)                        |
+| Arcade    | Sigmar          | Rare decorative accent — reserve for one special moment            |
 
 ## Wireframe border system
 
@@ -64,19 +68,24 @@ The whole site leans into a 2px border aesthetic inspired by Salt&Bits — zine/
 Pill system. Rounded-full, mono uppercase text, tight letter-spacing. Never repeat the same CTA label in adjacent sections — vary placement for premium feel.
 
 ### Primary (royal)
+
 `bg-royal text-paper hover:bg-royal-deep rounded-full`
+
 - **PRE-ORDER** — Navbar, Hero
 - **RESERVE YOURS - $300** — Product
 - **SHOP NOW** — available alt
 - **NOTIFY ME** — Contact newsletter
 
 ### Secondary (ink / outline)
+
 `border-2 border-ink text-ink hover:bg-ink hover:text-paper` OR `bg-ink text-paper hover:bg-royal`
+
 - **SEE THE PRINTS** — Hero (scrolls to #gallery)
 - **SEND MESSAGE** — Contact form
 - **LEARN MORE** — available alt
 
 ### Rules
+
 - Hero uses Pre-Order (primary) + See the Prints (secondary).
 - Product uses Reserve Yours - $300 (primary, bigger).
 - Contact uses Send Message (secondary ink) + Notify Me (primary royal).
@@ -101,7 +110,9 @@ Pill system. Rounded-full, mono uppercase text, tight letter-spacing. Never repe
 - Blob wobble: visible but subtle (~10-15% border-radius variation, ~18s cycle).
 
 ### Legitimate animation exceptions (keep as-is)
+
 These override the no-fade rule for specific, intentional reasons:
+
 - **CheckoutModal entrance** — modal needs an overlay fade.
 - **FAQ accordion** — height + opacity animation on answer open/close (height requires opacity for smoothness).
 - **MobileMenu blob expansion** — white blob with `mix-blend-difference` creates the color-shift reveal; blob + solid + content use a coordinated timeline.
@@ -117,6 +128,7 @@ These override the no-fade rule for specific, intentional reasons:
 ## Icon system
 
 Unified `+` / `-` language across the whole UI:
+
 - **Burger (Navbar)**: `+` in a 40x40 2px box. Opens mobile menu.
 - **MobileMenu close**: `-` (single horizontal line) in a 40x40 2px box. Matches the burger so it reads as "the same button, state-shifted".
 - **FAQ accordion**: `+` collapses to `-` via `scaleY(0)` on the vertical bar. Same visual language.
