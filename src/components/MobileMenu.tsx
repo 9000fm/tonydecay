@@ -3,24 +3,31 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
+import { useCheckout } from "@/hooks/useCheckout";
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const NAV_LINKS = [
-  { label: "WORK", href: "#gallery" },
-  { label: "ABOUT", href: "#artist" },
-  { label: "SHOP", href: "#package" },
-  { label: "FAQ", href: "#faq" },
-  { label: "CONTACT", href: "#contact" },
+// Simplified menu: WORK removed until the portfolio section is built. SHOP is
+// now an action (opens checkout modal), not a scroll target.
+type NavItem =
+  | { label: string; kind: "anchor"; href: string }
+  | { label: string; kind: "checkout" };
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "ABOUT", kind: "anchor", href: "#artist" },
+  { label: "SHOP", kind: "checkout" },
+  { label: "FAQ", kind: "anchor", href: "#faq" },
+  { label: "CONTACT", kind: "anchor", href: "#contact" },
 ];
 
 const MENU_BG = "#1A1A1E";
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const { dispatch } = useCheckout();
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -82,12 +89,20 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen, onClose]);
 
-  const handleLinkClick = (e: React.MouseEvent, href: string) => {
+  const handleAnchorClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     onClose();
     setTimeout(() => {
       const el = document.querySelector(href);
       if (el) el.scrollIntoView({ behavior: "smooth" });
+    }, 550);
+  };
+
+  const handleCheckoutClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClose();
+    setTimeout(() => {
+      dispatch({ type: "OPEN" });
     }, 550);
   };
 
@@ -112,26 +127,51 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       >
         {/* Nav links — always at final position, no entrance animation */}
         <nav className="flex flex-col items-center gap-4 sm:gap-5">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleLinkClick(e, link.href)}
-              className="font-tattoo text-5xl leading-none uppercase transition-colors duration-300 sm:text-6xl md:text-7xl"
-              style={{
-                letterSpacing: "0.02em",
-                color: "rgba(255,255,255,0.85)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.4)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.85)";
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const commonClass =
+              "font-tattoo text-5xl leading-none uppercase transition-colors duration-300 sm:text-6xl md:text-7xl cursor-pointer";
+            const commonStyle = {
+              letterSpacing: "0.02em",
+              color: "rgba(255,255,255,0.85)",
+              background: "transparent",
+              border: "none",
+              padding: 0,
+            } as React.CSSProperties;
+            const onEnter = (e: React.MouseEvent<HTMLElement>) => {
+              e.currentTarget.style.color = "rgba(255,255,255,0.4)";
+            };
+            const onLeave = (e: React.MouseEvent<HTMLElement>) => {
+              e.currentTarget.style.color = "rgba(255,255,255,0.85)";
+            };
+            if (item.kind === "checkout") {
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={handleCheckoutClick}
+                  className={commonClass}
+                  style={commonStyle}
+                  onMouseEnter={onEnter}
+                  onMouseLeave={onLeave}
+                >
+                  {item.label}
+                </button>
+              );
+            }
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleAnchorClick(e, item.href)}
+                className={commonClass}
+                style={commonStyle}
+                onMouseEnter={onEnter}
+                onMouseLeave={onLeave}
+              >
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Instagram icon */}
