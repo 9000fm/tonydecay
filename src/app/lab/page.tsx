@@ -2066,149 +2066,349 @@ function ArchiveCard({
 }
 
 /* ================== 08 · MENU VARIANTS ==================
-   Concept directions for reworking the MobileMenu. Live menu today is plain
-   Anton uppercase stacked. These are four different visual/structural moves
-   that all stay inside the same aesthetic. */
+   Four full visual previews of MobileMenu rework directions. Each mock is
+   shown in a phone-frame so the menu treatment reads at real size. */
+
+const IG_SVG_PATH =
+  "M12 2C9.28 2 8.94 2.01 7.88 2.06C6.81 2.11 6.09 2.28 5.46 2.52C4.8 2.78 4.24 3.12 3.68 3.68C3.12 4.24 2.78 4.8 2.52 5.46C2.28 6.09 2.11 6.81 2.06 7.88C2.01 8.94 2 9.28 2 12C2 14.72 2.01 15.06 2.06 16.12C2.11 17.19 2.28 17.91 2.52 18.54C2.78 19.2 3.12 19.76 3.68 20.32C4.24 20.88 4.8 21.22 5.46 21.48C6.09 21.72 6.81 21.89 7.88 21.94C8.94 21.99 9.28 22 12 22C14.72 22 15.06 21.99 16.12 21.94C17.19 21.89 17.91 21.72 18.54 21.48C19.2 21.22 19.76 20.88 20.32 20.32C20.88 19.76 21.22 19.2 21.48 18.54C21.72 17.91 21.89 17.19 21.94 16.12C21.99 15.06 22 14.72 22 12C22 9.28 21.99 8.94 21.94 7.88C21.89 6.81 21.72 6.09 21.48 5.46C21.22 4.8 20.88 4.24 20.32 3.68C19.76 3.12 19.2 2.78 18.54 2.52C17.91 2.28 17.19 2.11 16.12 2.06C15.06 2.01 14.72 2 12 2ZM12 4.16C14.67 4.16 14.99 4.17 16.04 4.22C17.02 4.26 17.55 4.43 17.9 4.56C18.37 4.74 18.7 4.96 19.05 5.31C19.4 5.66 19.62 5.99 19.8 6.46C19.93 6.81 20.1 7.34 20.14 8.32C20.19 9.38 20.2 9.69 20.2 12.36C20.2 15.03 20.19 15.34 20.14 16.4C20.1 17.38 19.93 17.91 19.8 18.26C19.62 18.73 19.4 19.06 19.05 19.41C18.7 19.76 18.37 19.98 17.9 20.16C17.55 20.29 17.02 20.46 16.04 20.5C14.99 20.55 14.67 20.56 12 20.56C9.33 20.56 9.01 20.55 7.96 20.5C6.98 20.46 6.45 20.29 6.1 20.16C5.63 19.98 5.3 19.76 4.95 19.41C4.6 19.06 4.38 18.73 4.2 18.26C4.07 17.91 3.9 17.38 3.86 16.4C3.81 15.34 3.8 15.03 3.8 12.36C3.8 9.69 3.81 9.38 3.86 8.32C3.9 7.34 4.07 6.81 4.2 6.46C4.38 5.99 4.6 5.66 4.95 5.31C5.3 4.96 5.63 4.74 6.1 4.56C6.45 4.43 6.98 4.26 7.96 4.22C9.01 4.17 9.33 4.16 12 4.16ZM12 6.86C9.16 6.86 6.86 9.16 6.86 12C6.86 14.84 9.16 17.14 12 17.14C14.84 17.14 17.14 14.84 17.14 12C17.14 9.16 14.84 6.86 12 6.86ZM12 15C10.34 15 9 13.66 9 12C9 10.34 10.34 9 12 9C13.66 9 15 10.34 15 12C15 13.66 13.66 15 12 15ZM18.84 6.62C18.84 7.34 18.26 7.92 17.54 7.92C16.82 7.92 16.24 7.34 16.24 6.62C16.24 5.9 16.82 5.32 17.54 5.32C18.26 5.32 18.84 5.9 18.84 6.62Z";
+
+function PhoneFrame({
+  tag,
+  title,
+  children,
+  bg = "#1A1A1E",
+}: {
+  tag: string;
+  title: string;
+  children: React.ReactNode;
+  bg?: string;
+}) {
+  return (
+    <div
+      style={{
+        background: "rgba(240,235,220,0.04)",
+        border: "1px solid rgba(240,235,220,0.2)",
+        padding: 16,
+      }}
+    >
+      <div className="mb-3 flex items-baseline gap-3">
+        <span
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 11,
+            letterSpacing: "0.3em",
+            fontWeight: 800,
+            color: "#F7C234",
+          }}
+        >
+          {tag}
+        </span>
+        <span
+          style={{
+            fontFamily: "var(--font-tattoo), sans-serif",
+            fontSize: 22,
+            color: "#f0ebdc",
+            letterSpacing: "0.02em",
+          }}
+        >
+          {title}
+        </span>
+      </div>
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: "9 / 16",
+          maxWidth: 320,
+          margin: "0 auto",
+          background: bg,
+          border: "3px solid #1a1a1a",
+          borderRadius: 14,
+          overflow: "hidden",
+          boxShadow: "6px 6px 0 rgba(26,26,26,0.4)",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function IGIcon({
+  size = 38,
+  color = "rgba(255,255,255,0.55)",
+}: {
+  size?: number;
+  color?: string;
+}) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden>
+      <path d={IG_SVG_PATH} />
+    </svg>
+  );
+}
+
+function MenuVariantA() {
+  const items = [
+    { jp: "作家", en: "ABOUT", tr: "sakka — artist / maker" },
+    { jp: "店", en: "SHOP", tr: "mise — shop / store" },
+    { jp: "質問", en: "FAQ", tr: "shitsumon — questions" },
+    { jp: "連絡", en: "CONTACT", tr: "renraku — contact / get in touch" },
+  ];
+  return (
+    <PhoneFrame tag="A" title="JP LABEL">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-6 px-6">
+        {items.map((item) => (
+          <div key={item.en} className="flex flex-col items-center">
+            <span
+              title={item.tr}
+              style={{
+                fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                fontSize: 44,
+                color: "rgba(255,255,255,0.92)",
+                lineHeight: 1,
+                letterSpacing: "0.04em",
+                textDecoration: "underline dotted",
+                textDecorationColor: "rgba(247,194,52,0.35)",
+                textUnderlineOffset: 6,
+              }}
+            >
+              {item.jp}
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 10,
+                letterSpacing: "0.32em",
+                fontWeight: 800,
+                color: "rgba(255,255,255,0.5)",
+                marginTop: 4,
+              }}
+            >
+              {item.en}
+            </span>
+          </div>
+        ))}
+        <div className="mt-4">
+          <IGIcon />
+        </div>
+      </div>
+    </PhoneFrame>
+  );
+}
+
+function MenuVariantB() {
+  const items = ["ABOUT", "SHOP", "FAQ", "CONTACT"];
+  return (
+    <PhoneFrame tag="B" title="NUMBERED STAGES">
+      <div className="flex h-full w-full flex-col items-stretch justify-center gap-4 px-8">
+        {items.map((label, i) => (
+          <div
+            key={label}
+            className="flex items-baseline gap-4"
+            style={{ borderBottom: "1px solid rgba(215,50,46,0.4)", paddingBottom: 8 }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: 34,
+                color: "var(--color-crimson)",
+                lineHeight: 1,
+                minWidth: 44,
+              }}
+            >
+              0{i + 1}
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-tattoo), sans-serif",
+                fontSize: 38,
+                color: "rgba(255,255,255,0.92)",
+                lineHeight: 1,
+                letterSpacing: "0.02em",
+                flex: 1,
+              }}
+            >
+              {label}
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                color: "rgba(255,255,255,0.4)",
+              }}
+            >
+              →
+            </span>
+          </div>
+        ))}
+        <div className="mt-4 flex justify-center">
+          <IGIcon size={32} />
+        </div>
+      </div>
+    </PhoneFrame>
+  );
+}
+
+function MenuVariantC() {
+  const items = [
+    { en: "ABOUT", jp: "作家", bg: "#d7322e", rot: -2 },
+    { en: "SHOP", jp: "店", bg: "#2b5dae", rot: 2 },
+    { en: "FAQ", jp: "質問", bg: "#5baa4f", rot: 1.5 },
+    { en: "CONTACT", jp: "連絡", bg: "#f7c234", rot: -1.5 },
+  ];
+  return (
+    <PhoneFrame tag="C" title="STAMP GRID">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-6 px-5">
+        <div
+          className="grid w-full"
+          style={{
+            gridTemplateColumns: "1fr 1fr",
+            gap: 14,
+          }}
+        >
+          {items.map((item) => (
+            <div
+              key={item.en}
+              style={{
+                position: "relative",
+                aspectRatio: "1 / 1",
+                background: item.bg,
+                border: "3px solid #1a1a1a",
+                boxShadow: "4px 4px 0 #1a1a1a",
+                transform: `rotate(${item.rot}deg)`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+            >
+              <span
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+                  fontSize: 96,
+                  color: "rgba(26,26,26,0.22)",
+                  lineHeight: 1,
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -54%)",
+                }}
+              >
+                {item.jp}
+              </span>
+              <span
+                style={{
+                  position: "relative",
+                  fontFamily: "var(--font-tattoo), sans-serif",
+                  fontSize: 22,
+                  color: item.bg === "#f7c234" ? "var(--color-ink)" : "var(--color-paper)",
+                  letterSpacing: "0.04em",
+                  lineHeight: 1,
+                }}
+              >
+                {item.en}
+              </span>
+            </div>
+          ))}
+        </div>
+        <IGIcon size={32} />
+      </div>
+    </PhoneFrame>
+  );
+}
+
+function MenuVariantD() {
+  const items = [
+    { en: "ABOUT", sub: "the artist", rot: -1.5 },
+    { en: "SHOP", sub: "the prints", rot: 1 },
+    { en: "FAQ", sub: "the questions", rot: -0.8 },
+    { en: "CONTACT", sub: "reach out", rot: 1.2 },
+  ];
+  return (
+    <PhoneFrame tag="D" title="TAPED INDEX CARDS" bg="#1a1a1e">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 px-6">
+        {items.map((item, i) => (
+          <div
+            key={item.en}
+            style={{
+              position: "relative",
+              width: "100%",
+              background: "#fffef8",
+              padding: "14px 18px",
+              border: "1px solid rgba(26,26,26,0.25)",
+              boxShadow: "3px 4px 10px rgba(0,0,0,0.4)",
+              transform: `rotate(${item.rot}deg)`,
+            }}
+          >
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: -8,
+                left: "50%",
+                transform: `translateX(-50%) rotate(${i % 2 === 0 ? -3 : 3}deg)`,
+                width: 80,
+                height: 14,
+                background: "rgba(247,194,52,0.6)",
+                border: "1px solid rgba(26,26,26,0.28)",
+              }}
+            />
+            <div className="flex items-baseline justify-between gap-3">
+              <span
+                style={{
+                  fontFamily: "var(--font-tattoo), sans-serif",
+                  fontSize: 28,
+                  color: "var(--color-ink)",
+                  lineHeight: 1,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {item.en}
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-display), serif",
+                  fontStyle: "italic",
+                  fontSize: 13,
+                  color: "rgba(26,26,26,0.55)",
+                }}
+              >
+                {item.sub} →
+              </span>
+            </div>
+          </div>
+        ))}
+        <div className="mt-2">
+          <IGIcon size={30} />
+        </div>
+      </div>
+    </PhoneFrame>
+  );
+}
 
 function V08MenuVariants() {
-  const variants: {
-    num: string;
-    name: string;
-    summary: string;
-    details: string[];
-  }[] = [
-    {
-      num: "A",
-      name: "JP LABEL",
-      summary:
-        "Each menu item shows its Japanese label first (big) + English subtitle small. Hover reveals tooltip translation per the JP helper already used in Artist.",
-      details: [
-        "作家 (sakka) — ABOUT",
-        "店 (mise) — SHOP",
-        "Q&A (shitsumon) — FAQ",
-        "連絡 (renraku) — CONTACT",
-        "Anton for JP, JetBrains Mono small-caps for English sub.",
-        "Feel: magazine column heads. Reinforces the whole JP game-mag frame.",
-      ],
-    },
-    {
-      num: "B",
-      name: "NUMBERED STAGES",
-      summary:
-        "Arcade-mag numbered list — each item prefixed 01 · / 02 · etc. Large number in crimson, item name in ink. Feels like a Famitsu table of contents.",
-      details: [
-        "01 · ABOUT",
-        "02 · SHOP",
-        "03 · FAQ",
-        "04 · CONTACT",
-        "Number in crimson Anton, name in cream Anton. Underline per row in crimson.",
-        "Feel: magazine TOC. Ordered reading sequence.",
-      ],
-    },
-    {
-      num: "C",
-      name: "STAMP GRID",
-      summary:
-        "2x2 grid of square rubber-stamped tiles — ABOUT / SHOP / FAQ / CONTACT each live inside a tilted 4-color stamp box (crimson / royal / leaf / gold). Tap = ink-stamp press effect.",
-      details: [
-        "Each item = 180×180 colored square, tilted ±2°, ink outline.",
-        "Japanese glyph behind the English word at 30% opacity as decoration.",
-        "Tap: 80ms scale-down 'stamp press' micro-animation.",
-        "Feel: flash sheet / stamp panel. Visually loudest option.",
-      ],
-    },
-    {
-      num: "D",
-      name: "TAPED INDEX CARDS",
-      summary:
-        "Each menu item is an index card taped at the top with masking tape (validated scrapbook style). Stacked vertically, slight tilts. Hand-drawn arrow after each label.",
-      details: [
-        "White paper cards, each with a tape strip.",
-        "Big Anton label + a tiny italic subtitle (e.g. 'the artist', 'the prints', 'the questions', 'the post').",
-        "Hover: card lifts 4° + tape shadow deepens.",
-        "Feel: scrapbook / notebook. Most tactile option; reuses approved taped treatment.",
-      ],
-    },
-  ];
-
   return (
     <section>
       <VariantLabel
         num="08"
         name="MENU VARIANTS"
-        desc="Four concept directions for reworking the menu that opens from the burger. Live version today is plain Anton stacked centered. Each concept is a spec, not a build — pick one and I implement."
-        bestIf="Pick the direction for the menu rework."
+        desc="Four full visual previews of the MobileMenu rework. Each mock is rendered inside a phone-frame so the treatment reads at real size. Same items everywhere (ABOUT / SHOP / FAQ / CONTACT + IG) — four different visual treatments. Pick a letter and I promote it."
+        bestIf="Pick the menu visual direction."
       />
       <div
-        className="mx-auto max-w-5xl px-7 pb-16 sm:px-10"
+        className="mx-auto max-w-6xl px-7 pb-16 sm:px-10"
         style={{
           display: "grid",
           gap: 24,
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
         }}
       >
-        {variants.map((v) => (
-          <div
-            key={v.num}
-            style={{
-              background: "rgba(240,235,220,0.05)",
-              border: "1px solid rgba(240,235,220,0.2)",
-              padding: 20,
-            }}
-          >
-            <div className="mb-3">
-              <span
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 11,
-                  letterSpacing: "0.3em",
-                  fontWeight: 800,
-                  color: "rgba(240,235,220,0.55)",
-                }}
-              >
-                {v.num}
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-tattoo), sans-serif",
-                  fontSize: 26,
-                  color: "#f0ebdc",
-                  letterSpacing: "0.02em",
-                  marginLeft: 12,
-                }}
-              >
-                {v.name}
-              </span>
-            </div>
-            <p
-              style={{
-                fontFamily: "var(--font-display), serif",
-                fontSize: 15,
-                lineHeight: 1.5,
-                color: "rgba(240,235,220,0.82)",
-                marginBottom: 14,
-              }}
-            >
-              {v.summary}
-            </p>
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                fontFamily: "var(--font-mono), monospace",
-                fontSize: 12,
-                lineHeight: 1.7,
-                color: "rgba(240,235,220,0.65)",
-                letterSpacing: "0.02em",
-              }}
-            >
-              {v.details.map((d) => (
-                <li key={d}>· {d}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <MenuVariantA />
+        <MenuVariantB />
+        <MenuVariantC />
+        <MenuVariantD />
       </div>
     </section>
   );
