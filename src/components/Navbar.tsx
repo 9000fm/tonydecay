@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { MobileMenu } from "./MobileMenu";
-import { MarqueeBar } from "./MarqueeBar";
 import { useCheckout } from "@/hooks/useCheckout";
 import { useScramble } from "@/hooks/useScramble";
 
@@ -36,25 +35,7 @@ export function Navbar() {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        // Marquee shows while the middle of the hero print is still below the navbar.
-        // Once the user has scrolled past the print's vertical midpoint, marquee hides.
-        // Pick the first VISIBLE hero-print element (mobile fan and desktop deck both tag).
-        const heroPrints = document.querySelectorAll<HTMLElement>("[data-hero-print]");
-        let rect: DOMRect | null = null;
-        for (const el of heroPrints) {
-          const r = el.getBoundingClientRect();
-          if (r.width > 0 && r.height > 0) {
-            rect = r;
-            break;
-          }
-        }
-        if (rect) {
-          // Marquee visible while 3/5 (60%) of the hero print is still below the navbar.
-          // Once user scrolls past that point, marquee hides.
-          setAtTop(rect.top + rect.height * 0.6 > 90);
-        } else {
-          setAtTop(window.scrollY < 200);
-        }
+        setAtTop(window.scrollY < 60);
       });
     };
     tick();
@@ -67,20 +48,10 @@ export function Navbar() {
     };
   }, []);
 
-  const navTop = atTop ? 28 : 0;
+  const navTop = atTop ? 32 : 0;
 
   return (
     <>
-      {/* Marquee — conditional render (no fade) */}
-      {!navHidden && (
-        <div
-          className="fixed top-0 right-0 left-0 z-[99] overflow-hidden transition-[max-height] duration-500 ease-out"
-          style={{ maxHeight: atTop ? 28 : 0 }}
-        >
-          <MarqueeBar />
-        </div>
-      )}
-
       {/* LEFT — MENU/CERRAR toggle, same pixel position always, text scramble on change */}
       <div
         className="fixed left-0 z-[120] flex h-14 items-center px-4 transition-[top] duration-500 ease-out sm:h-16 sm:px-6"
@@ -138,7 +109,7 @@ export function Navbar() {
               color: "#000000",
             }}
           >
-            PRE-ORDER
+            ORDER NOW
           </button>
         </div>
       )}
