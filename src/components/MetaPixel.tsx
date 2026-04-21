@@ -28,6 +28,8 @@ fbq('init', '${PIXEL_ID}');
 fbq('track', 'PageView');`}
       </Script>
       <noscript>
+        {/* Meta requires a plain <img> for the pixel fallback — next/image would break tracking */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           height="1"
           width="1"
@@ -40,10 +42,7 @@ fbq('track', 'PageView');`}
   );
 }
 
-export function trackEvent(
-  eventName: string,
-  params?: Record<string, unknown>
-) {
+export function trackEvent(eventName: string, params?: Record<string, unknown>) {
   if (typeof window !== "undefined" && window.fbq) {
     window.fbq("track", eventName, params);
   }

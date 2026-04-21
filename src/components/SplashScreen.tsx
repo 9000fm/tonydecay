@@ -34,12 +34,14 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
       try {
         isFirst = !sessionStorage.getItem("td-visited");
         if (isFirst) sessionStorage.setItem("td-visited", "1");
-      } catch { /* SSR / private mode fallback — treat as first */ }
+      } catch {
+        /* SSR / private mode fallback — treat as first */
+      }
 
-      const D1 = isFirst ? 2.0 : 0.5;   // dark beat 1
-      const DL = isFirst ? 3.0 : 1.0;    // logo hold
-      const D2 = isFirst ? 2.0 : 0.5;    // dark beat 2
-      const IR = isFirst ? 1.9 : 1.2;    // iris duration
+      const D1 = isFirst ? 2.0 : 0.5; // dark beat 1
+      const DL = isFirst ? 3.0 : 1.0; // logo hold
+      const D2 = isFirst ? 2.0 : 0.5; // dark beat 2
+      const IR = isFirst ? 1.9 : 1.2; // iris duration
 
       const tLogoOn = D1;
       const tLogoOff = D1 + DL;
@@ -62,15 +64,20 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
       tl.set(firma, { display: "block" }, tLogoOn);
       // Logo pops away
       tl.set(firma, { display: "none" }, tLogoOff);
-      // Container transparent + iris primes + expands
+      // Iris primes FIRST (so shadow covers before container goes transparent — prevents right-edge flash),
+      // then container transparent, then iris expands.
+      tl.set(iris, { boxShadow: "0 0 0 200vmax var(--color-ink)" }, tIris);
       tl.set(container, { backgroundColor: "transparent" }, tIris);
-      tl.set(iris, { boxShadow: "0 0 0 100vmax var(--color-ink)" }, tIris);
-      tl.to(iris, {
-        width: "300vmax",
-        height: "300vmax",
-        duration: IR,
-        ease: "power3.inOut",
-      }, tIris);
+      tl.to(
+        iris,
+        {
+          width: "300vmax",
+          height: "300vmax",
+          duration: IR,
+          ease: "power3.inOut",
+        },
+        tIris,
+      );
     });
 
     return () => {
@@ -105,7 +112,7 @@ export function SplashScreen({ onEnter }: SplashScreenProps) {
         ref={firmaRef}
         src="/gallery/Firma.webp"
         alt="Tony Decay"
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-20 sm:h-24 w-auto object-contain"
+        className="absolute top-1/2 left-1/2 h-20 w-auto -translate-x-1/2 -translate-y-1/2 object-contain sm:h-24"
         style={{ display: "none", filter: "brightness(0) invert(1)" }}
       />
     </div>

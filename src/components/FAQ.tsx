@@ -3,8 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 const faqs = [
   {
     question: "What's included in the collection?",
@@ -60,7 +58,7 @@ function AccordionItem({
       gsap.fromTo(
         content,
         { height: 0, opacity: 0 },
-        { height, opacity: 1, duration: 0.5, ease: "power3.out" }
+        { height, opacity: 1, duration: 0.5, ease: "power3.out" },
       );
     } else {
       gsap.to(content, {
@@ -73,16 +71,16 @@ function AccordionItem({
   }, [isOpen]);
 
   return (
-    <div className="border-b-2 border-paper/30 last:border-b-0 px-4 sm:px-6">
+    <div className="border-paper/30 border-b-2 px-4 last:border-b-0 sm:px-6">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-5 sm:py-6 text-left group"
+        className="group flex w-full items-center justify-between py-5 text-left sm:py-6"
       >
-        <span className="font-sans text-base sm:text-lg text-paper/80 group-hover:text-paper transition-colors duration-300 pr-6">
+        <span className="text-paper/80 group-hover:text-paper pr-6 font-sans text-base transition-colors duration-300 sm:text-lg">
           {faq.question}
         </span>
         <span
-          className="text-paper/40 shrink-0 relative inline-block transition-transform duration-300 ease-out"
+          className="text-paper/40 relative inline-block shrink-0 transition-transform duration-300 ease-out"
           style={{
             width: 16,
             height: 16,
@@ -91,11 +89,11 @@ function AccordionItem({
           aria-hidden
         >
           <span
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-current"
+            className="absolute top-1/2 left-0 -translate-y-1/2 bg-current"
             style={{ width: 16, height: 1.5 }}
           />
           <span
-            className="absolute left-1/2 top-0 -translate-x-1/2 bg-current"
+            className="absolute top-0 left-1/2 -translate-x-1/2 bg-current"
             style={{ width: 1.5, height: 16 }}
           />
         </span>
@@ -103,7 +101,7 @@ function AccordionItem({
       <div ref={contentRef} className="overflow-hidden" style={{ height: 0 }}>
         <p
           ref={innerRef}
-          className="pb-6 sm:pb-7 text-paper/50 text-sm sm:text-base leading-relaxed max-w-2xl"
+          className="text-paper/50 max-w-2xl pb-6 text-sm leading-relaxed sm:pb-7 sm:text-base"
         >
           {faq.answer}
         </p>
@@ -121,7 +119,7 @@ export function FAQ() {
     (index: number) => {
       setOpenIndex(openIndex === index ? null : index);
     },
-    [openIndex]
+    [openIndex],
   );
 
   return (
@@ -129,23 +127,26 @@ export function FAQ() {
       ref={sectionRef}
       id="faq"
       data-nav-dark="true"
-      className="relative py-20 sm:py-28 overflow-hidden bg-bg border-b-2 border-paper"
+      className="bg-bg border-paper relative overflow-hidden border-b-2 py-20 sm:py-28"
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="inline-block border-2 border-paper px-3 py-1 font-mono text-paper uppercase mb-6 sm:mb-8" style={{ fontSize: 10, letterSpacing: "0.22em" }}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div
+          className="border-paper text-paper mb-6 inline-block border-2 px-3 py-1 font-mono uppercase sm:mb-8"
+          style={{ fontSize: 10, letterSpacing: "0.22em" }}
+        >
           Questions / Answers
         </div>
         <h2
           ref={headingRef}
-          className="font-tattoo text-paper uppercase tracking-tighter leading-[0.82]"
+          className="font-tattoo text-paper leading-[0.82] tracking-tighter uppercase"
           style={{ fontSize: "clamp(3rem, 12vw, 9rem)" }}
         >
           FAQ
         </h2>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-10 sm:mt-14">
-        <div className="border-2 border-paper">
+      <div className="mx-auto mt-10 max-w-4xl px-4 sm:mt-14 sm:px-6">
+        <div className="border-paper border-2">
           {faqs.map((faq, index) => (
             <AccordionItem
               key={faq.question}
