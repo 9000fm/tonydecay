@@ -125,50 +125,94 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         className="flex flex-col items-center justify-center"
         style={{ width: "100vw", height: "100vh" }}
       >
-        {/* Nav links — always at final position, no entrance animation */}
-        <nav className="flex flex-col items-center gap-4 sm:gap-5">
-          {NAV_ITEMS.map((item) => {
-            const commonClass =
-              "font-tattoo text-5xl leading-none uppercase transition-colors duration-300 sm:text-6xl md:text-7xl cursor-pointer";
-            const commonStyle = {
-              letterSpacing: "0.02em",
-              color: "rgba(255,255,255,0.85)",
-              background: "transparent",
-              border: "none",
-              padding: 0,
-            } as React.CSSProperties;
+        {/* Nav — NUMBERED STAGES (V08-B from lab). Magazine TOC feel: each row
+             has a crimson Anton number + cream Anton label + mono → arrow on
+             the right, separated by a thin crimson bottom rule. */}
+        <nav className="flex w-full max-w-md flex-col items-stretch gap-3 px-8 sm:gap-4">
+          {NAV_ITEMS.map((item, i) => {
+            const label = item.label;
+            const num = String(i + 1).padStart(2, "0");
             const onEnter = (e: React.MouseEvent<HTMLElement>) => {
-              e.currentTarget.style.color = "rgba(255,255,255,0.4)";
+              e.currentTarget.style.opacity = "0.6";
             };
             const onLeave = (e: React.MouseEvent<HTMLElement>) => {
-              e.currentTarget.style.color = "rgba(255,255,255,0.85)";
+              e.currentTarget.style.opacity = "1";
             };
+            const rowStyle: React.CSSProperties = {
+              display: "flex",
+              alignItems: "baseline",
+              gap: 16,
+              padding: "10px 0",
+              borderBottom: "1px solid rgba(215,50,46,0.55)",
+              cursor: "pointer",
+              background: "transparent",
+              width: "100%",
+              textDecoration: "none",
+              transition: "opacity 200ms ease",
+            };
+            const Inner = (
+              <>
+                <span
+                  style={{
+                    fontFamily: "var(--font-tattoo), sans-serif",
+                    fontSize: 36,
+                    color: "var(--color-crimson)",
+                    lineHeight: 1,
+                    letterSpacing: "0.02em",
+                    minWidth: 52,
+                  }}
+                >
+                  {num}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-tattoo), sans-serif",
+                    fontSize: 44,
+                    color: "rgba(255,255,255,0.92)",
+                    lineHeight: 1,
+                    letterSpacing: "0.02em",
+                    flex: 1,
+                  }}
+                  className="sm:text-5xl md:text-6xl"
+                >
+                  {label}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 14,
+                    color: "rgba(255,255,255,0.45)",
+                    fontWeight: 800,
+                  }}
+                >
+                  →
+                </span>
+              </>
+            );
             if (item.kind === "checkout") {
               return (
                 <button
-                  key={item.label}
+                  key={label}
                   type="button"
                   onClick={handleCheckoutClick}
-                  className={commonClass}
-                  style={commonStyle}
+                  style={{ ...rowStyle, border: "none", borderBottom: rowStyle.borderBottom }}
                   onMouseEnter={onEnter}
                   onMouseLeave={onLeave}
                 >
-                  {item.label}
+                  {Inner}
                 </button>
               );
             }
             return (
               <a
-                key={item.label}
+                key={label}
                 href={item.href}
                 onClick={(e) => handleAnchorClick(e, item.href)}
-                className={commonClass}
-                style={commonStyle}
+                style={rowStyle}
                 onMouseEnter={onEnter}
                 onMouseLeave={onLeave}
               >
-                {item.label}
+                {Inner}
               </a>
             );
           })}
