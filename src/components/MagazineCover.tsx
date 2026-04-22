@@ -76,17 +76,22 @@ function PreOrderStarburst({
       type="button"
       onClick={onClick}
       aria-label="Order now"
-      className="group relative block shrink-0 transition-transform duration-150 ease-out hover:scale-[1.04] active:scale-[0.96]"
-      style={{
-        width: size,
-        height: size,
-        background: "transparent",
-        border: "none",
-        padding: 0,
-        cursor: "pointer",
-        filter: "drop-shadow(3px 3px 0 var(--color-ink))",
-        transform: `rotate(${rotate}deg)`,
-      }}
+      className="group relative block shrink-0"
+      style={
+        {
+          width: size,
+          height: size,
+          background: "transparent",
+          border: "none",
+          padding: 0,
+          cursor: "pointer",
+          filter: "drop-shadow(3px 3px 0 var(--color-ink))",
+          // CSS var lets the levitate keyframe preserve the caller's rotate
+          "--rot": `${rotate}deg`,
+          transform: `rotate(${rotate}deg)`,
+          animation: "star-levitate 3.4s ease-in-out infinite",
+        } as React.CSSProperties
+      }
     >
       <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
         <defs>

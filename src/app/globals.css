@@ -307,6 +307,19 @@ body {
   }
 }
 
+/* Starburst levitate — gentle vertical bob so the ORDER NOW star looks alive
+   without wobbling around. Uses --rot CSS var so the caller's rotation is
+   preserved while the animation compounds translateY. */
+@keyframes star-levitate {
+  0%,
+  100% {
+    transform: rotate(var(--rot, 0deg)) translateY(0);
+  }
+  50% {
+    transform: rotate(var(--rot, 0deg)) translateY(-6px);
+  }
+}
+
 /* Title shimmer — long idle pause, then a short gold sweep across. Subtle + occasional. */
 @keyframes title-shimmer {
   0%,
