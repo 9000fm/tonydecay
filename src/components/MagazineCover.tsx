@@ -468,14 +468,14 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           style={{
             background: "var(--color-gold)",
             color: "var(--color-ink)",
-            border: "3px solid var(--color-ink)",
-            padding: "10px 22px",
+            border: "2px solid var(--color-ink)",
+            padding: "7px 16px",
             cursor: "pointer",
             fontFamily: "var(--font-arcade), sans-serif",
-            fontSize: 22,
+            fontSize: 17,
             letterSpacing: "0.02em",
             lineHeight: 1,
-            boxShadow: "5px 5px 0 var(--color-crimson), 5px 5px 0 2px var(--color-ink)",
+            boxShadow: "4px 4px 0 var(--color-crimson), 4px 4px 0 2px var(--color-ink)",
           }}
         >
           ORDER NOW
