@@ -205,35 +205,21 @@ function LabIndex() {
       className="mx-auto max-w-6xl px-6 pt-6 pb-6 sm:px-10"
       style={{ borderBottom: "1px dashed rgba(240,235,220,0.25)" }}
     >
-      {/* Tight breadcrumb + CLI prompt — replaces the oversized FOUR FLAVORS hero */}
-      <div className="mb-5">
-        <div
-          style={{
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 10,
-            letterSpacing: "0.32em",
-            fontWeight: 800,
-            color: "rgba(240,235,220,0.55)",
-          }}
-        >
-          TONY DECAY / LAB / SURFACE-TREATMENT EXPERIMENTS
-        </div>
-        <div
-          className="mt-1"
-          style={{
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 11,
-            letterSpacing: "0.32em",
-            fontWeight: 800,
-            color: "#F7C234",
-          }}
-        >
-          $ lab --list
-        </div>
+      <div
+        className="mb-5"
+        style={{
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: 10,
+          letterSpacing: "0.32em",
+          fontWeight: 800,
+          color: "rgba(240,235,220,0.55)",
+        }}
+      >
+        TONY DECAY / LAB
       </div>
       <div
         className="grid gap-x-10 gap-y-5"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
       >
         {LAB_ROUTES.map((group) => (
           <div key={group.group}>
@@ -243,65 +229,43 @@ function LabIndex() {
                 fontSize: 10,
                 letterSpacing: "0.32em",
                 fontWeight: 800,
-                color: "rgba(240,235,220,0.55)",
-                marginBottom: 4,
-                borderBottom: "1px solid rgba(240,235,220,0.15)",
-                paddingBottom: 4,
+                color: "rgba(240,235,220,0.45)",
+                marginBottom: 6,
               }}
             >
-              {group.group}/{" "}
-              <span style={{ opacity: 0.6, fontWeight: 800 }}>{group.items.length}</span>
+              {group.group}
             </div>
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {group.items.map((item, i) => {
                 const isExternal = item.href.startsWith("/lab/");
                 const isTodo = item.status === "todo";
-                const Inner = (
+                const body = (
                   <span
                     style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      gap: 8,
+                      display: "block",
                       padding: "3px 0",
                       fontFamily: "var(--font-mono), monospace",
                       fontSize: 12,
                       letterSpacing: "0.04em",
-                      color: isTodo ? "rgba(240,235,220,0.35)" : "rgba(240,235,220,0.85)",
+                      color: isTodo ? "rgba(240,235,220,0.3)" : "rgba(240,235,220,0.85)",
                       textDecoration: "none",
                     }}
                   >
-                    <span style={{ color: "#F7C234" }}>
-                      {isExternal ? "→" : isTodo ? "○" : "·"}
-                    </span>
-                    <span style={{ flex: 1 }}>{item.label}</span>
-                    <span
-                      style={{
-                        fontSize: 9,
-                        letterSpacing: "0.2em",
-                        fontWeight: 800,
-                        color:
-                          item.status === "live"
-                            ? "#5baa4f"
-                            : item.status === "todo"
-                              ? "rgba(240,235,220,0.35)"
-                              : "rgba(240,235,220,0.5)",
-                      }}
-                    >
-                      [{item.status}]
-                    </span>
+                    {item.label}
+                    {isExternal && <span style={{ color: "#F7C234", marginLeft: 8 }}>→</span>}
                   </span>
                 );
                 return (
                   <li key={i}>
                     {isTodo ? (
-                      Inner
+                      body
                     ) : isExternal ? (
                       <Link href={item.href} style={{ textDecoration: "none" }}>
-                        {Inner}
+                        {body}
                       </Link>
                     ) : (
                       <a href={item.href} style={{ textDecoration: "none" }}>
-                        {Inner}
+                        {body}
                       </a>
                     )}
                   </li>
