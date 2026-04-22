@@ -313,28 +313,19 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
     return () => clearInterval(id);
   }, [featuredPool.length]);
 
-  // Header behavior: hidden at top of page; reveals on scroll-up; hides on
-  // scroll-down. Returning to top hides it again. Pink ticker + dark nav
-  // animate as one unit.
-  const TOP_THRESHOLD = 80;
-  const [headerVisible, setHeaderVisible] = useState(false);
-  const lastYRef = useRef(0);
+  // Scroll model: at the very top, pink marquee is visible. Once scrolled past
+  // the threshold, marquee slides up and a compact sticky bar (MENU / mini
+  // TONY の DECAY / BUY) slides in to replace it. Return to very top → marquee
+  // returns, compact hides.
+  const HIDE_THRESHOLD = 120;
+  const [pastTop, setPastTop] = useState(false);
   const scrollRafRef = useRef<number | null>(null);
   useEffect(() => {
     const onScroll = () => {
       if (scrollRafRef.current !== null) return;
       scrollRafRef.current = requestAnimationFrame(() => {
         scrollRafRef.current = null;
-        const y = window.scrollY;
-        const dy = y - lastYRef.current;
-        if (y < TOP_THRESHOLD) {
-          setHeaderVisible(false);
-        } else if (dy > 6) {
-          setHeaderVisible(false);
-        } else if (dy < -6) {
-          setHeaderVisible(true);
-        }
-        lastYRef.current = y;
+        setPastTop(window.scrollY > HIDE_THRESHOLD);
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -352,13 +343,16 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
         background: "var(--color-paper)",
       }}
     >
-      {/* A. Pink ticker — always visible; scroll-reveal only applies to the nav below. */}
+      {/* A. Pink marquee — hides on scroll-down past threshold, returns at top. */}
       <div
         className="fixed top-0 right-0 left-0 z-[81] w-full overflow-hidden"
         style={{
           background: "#F2A2BC",
           borderBottom: "3px solid var(--color-ink)",
           height: 32,
+          transform: pastTop ? "translateY(-100%)" : "translateY(0)",
+          transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1)",
+          willChange: "transform",
         }}
       >
         <div
@@ -383,18 +377,18 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
         </div>
       </div>
 
-      {/* B-nav. Dark editorial nav strip — scroll-reveal only; tucks up behind the
-           pink ticker when hidden. Flush against ticker's ink bottom border. */}
+      {/* A-compact. Sticky replacement bar — appears once scrolled past the
+           marquee threshold. Cream paper with ink border. MENU · mini TONY の
+           DECAY · BUY. When at top (!pastTop) it's tucked above the viewport. */}
       <div
-        className="fixed right-0 left-0 z-[80] flex w-full items-center justify-between"
+        className="fixed top-0 right-0 left-0 z-[80] flex w-full items-center justify-between"
         style={{
-          top: 32,
-          background: "var(--color-ink)",
-          borderBottom: "3px solid var(--color-ink)",
-          padding: "10px 28px",
-          minHeight: 56,
-          transform: headerVisible ? "translateY(0)" : "translateY(-100%)",
-          transition: "transform 400ms cubic-bezier(0.22, 1, 0.36, 1)",
+          background: "var(--color-paper-warm, #ECE4D0)",
+          borderBottom: "2px solid var(--color-ink)",
+          padding: "10px 20px",
+          minHeight: 48,
+          transform: pastTop ? "translateY(0)" : "translateY(-100%)",
+          transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1)",
           willChange: "transform",
         }}
       >
@@ -405,52 +399,60 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
           style={{
             background: "transparent",
             border: "none",
-            padding: "6px 8px",
+            padding: "4px 6px",
             cursor: "pointer",
             fontFamily: "var(--font-mono), monospace",
-            fontSize: 12,
+            fontSize: 11,
             letterSpacing: "0.3em",
             fontWeight: 800,
-            color: "var(--color-paper)",
+            color: "var(--color-ink)",
             lineHeight: 1,
           }}
         >
-          MENU
+          ≡ MENU
         </button>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/gallery/Firma.webp"
-          alt="Tony Decay"
+        <span
+          aria-hidden
           style={{
-            height: 34,
-            width: "auto",
-            objectFit: "contain",
-            filter: "invert(1) brightness(1.15)",
+            fontFamily: "var(--font-tattoo), sans-serif",
+            fontSize: 22,
+            color: "var(--color-ink)",
+            letterSpacing: "0.02em",
+            lineHeight: 1,
           }}
-        />
+        >
+          TONY{" "}
+          <span
+            style={{
+              color: "var(--color-crimson)",
+              fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
+              fontSize: 14,
+            }}
+          >
+            の
+          </span>{" "}
+          <span style={{ color: "var(--color-crimson)" }}>DECAY</span>
+        </span>
         <button
           type="button"
           onClick={() => dispatch({ type: "OPEN" })}
           aria-label="Order now"
-          className="inline-flex items-center justify-center"
           style={{
-            background: "var(--color-paper)",
+            background: "var(--color-gold)",
             color: "var(--color-ink)",
-            borderRadius: 9999,
-            padding: "8px 18px",
-            border: "none",
+            border: "2px solid var(--color-ink)",
+            padding: "6px 14px",
             cursor: "pointer",
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 11,
-            letterSpacing: "0.22em",
-            fontWeight: 800,
+            fontFamily: "var(--font-tattoo), sans-serif",
+            fontSize: 15,
+            letterSpacing: "0.02em",
             lineHeight: 1,
+            boxShadow: "2px 2px 0 var(--color-crimson)",
           }}
         >
-          ORDER NOW
+          BUY
         </button>
       </div>
-      {/* No spacer: header overlays masthead only when revealed (scroll-up). */}
 
       {/* B. Masthead — solid warm paper (no dots, clean for type) */}
       <div
@@ -524,17 +526,16 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
             </div>
           </div>
 
-          {/* Desktop starburst — z-index 100 lifts it above the pink marquee
-             (z-[81]) so the star's top crown peeks up past the marquee bottom
-             edge. Top pulled from 54 → 16 so the crown actually extends into
-             the marquee band. Stamp-slapped-on-top "popup" feel. */}
+          {/* Desktop starburst — z-index 10 sits BELOW the pink marquee (z-[81])
+             so the crown slides behind the marquee instead of over it.
+             "Peeking from behind" look. */}
           <div
             className="hidden lg:block"
             style={{
               position: "absolute",
               right: 88,
               top: 36,
-              zIndex: 100,
+              zIndex: 10,
             }}
           >
             <PreOrderStarburst onClick={() => dispatch({ type: "OPEN" })} size={200} />
