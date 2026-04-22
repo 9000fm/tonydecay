@@ -140,7 +140,9 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             };
             const rowStyle: React.CSSProperties = {
               display: "flex",
-              alignItems: "baseline",
+              // center (not baseline) so SHOP's <button> child aligns identically
+              // to the <a> anchor rows — baseline was offsetting the SHOP arrow.
+              alignItems: "center",
               gap: 16,
               padding: "10px 0",
               borderBottom: "1px solid rgba(215,50,46,0.55)",
