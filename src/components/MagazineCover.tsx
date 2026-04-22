@@ -299,9 +299,10 @@ function RedArrow() {
 
 interface MagazineCoverProps {
   onOpenMenu?: () => void;
+  menuOpen?: boolean;
 }
 
-export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
+export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverProps) {
   const { dispatch } = useCheckout();
 
   const ticker = Array.from({ length: TICKER_REPEAT }).flatMap(() => TICKER_TOKENS);
@@ -395,45 +396,52 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
         </div>
       </div>
 
-      {/* A-compact. Sticky replacement bar — appears once scrolled past the
-           marquee threshold. Cream paper with ink border. MENU · mini TONY の
-           DECAY · BUY. When at top (!pastTop) it's tucked above the viewport. */}
+      {/* A-compact. Sticky replacement bar — appears past marquee threshold.
+           +60% scale (minHeight 48 → 76). Three-column layout:
+           [outlined MENU] · centered TONY の DECAY · [yellow ORDER NOW block].
+           MENU inverts to cream-fill/ink-text when menuOpen so it stays
+           visible on the dark menu overlay. */}
       <div
-        className="fixed top-0 right-0 left-0 z-[80] flex w-full items-center justify-between"
+        className="fixed top-0 right-0 left-0 z-[80] flex w-full items-center justify-between gap-4"
         style={{
           background: "var(--color-paper-warm, #ECE4D0)",
           borderBottom: "2px solid var(--color-ink)",
-          padding: "10px 20px",
-          minHeight: 48,
+          padding: "14px 24px",
+          minHeight: 76,
           transform: pastTop ? "translateY(0)" : "translateY(-100%)",
           transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1)",
           willChange: "transform",
         }}
       >
+        {/* MENU — outlined rect (image #102 ref). Inverts when menu is open. */}
         <button
           type="button"
           onClick={onOpenMenu}
           aria-label="Open menu"
           style={{
-            background: "transparent",
-            border: "none",
-            padding: "4px 6px",
+            background: menuOpen ? "var(--color-paper)" : "transparent",
+            color: "var(--color-ink)",
+            border: "2px solid var(--color-ink)",
+            padding: "10px 20px",
             cursor: "pointer",
             fontFamily: "var(--font-mono), monospace",
-            fontSize: 11,
-            letterSpacing: "0.3em",
+            fontSize: 13,
+            letterSpacing: "0.32em",
             fontWeight: 800,
-            color: "var(--color-ink)",
             lineHeight: 1,
+            transition: "background 200ms ease",
           }}
         >
-          ≡ MENU
+          MENU
         </button>
+
+        {/* Centered title — scaled up +60%. Hidden on very narrow widths. */}
         <span
           aria-hidden
+          className="hidden sm:inline"
           style={{
             fontFamily: "var(--font-tattoo), sans-serif",
-            fontSize: 22,
+            fontSize: 34,
             color: "var(--color-ink)",
             letterSpacing: "0.02em",
             lineHeight: 1,
@@ -444,13 +452,15 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
             style={{
               color: "var(--color-crimson)",
               fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
-              fontSize: 14,
+              fontSize: 22,
             }}
           >
             の
           </span>{" "}
           <span style={{ color: "var(--color-crimson)" }}>DECAY</span>
         </span>
+
+        {/* ORDER NOW — image #101 ref. Chunky yellow block w/ crimson shadow. */}
         <button
           type="button"
           onClick={() => dispatch({ type: "OPEN" })}
@@ -458,17 +468,17 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
           style={{
             background: "var(--color-gold)",
             color: "var(--color-ink)",
-            border: "2px solid var(--color-ink)",
-            padding: "6px 14px",
+            border: "3px solid var(--color-ink)",
+            padding: "10px 22px",
             cursor: "pointer",
-            fontFamily: "var(--font-tattoo), sans-serif",
-            fontSize: 15,
+            fontFamily: "var(--font-arcade), sans-serif",
+            fontSize: 22,
             letterSpacing: "0.02em",
             lineHeight: 1,
-            boxShadow: "2px 2px 0 var(--color-crimson)",
+            boxShadow: "5px 5px 0 var(--color-crimson), 5px 5px 0 2px var(--color-ink)",
           }}
         >
-          BUY
+          ORDER NOW
         </button>
       </div>
 
