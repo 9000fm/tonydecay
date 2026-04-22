@@ -6,6 +6,7 @@ import { SplashScreen } from "@/components/SplashScreen";
 import { MagazineCover } from "@/components/MagazineCover";
 import { MobileMenu } from "@/components/MobileMenu";
 import { Artist } from "@/components/Artist";
+import { Work } from "@/components/Work";
 import { FAQ } from "@/components/FAQ";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
@@ -32,6 +33,7 @@ export default function Home() {
       {!splashDone && <SplashScreen onEnter={handleSplashEnter} />}
       <main>
         <MagazineCover onOpenMenu={() => setMenuOpen(true)} />
+        <Work />
         <Artist />
         <FAQ />
         <Contact />

@@ -17,6 +17,7 @@ type NavItem =
   | { label: string; kind: "checkout" };
 
 const NAV_ITEMS: NavItem[] = [
+  { label: "WORK", kind: "anchor", href: "#work" },
   { label: "ABOUT", kind: "anchor", href: "#artist" },
   { label: "SHOP", kind: "checkout" },
   { label: "FAQ", kind: "anchor", href: "#faq" },
