@@ -63,15 +63,15 @@ export function Artist() {
         aria-hidden
       />
 
-      <div className="relative mx-auto max-w-6xl px-7 py-16 sm:px-10 sm:py-20">
+      <div className="relative mx-auto max-w-6xl px-7 py-16 sm:px-10 sm:py-20 2xl:max-w-[1400px]">
         {/* Editorial header — eyebrow reads as a magazine column label now,
              so "TONY DECAY" only appears once (the heading). */}
         <div className="relative mb-2 flex flex-col">
           <span
+            className="text-[18px] 2xl:text-[22px]"
             style={{
               fontFamily: "var(--font-display), serif",
               fontStyle: "italic",
-              fontSize: 18,
               color: "var(--color-crimson)",
               transform: "rotate(-2deg)",
               alignSelf: "flex-start",
@@ -83,7 +83,7 @@ export function Artist() {
             className="mt-1"
             style={{
               fontFamily: "var(--font-tattoo), sans-serif",
-              fontSize: "clamp(3rem, 11vw, 8rem)",
+              fontSize: "clamp(3rem, 11vw, 11rem)",
               color: "var(--color-ink)",
               lineHeight: 0.88,
               letterSpacing: "0.01em",
@@ -92,9 +92,9 @@ export function Artist() {
             TONY DECAY
           </h2>
           <span
+            className="text-[28px] 2xl:text-[44px]"
             style={{
               fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
-              fontSize: 28,
               color: "var(--color-ink-soft)",
               marginTop: 4,
             }}
@@ -105,8 +105,11 @@ export function Artist() {
 
         {/* Polaroid wall + doodles + handwritten bio */}
         <div className="relative mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[7fr_5fr] lg:gap-14">
-          {/* Polaroid wall */}
-          <div className="relative mx-auto w-full" style={{ height: 520, maxWidth: 620 }}>
+          {/* Polaroid wall — grows on 2xl so Artist section feels right on 2K */}
+          <div
+            className="relative mx-auto w-full 2xl:h-[680px] 2xl:max-w-[780px]"
+            style={{ height: 520, maxWidth: 620 }}
+          >
             {POLAROIDS.map((p, i) => (
               <figure
                 key={p.print.id}

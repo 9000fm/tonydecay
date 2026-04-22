@@ -253,20 +253,27 @@ function FeaturedStickerSets() {
   );
 }
 
+/* Pokémon menu arrow — chunky low-poly right-pointing triangle from
+   Gen 1/2 dialog select cursors. Crimson fill + ink stroke. Bobs
+   horizontally 4px every 0.5s via arrow-wiggle keyframe. */
 function RedArrow() {
   return (
     <svg
-      viewBox="0 0 120 78"
+      viewBox="0 0 60 80"
       aria-hidden
-      className="h-[36px] w-[52px] shrink-0 sm:h-[52px] sm:w-[72px] lg:h-[64px] lg:w-[92px]"
-      style={{ animation: "arrow-wiggle 0.8s ease-in-out infinite alternate" }}
+      className="h-[44px] w-[34px] shrink-0 sm:h-[60px] sm:w-[46px] lg:h-[76px] lg:w-[58px]"
+      style={{
+        animation: "arrow-wiggle 0.5s steps(1) infinite alternate",
+        shapeRendering: "crispEdges",
+      }}
     >
-      <path
-        d="M5 42 L60 42 L60 14 L115 42 L60 70 L60 42 Z"
+      {/* Low-poly stepped triangle — reads as a chunky cursor, not 1px pixel */}
+      <polygon
+        points="0,12 12,12 12,24 24,24 24,36 36,36 36,44 24,44 24,56 12,56 12,68 0,68"
         fill="var(--color-crimson)"
         stroke="var(--color-ink)"
-        strokeWidth={3}
-        strokeLinejoin="round"
+        strokeWidth={2}
+        strokeLinejoin="miter"
       />
     </svg>
   );
@@ -791,7 +798,7 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
         </button>
 
         <div
-          className="relative"
+          className="relative lg:!p-[18px_30px_18px_42px] lg:!text-[48px]"
           style={{
             padding: "10px 18px 10px 26px",
             background: "var(--color-crimson)",
@@ -808,6 +815,7 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
         >
           <span
             aria-hidden
+            className="lg:!left-[16px] lg:!h-[14px] lg:!w-[14px]"
             style={{
               position: "absolute",
               left: 10,

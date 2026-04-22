@@ -238,7 +238,7 @@ export function FAQ() {
               alignSelf: "flex-start",
             }}
           >
-            — pinned questions
+            — frequently asked
           </span>
           <h2
             style={{
@@ -248,7 +248,7 @@ export function FAQ() {
               lineHeight: 0.88,
             }}
           >
-            ASKED &amp; ANSWERED
+            FAQ
           </h2>
           <span
             style={{
