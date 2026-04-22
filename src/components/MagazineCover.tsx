@@ -272,22 +272,22 @@ function FeaturedStickerSets() {
 }
 
 /* Pokémon menu arrow — chunky low-poly right-pointing triangle from
-   Gen 1/2 dialog select cursors. Crimson fill + ink stroke. Bobs
-   horizontally 4px every 0.5s via arrow-wiggle keyframe. */
+   Gen 1/2 dialog select cursors. Uniform 12px stepped pyramid: 1 cell
+   top, 2 cells, 3 cells (tip), 2 cells, 1 cell. Bobs horizontally
+   6px every 0.5s via arrow-wiggle keyframe (hard step, no easing). */
 function RedArrow() {
   return (
     <svg
-      viewBox="0 0 60 80"
+      viewBox="0 0 36 60"
       aria-hidden
-      className="h-[44px] w-[34px] shrink-0 sm:h-[60px] sm:w-[46px] lg:h-[76px] lg:w-[58px]"
+      className="h-[40px] w-[24px] shrink-0 sm:h-[56px] sm:w-[34px] lg:h-[72px] lg:w-[44px]"
       style={{
         animation: "arrow-wiggle 0.5s steps(1) infinite alternate",
         shapeRendering: "crispEdges",
       }}
     >
-      {/* Low-poly stepped triangle — reads as a chunky cursor, not 1px pixel */}
       <polygon
-        points="0,12 12,12 12,24 24,24 24,36 36,36 36,44 24,44 24,56 12,56 12,68 0,68"
+        points="0,0 12,0 12,12 24,12 24,24 36,24 36,36 24,36 24,48 12,48 12,60 0,60"
         fill="var(--color-crimson)"
         stroke="var(--color-ink)"
         strokeWidth={2}
@@ -801,12 +801,13 @@ export function MagazineCover({ onOpenMenu }: MagazineCoverProps) {
           className="cta-collect-pad shrink-0"
           style={{
             // clamp() — bulletproof responsive sizing, bypasses any Tailwind JIT
-            // scan quirks on arbitrary-value classes. Min 52 (mobile) / max 108 (2K).
-            fontSize: "clamp(52px, 10vw, 108px)",
+            // Sigmar = chunky rounded display — South Park logo energy.
+            // Sigmar is wider than Anton so size caps lower: 44 mobile / 80 2K.
+            fontSize: "clamp(44px, 7.6vw, 80px)",
             background: "linear-gradient(135deg, #FFD55A 0%, #F7C234 50%, #E3A81F 100%)",
             border: "3px solid var(--color-ink)",
-            fontFamily: "var(--font-tattoo), sans-serif",
-            letterSpacing: "0.02em",
+            fontFamily: "var(--font-arcade), sans-serif",
+            letterSpacing: "0.01em",
             color: "var(--color-ink)",
             boxShadow: "8px 8px 0 var(--color-crimson), 8px 8px 0 2px var(--color-ink)",
             lineHeight: 1,

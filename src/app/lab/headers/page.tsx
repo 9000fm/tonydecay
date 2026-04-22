@@ -489,58 +489,107 @@ function StarV3Crimson({ size = 160 }: { size?: number }) {
   );
 }
 
+/* V4 · COIN — proper coin stamp with beveled rim, milled edge (tick marks),
+   arc text top + bottom, and a big TD monogram center. No ORDER NOW text. */
 function StarV4Circle({ size = 160 }: { size?: number }) {
+  const uid = useId().replace(/:/g, "");
+  const arcTopId = `coin-arc-top-${uid}`;
+  const arcBotId = `coin-arc-bot-${uid}`;
   return (
     <svg
       viewBox="0 0 100 100"
       width={size}
       height={size}
-      style={{ transform: "rotate(-4deg)", filter: "drop-shadow(3px 3px 0 #1a1a1a)" }}
+      style={{ transform: "rotate(-3deg)", filter: "drop-shadow(3px 3px 0 #1a1a1a)" }}
     >
-      <circle cx="50" cy="50" r="44" fill="#F7C234" stroke="#1a1a1a" strokeWidth={3} />
+      <defs>
+        {/* Top arc — text reads left→right along upper inner rim */}
+        <path id={arcTopId} d="M 20,50 A 30,30 0 0,1 80,50" fill="none" />
+        {/* Bottom arc — flipped so text reads left→right along lower inner rim */}
+        <path id={arcBotId} d="M 22,55 A 28,28 0 0,0 78,55" fill="none" />
+        <radialGradient id={`coin-shade-${uid}`} cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stopColor="#FFE066" />
+          <stop offset="55%" stopColor="#F7C234" />
+          <stop offset="100%" stopColor="#C98F1A" />
+        </radialGradient>
+      </defs>
+
+      {/* Outer thick rim */}
+      <circle cx="50" cy="50" r="46" fill="#1a1a1a" />
+      {/* Coin body with radial shade for metal feel */}
       <circle
         cx="50"
         cy="50"
-        r="38"
-        fill="none"
+        r="43"
+        fill={`url(#coin-shade-${uid})`}
         stroke="#1a1a1a"
         strokeWidth={1}
-        strokeDasharray="3 2"
       />
+
+      {/* Milled edge — 36 tick marks around the rim */}
+      <g stroke="#1a1a1a" strokeWidth={0.8}>
+        {Array.from({ length: 36 }).map((_, i) => {
+          const angle = (i * 360) / 36;
+          const rad = (angle * Math.PI) / 180;
+          const x1 = 50 + Math.cos(rad) * 43;
+          const y1 = 50 + Math.sin(rad) * 43;
+          const x2 = 50 + Math.cos(rad) * 46;
+          const y2 = 50 + Math.sin(rad) * 46;
+          return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
+        })}
+      </g>
+
+      {/* Inner dashed raised ring (beveled edge) */}
+      <circle
+        cx="50"
+        cy="50"
+        r="35"
+        fill="none"
+        stroke="#1a1a1a"
+        strokeWidth={0.8}
+        strokeDasharray="1.5 1.5"
+        opacity={0.6}
+      />
+
+      {/* Arc text — TOP */}
       <text
-        x="50"
-        y="40"
-        textAnchor="middle"
-        fontFamily="var(--font-jp), var(--font-tattoo), sans-serif"
-        fontWeight={900}
-        fontSize="20"
+        fontFamily="var(--font-mono), monospace"
+        fontSize="6.5"
+        fontWeight={800}
+        letterSpacing="0.32em"
         fill="#1a1a1a"
       >
-        予約
+        <textPath href={`#${arcTopId}`} startOffset="50%" textAnchor="middle">
+          LIMITED EDITION
+        </textPath>
       </text>
+
+      {/* Center monogram — big TD */}
       <text
         x="50"
-        y="58"
+        y="59"
         textAnchor="middle"
         fontFamily="var(--font-tattoo), sans-serif"
         fontWeight={700}
-        fontSize="14"
-        letterSpacing="0.03em"
-        fill="#d7322e"
+        fontSize="34"
+        fill="#1a1a1a"
+        letterSpacing="0.02em"
+        style={{ filter: "drop-shadow(1px 1px 0 rgba(26,26,26,0.3))" }}
       >
-        ORDER NOW
+        TD
       </text>
+
+      {/* Arc text — BOTTOM */}
       <text
-        x="50"
-        y="74"
-        textAnchor="middle"
         fontFamily="var(--font-mono), monospace"
+        fontSize="5.5"
         fontWeight={800}
-        fontSize="9"
-        letterSpacing="0.2em"
+        letterSpacing="0.32em"
         fill="#1a1a1a"
       >
-        VOL.01
+        <textPath href={`#${arcBotId}`} startOffset="50%" textAnchor="middle">
+          VOL.01 · 2026 · 100 SETS
+        </textPath>
       </text>
     </svg>
   );
@@ -714,7 +763,7 @@ function H2StarburstCombos() {
         <VariantTile name="V3 · CRIMSON INVERSION">
           <StarV3Crimson />
         </VariantTile>
-        <VariantTile name="V4 · CIRCLE STAMP">
+        <VariantTile name="V4 · COIN (TD MONOGRAM)">
           <StarV4Circle />
         </VariantTile>
         <VariantTile name="V5 · TICKET STUB">

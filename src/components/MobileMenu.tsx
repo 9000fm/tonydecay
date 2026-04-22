@@ -166,12 +166,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <>
                   <span
                     style={{
-                      fontFamily: "var(--font-tattoo), sans-serif",
-                      fontSize: 36,
+                      // Chunky arcade Sigmar for the numbers — playful + heavy.
+                      // Label font (Anton) stays so the contrast does the work.
+                      fontFamily: "var(--font-arcade), sans-serif",
+                      fontSize: 32,
                       color: "var(--color-crimson)",
                       lineHeight: 1,
                       letterSpacing: "0.02em",
-                      minWidth: 52,
+                      minWidth: 58,
                     }}
                   >
                     {num}
