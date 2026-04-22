@@ -72,98 +72,105 @@ function PreOrderStarburst({
   const STAR_POINTS =
     "50,0 57,14 70,4 68,20 86,16 78,32 96,38 80,48 96,62 76,64 84,82 64,76 66,96 50,84 34,96 36,76 16,82 24,64 4,62 20,48 4,38 22,32 14,16 32,20 30,4 43,14";
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Order now"
-      className="group relative block shrink-0"
+    <span
+      className="relative block shrink-0"
       style={
         {
+          display: "inline-block",
           width: size,
           height: size,
-          background: "transparent",
-          border: "none",
-          padding: 0,
-          cursor: "pointer",
           filter: "drop-shadow(3px 3px 0 var(--color-ink))",
-          // CSS var lets the levitate keyframe preserve the caller's rotate
+          // Outer span runs the levitate keyframe; rotate preserved via --rot
           "--rot": `${rotate}deg`,
           transform: `rotate(${rotate}deg)`,
           animation: "star-levitate 3.4s ease-in-out infinite",
         } as React.CSSProperties
       }
     >
-      <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
-        <defs>
-          <clipPath id={clipId}>
-            <polygon points={STAR_POINTS} />
-          </clipPath>
-          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <polygon
-          points={STAR_POINTS}
-          fill="var(--color-gold)"
-          stroke="var(--color-ink)"
-          strokeWidth={2.25}
-          strokeLinejoin="round"
-        />
-        <g clipPath={`url(#${clipId})`} style={{ mixBlendMode: "screen" }}>
-          <rect
-            x="0"
-            y="-20"
-            width="28"
-            height="140"
-            fill={`url(#${gradId})`}
-            style={{
-              transformOrigin: "center",
-              animation: "star-shine-sweep 7s ease-in-out infinite",
-            }}
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label="Order now"
+        className="group relative block h-full w-full shrink-0 transition-transform duration-150 ease-out hover:scale-[1.04] active:scale-[0.96]"
+        style={{
+          background: "transparent",
+          border: "none",
+          padding: 0,
+          cursor: "pointer",
+        }}
+      >
+        <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
+          <defs>
+            <clipPath id={clipId}>
+              <polygon points={STAR_POINTS} />
+            </clipPath>
+            <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="50%" stopColor="#ffffff" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <polygon
+            points={STAR_POINTS}
+            fill="var(--color-gold)"
+            stroke="var(--color-ink)"
+            strokeWidth={2.25}
+            strokeLinejoin="round"
           />
-        </g>
-        <text
-          x="50"
-          y="36"
-          textAnchor="middle"
-          fontFamily="var(--font-jp), var(--font-tattoo), sans-serif"
-          fontWeight={900}
-          fontSize="22"
-          fill="var(--color-ink)"
-        >
-          予約
-        </text>
-        <text
-          x="50"
-          y="56"
-          textAnchor="middle"
-          fontFamily="var(--font-tattoo), sans-serif"
-          fontWeight={700}
-          fontSize="15"
-          letterSpacing="0.03em"
-          fill="var(--color-crimson)"
-          stroke="var(--color-paper)"
-          strokeWidth="0.6"
-          paintOrder="stroke"
-        >
-          ORDER NOW
-        </text>
-        <text
-          x="50"
-          y="76"
-          textAnchor="middle"
-          fontFamily="var(--font-mono), monospace"
-          fontWeight={800}
-          fontSize="10"
-          letterSpacing="0.16em"
-          fill="var(--color-ink)"
-        >
-          VOL.01
-        </text>
-      </svg>
-    </button>
+          <g clipPath={`url(#${clipId})`} style={{ mixBlendMode: "screen" }}>
+            <rect
+              x="0"
+              y="-20"
+              width="28"
+              height="140"
+              fill={`url(#${gradId})`}
+              style={{
+                transformOrigin: "center",
+                animation: "star-shine-sweep 7s ease-in-out infinite",
+              }}
+            />
+          </g>
+          <text
+            x="50"
+            y="36"
+            textAnchor="middle"
+            fontFamily="var(--font-jp), var(--font-tattoo), sans-serif"
+            fontWeight={900}
+            fontSize="22"
+            fill="var(--color-ink)"
+          >
+            予約
+          </text>
+          <text
+            x="50"
+            y="56"
+            textAnchor="middle"
+            fontFamily="var(--font-tattoo), sans-serif"
+            fontWeight={700}
+            fontSize="15"
+            letterSpacing="0.03em"
+            fill="var(--color-crimson)"
+            stroke="var(--color-paper)"
+            strokeWidth="0.6"
+            paintOrder="stroke"
+          >
+            ORDER NOW
+          </text>
+          <text
+            x="50"
+            y="76"
+            textAnchor="middle"
+            fontFamily="var(--font-mono), monospace"
+            fontWeight={800}
+            fontSize="10"
+            letterSpacing="0.16em"
+            fill="var(--color-ink)"
+          >
+            VOL.01
+          </text>
+        </svg>
+      </button>
+    </span>
   );
 }
 
