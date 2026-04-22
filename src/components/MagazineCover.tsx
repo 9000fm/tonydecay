@@ -469,11 +469,11 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
             background: "var(--color-gold)",
             color: "var(--color-ink)",
             border: "2px solid var(--color-ink)",
-            padding: "7px 16px",
+            padding: "8px 18px",
             cursor: "pointer",
-            fontFamily: "var(--font-arcade), sans-serif",
-            fontSize: 17,
-            letterSpacing: "0.02em",
+            fontFamily: "var(--font-tattoo), sans-serif",
+            fontSize: 22,
+            letterSpacing: "0.03em",
             lineHeight: 1,
             boxShadow: "4px 4px 0 var(--color-crimson), 4px 4px 0 2px var(--color-ink)",
           }}
@@ -811,13 +811,13 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           className="cta-collect-pad shrink-0"
           style={{
             // clamp() — bulletproof responsive sizing, bypasses any Tailwind JIT
-            // Sigmar = chunky rounded display — South Park logo energy.
-            // Sigmar is wider than Anton so size caps lower: 44 mobile / 80 2K.
-            fontSize: "clamp(44px, 7.6vw, 80px)",
+            // clamp() — bulletproof responsive sizing. Max lowered from 108 → 76
+            // because Anton at 108 was gigantic on 2K screens.
+            fontSize: "clamp(48px, 7.5vw, 76px)",
             background: "linear-gradient(135deg, #FFD55A 0%, #F7C234 50%, #E3A81F 100%)",
             border: "3px solid var(--color-ink)",
-            fontFamily: "var(--font-arcade), sans-serif",
-            letterSpacing: "0.01em",
+            fontFamily: "var(--font-tattoo), sans-serif",
+            letterSpacing: "0.02em",
             color: "var(--color-ink)",
             boxShadow: "8px 8px 0 var(--color-crimson), 8px 8px 0 2px var(--color-ink)",
             lineHeight: 1,
@@ -843,19 +843,21 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
             letterSpacing: "0.02em",
           }}
         >
+          {/* Punched tag hole — dark fill reads as a real hole (not a pearl
+               dot). Inset shadow gives it depth so the paper looks cut. */}
           <span
             aria-hidden
-            className="lg:!left-[16px] lg:!h-[14px] lg:!w-[14px]"
+            className="lg:!left-[18px] lg:!h-[16px] lg:!w-[16px]"
             style={{
               position: "absolute",
-              left: 10,
+              left: 12,
               top: "50%",
               transform: "translateY(-50%)",
-              width: 8,
-              height: 8,
+              width: 10,
+              height: 10,
               borderRadius: "50%",
-              background: "var(--color-paper)",
-              border: "1.5px solid var(--color-ink)",
+              background: "#2a0e0c",
+              boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4)",
             }}
           />
           $300
