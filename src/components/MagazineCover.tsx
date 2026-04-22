@@ -91,12 +91,17 @@ function PreOrderStarburst({
         type="button"
         onClick={onClick}
         aria-label="Order now"
-        className="group relative block h-full w-full shrink-0 transition-transform duration-150 ease-out hover:scale-[1.04] active:scale-[0.96]"
+        className="group relative block h-full w-full shrink-0 hover:scale-[1.1] active:scale-[0.96]"
         style={{
           background: "transparent",
           border: "none",
           padding: 0,
           cursor: "pointer",
+          // Premium buttery ease — cubic-bezier 0.22, 1, 0.36, 1 (ease-out-quart).
+          // 520ms on hover-in, snappier 180ms on press so click still feels responsive.
+          transitionProperty: "transform",
+          transitionDuration: "520ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
@@ -132,7 +137,7 @@ function PreOrderStarburst({
           </g>
           <text
             x="50"
-            y="36"
+            y="40"
             textAnchor="middle"
             fontFamily="var(--font-jp), var(--font-tattoo), sans-serif"
             fontWeight={900}
@@ -147,7 +152,7 @@ function PreOrderStarburst({
             textAnchor="middle"
             fontFamily="var(--font-tattoo), sans-serif"
             fontWeight={700}
-            fontSize="15"
+            fontSize="13"
             letterSpacing="0.03em"
             fill="var(--color-crimson)"
             stroke="var(--color-paper)"
@@ -158,7 +163,7 @@ function PreOrderStarburst({
           </text>
           <text
             x="50"
-            y="76"
+            y="70"
             textAnchor="middle"
             fontFamily="var(--font-mono), monospace"
             fontWeight={800}
