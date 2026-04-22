@@ -97,11 +97,12 @@ function PreOrderStarburst({
           border: "none",
           padding: 0,
           cursor: "pointer",
-          // Premium buttery ease — cubic-bezier 0.22, 1, 0.36, 1 (ease-out-quart).
-          // 520ms on hover-in, snappier 180ms on press so click still feels responsive.
+          // Premium buttery stamp-growth — ease-out-expo for dramatic slow
+          // deceleration. Long 720ms hold so the hover feels weighted and
+          // expensive, not twitchy. Same easing on hover-out.
           transitionProperty: "transform",
-          transitionDuration: "520ms",
-          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+          transitionDuration: "720ms",
+          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
