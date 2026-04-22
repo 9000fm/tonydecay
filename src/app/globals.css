@@ -259,13 +259,14 @@ body {
   display: inline-block;
 }
 
-/* Red CTA arrow — subtle horizontal nudge, alternate so it rocks */
+/* Red CTA arrow — Gen-1 Pokémon cursor tick. 8px hop so the bob is
+   actually visible, not subliminal. Use with steps(1) so it jumps, no ease. */
 @keyframes arrow-wiggle {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(4px);
+    transform: translateX(8px);
   }
 }
 
