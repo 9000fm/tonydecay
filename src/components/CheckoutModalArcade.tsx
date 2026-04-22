@@ -85,7 +85,10 @@ export function CheckoutModalArcade({ open, onClose }: Props) {
   const [shipping, setShipping] = useState<ShippingInfo>(EMPTY_SHIPPING);
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingInfo, string>>>({});
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  // Supabase order uuid — created after valid shipping, linked at capture time.
+  const [localOrderId, setLocalOrderId] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   if (!open) return null;
 
@@ -100,6 +103,33 @@ export function CheckoutModalArcade({ open, onClose }: Props) {
     if (!shipping.country.trim()) e.country = "required";
     setErrors(e);
     return Object.keys(e).length === 0;
+  };
+
+  // Called when shipping form submits. Creates the Supabase order (pending
+  // status, reserves TD-XXX number), then advances to payment step.
+  const handleShippingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateShipping()) return;
+    setPayError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shipping, paymentMethod: "paypal" }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.orderId) {
+        throw new Error(data.error || "could not create order");
+      }
+      setLocalOrderId(data.orderId);
+      setOrderNumber(data.orderNumber);
+      setStep("payment");
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const stepIndex = step === "shipping" ? 1 : step === "payment" ? 2 : 3;
@@ -229,15 +259,7 @@ export function CheckoutModalArcade({ open, onClose }: Props) {
 
           {/* Step 1 — Shipping */}
           {step === "shipping" && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (validateShipping()) {
-                  setStep("payment");
-                }
-              }}
-              noValidate
-            >
+            <form onSubmit={handleShippingSubmit} noValidate>
               <Field
                 label="FULL NAME"
                 value={shipping.fullName}
@@ -301,9 +323,22 @@ export function CheckoutModalArcade({ open, onClose }: Props) {
                 />
               </div>
 
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex items-center justify-end gap-4">
+                {payError && (
+                  <span
+                    style={{
+                      fontFamily: "var(--font-display), serif",
+                      fontStyle: "italic",
+                      fontSize: 13,
+                      color: "var(--color-crimson)",
+                    }}
+                  >
+                    — {payError}
+                  </span>
+                )}
                 <button
                   type="submit"
+                  disabled={submitting}
                   style={{
                     padding: "12px 22px",
                     background: "var(--color-gold)",
@@ -313,11 +348,12 @@ export function CheckoutModalArcade({ open, onClose }: Props) {
                     fontSize: 22,
                     letterSpacing: "0.02em",
                     lineHeight: 1,
-                    cursor: "pointer",
+                    cursor: submitting ? "wait" : "pointer",
+                    opacity: submitting ? 0.6 : 1,
                     boxShadow: "4px 4px 0 var(--color-crimson), 4px 4px 0 2px var(--color-ink)",
                   }}
                 >
-                  CONTINUE →
+                  {submitting ? "…" : "CONTINUE →"}
                 </button>
               </div>
             </form>
@@ -389,16 +425,19 @@ export function CheckoutModalArcade({ open, onClose }: Props) {
                     const r = await fetch("/api/paypal/capture", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ orderId: data.orderID }),
+                      body: JSON.stringify({
+                        orderId: data.orderID,
+                        localOrderId,
+                      }),
                     });
                     const j = await r.json();
                     if (j.error) {
                       setPayError(String(j.error));
                       return;
                     }
-                    setOrderNumber(
-                      j?.purchase_units?.[0]?.payments?.captures?.[0]?.id ?? data.orderID,
-                    );
+                    // Prefer the TD-XXX number from confirm_payment; fall back
+                    // to what was reserved at order create.
+                    if (j.orderNumber) setOrderNumber(j.orderNumber);
                     setStep("success");
                   }}
                   onError={(err) => setPayError(String(err))}

@@ -1,7 +1,16 @@
 import "server-only";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+/* Lazy-init Resend — module-level `new Resend(undefined)` fails the build
+   when RESEND_API_KEY is empty. Instantiates on first send. */
+let cached: Resend | null = null;
+function getResend(): Resend {
+  if (cached) return cached;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error("RESEND_API_KEY missing");
+  cached = new Resend(key);
+  return cached;
+}
 
 const FROM_EMAIL = "Tony Decay <orders@tonydecay.com>";
 
@@ -10,7 +19,7 @@ export async function sendConfirmationEmail(order: {
   fullName: string;
   orderNumber: string;
 }) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: order.email,
     subject: `Order Confirmed — ${order.orderNumber}`,
@@ -26,7 +35,7 @@ export async function sendConfirmationEmail(order: {
 }
 
 export async function sendAbandonedEmail(email: string, remaining: number) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject: "Still thinking about it?",

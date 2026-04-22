@@ -7,7 +7,9 @@ export async function POST() {
     const id = await createPayPalOrder(PRICE_USD);
     return NextResponse.json({ id });
   } catch (err) {
-    console.error("create-order failed:", err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    // Logs the full PayPal message to your dev-server / Vercel logs
+    console.error("[paypal/create-order]", message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
