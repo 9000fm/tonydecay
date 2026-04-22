@@ -32,7 +32,7 @@ export default function Home() {
       <MetaPixel />
       {!splashDone && <SplashScreen onEnter={handleSplashEnter} />}
       <main>
-        <MagazineCover onOpenMenu={() => setMenuOpen(true)} />
+        <MagazineCover onOpenMenu={() => setMenuOpen((v) => !v)} menuOpen={menuOpen} />
         <Work />
         <Artist />
         <FAQ />
