@@ -141,8 +141,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             };
             const rowStyle: React.CSSProperties = {
               display: "flex",
-              // center (not baseline) so SHOP's <button> child aligns identically
-              // to the <a> anchor rows — baseline was offsetting the SHOP arrow.
               alignItems: "center",
               gap: 16,
               padding: "10px 0",
@@ -150,6 +148,10 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               cursor: "pointer",
               background: "transparent",
               width: "100%",
+              // textAlign: left forces SHOP's <button> to match the <a> rows —
+              // buttons inherit text-align: center by default, which was
+              // centering the label span's text inside the row.
+              textAlign: "left",
               textDecoration: "none",
               transition: "opacity 200ms ease",
             };

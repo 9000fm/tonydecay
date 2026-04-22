@@ -151,6 +151,16 @@ const LAB_ROUTES = [
     ],
   },
   {
+    group: "CHECKOUT",
+    items: [
+      {
+        href: "/lab/checkout",
+        label: "shipping + paypal sandbox flow",
+        status: "live",
+      },
+    ],
+  },
+  {
     group: "THEMES",
     items: [
       { href: "#lab-01", label: "01 · XEROX treatment", status: "here" },
