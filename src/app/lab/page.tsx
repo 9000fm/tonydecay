@@ -202,23 +202,37 @@ const LAB_ROUTES = [
 function LabIndex() {
   return (
     <section
-      className="mx-auto max-w-6xl px-6 pt-10 pb-14 sm:px-10"
+      className="mx-auto max-w-6xl px-6 pt-6 pb-6 sm:px-10"
       style={{ borderBottom: "1px dashed rgba(240,235,220,0.25)" }}
     >
-      <div
-        className="mb-6"
-        style={{
-          fontFamily: "var(--font-mono), monospace",
-          fontSize: 11,
-          letterSpacing: "0.32em",
-          fontWeight: 800,
-          color: "#F7C234",
-        }}
-      >
-        $ lab --list
+      {/* Tight breadcrumb + CLI prompt — replaces the oversized FOUR FLAVORS hero */}
+      <div className="mb-5">
+        <div
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 10,
+            letterSpacing: "0.32em",
+            fontWeight: 800,
+            color: "rgba(240,235,220,0.55)",
+          }}
+        >
+          TONY DECAY / LAB / SURFACE-TREATMENT EXPERIMENTS
+        </div>
+        <div
+          className="mt-1"
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 11,
+            letterSpacing: "0.32em",
+            fontWeight: 800,
+            color: "#F7C234",
+          }}
+        >
+          $ lab --list
+        </div>
       </div>
       <div
-        className="grid gap-x-10 gap-y-8"
+        className="grid gap-x-10 gap-y-5"
         style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}
       >
         {LAB_ROUTES.map((group) => (
@@ -230,12 +244,13 @@ function LabIndex() {
                 letterSpacing: "0.32em",
                 fontWeight: 800,
                 color: "rgba(240,235,220,0.55)",
-                marginBottom: 8,
+                marginBottom: 4,
                 borderBottom: "1px solid rgba(240,235,220,0.15)",
                 paddingBottom: 4,
               }}
             >
-              {group.group}/
+              {group.group}/{" "}
+              <span style={{ opacity: 0.6, fontWeight: 800 }}>{group.items.length}</span>
             </div>
             <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
               {group.items.map((item, i) => {
@@ -247,7 +262,7 @@ function LabIndex() {
                       display: "flex",
                       alignItems: "baseline",
                       gap: 8,
-                      padding: "6px 0",
+                      padding: "3px 0",
                       fontFamily: "var(--font-mono), monospace",
                       fontSize: 12,
                       letterSpacing: "0.04em",
@@ -318,7 +333,6 @@ export default function LabPage() {
           </defs>
         </svg>
 
-        <LabHeader />
         <LabIndex />
         <SkipToTop />
         <div id="lab-01">
@@ -386,6 +400,7 @@ export default function LabPage() {
 
 /* ================== HEADER / FOOTER ================== */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function LabHeader() {
   return (
     <header
