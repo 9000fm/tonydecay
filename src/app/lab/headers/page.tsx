@@ -1131,17 +1131,448 @@ function H4BurgerCombos() {
   );
 }
 
+/* ============== H5 — TOP STAMP ALTS ==============
+   Replacement options for the top-right corner stamp on the featured
+   print (currently FeaturedStickerNew, a 28-point starburst with 新作!).
+   The bottom-left 100-SETS sticker is also a starburst, so the cover has
+   two stars stacked on it. These are 4 non-star alternatives. */
+
+type StampVariant = "S1" | "S2" | "S3" | "S4";
+
+const STAMP_VARIANTS: { id: StampVariant; name: string; blurb: string }[] = [
+  {
+    id: "S1",
+    name: "RIBBON FLAG",
+    blurb:
+      "2-tail diagonal banner / pennant. Crimson body, ink stroke, drop-shadow. Reads as a magazine cover-flag — sits clean next to a starburst without competing.",
+  },
+  {
+    id: "S2",
+    name: "ROUND POSTAGE",
+    blurb:
+      "Circle with milled-tick rim (16 ticks) and a thin inner double-rule. Suggests a stamped-and-numbered postal mark — fits the editorial / collector vocab.",
+  },
+  {
+    id: "S3",
+    name: "MANGA BUBBLE",
+    blurb:
+      "Jagged-edge speech bubble (10 spike points). Pure manga callout. Ties to Tony's Sugimori-Pokémon DNA, contrasts with a plain starburst on the bottom.",
+  },
+  {
+    id: "S4",
+    name: "WASHI TAPE",
+    blurb:
+      "Angled paper-tape strip with torn semicircular edges. Handwritten Anton callout. Makes the cover feel scrapbooked — tape grammar already approved (V02).",
+  },
+];
+
+function StampRibbonFlag({ text }: { text: string }) {
+  return (
+    <svg
+      viewBox="0 0 200 110"
+      width="180"
+      height="99"
+      aria-hidden
+      style={{
+        transform: "rotate(8deg)",
+        filter: "drop-shadow(4px 4px 0 #1a1a1a)",
+      }}
+    >
+      {/* Pennant: rect body + V-tail on right */}
+      <path
+        d="M4 14 L160 14 L196 55 L160 96 L4 96 Z"
+        fill="#d7322e"
+        stroke="#1a1a1a"
+        strokeWidth="3"
+        strokeLinejoin="miter"
+      />
+      {/* Inner cream rule */}
+      <path
+        d="M12 22 L154 22 L184 55 L154 88 L12 88 Z"
+        fill="none"
+        stroke="#F5ECCE"
+        strokeWidth="1.5"
+        strokeDasharray="2 3"
+      />
+      <text
+        x="86"
+        y="63"
+        textAnchor="middle"
+        fontFamily="var(--font-tattoo), sans-serif"
+        fontWeight={900}
+        fontSize="34"
+        fill="#F5ECCE"
+        letterSpacing="0.04em"
+      >
+        {text}
+      </text>
+    </svg>
+  );
+}
+
+function StampRoundPostage({ text }: { text: string }) {
+  /* 16 milled ticks around the perimeter. */
+  const ticks = Array.from({ length: 16 });
+  return (
+    <svg
+      viewBox="0 0 120 120"
+      width="150"
+      height="150"
+      aria-hidden
+      style={{
+        transform: "rotate(-12deg)",
+        filter: "drop-shadow(4px 4px 0 #1a1a1a)",
+      }}
+    >
+      <circle cx="60" cy="60" r="54" fill="#d7322e" stroke="#1a1a1a" strokeWidth="3" />
+      <circle cx="60" cy="60" r="46" fill="none" stroke="#F5ECCE" strokeWidth="1.5" />
+      <circle
+        cx="60"
+        cy="60"
+        r="42"
+        fill="none"
+        stroke="#F5ECCE"
+        strokeWidth="0.8"
+        strokeDasharray="2 2"
+      />
+      {ticks.map((_, i) => {
+        const a = (i / 16) * Math.PI * 2;
+        const x1 = 60 + Math.cos(a) * 50;
+        const y1 = 60 + Math.sin(a) * 50;
+        const x2 = 60 + Math.cos(a) * 56;
+        const y2 = 60 + Math.sin(a) * 56;
+        return (
+          <line
+            key={i}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="#1a1a1a"
+            strokeWidth="2"
+            strokeLinecap="square"
+          />
+        );
+      })}
+      <text
+        x="60"
+        y="58"
+        textAnchor="middle"
+        fontFamily="var(--font-tattoo), sans-serif"
+        fontWeight={900}
+        fontSize="24"
+        fill="#F5ECCE"
+        letterSpacing="0.04em"
+      >
+        {text}
+      </text>
+      <text
+        x="60"
+        y="78"
+        textAnchor="middle"
+        fontFamily="var(--font-mono), monospace"
+        fontWeight={800}
+        fontSize="8"
+        fill="#F5ECCE"
+        letterSpacing="0.32em"
+      >
+        VOL · 01
+      </text>
+    </svg>
+  );
+}
+
+function StampMangaBubble({ text }: { text: string }) {
+  /* 10-spike jagged bubble. */
+  return (
+    <svg
+      viewBox="0 0 140 120"
+      width="170"
+      height="146"
+      aria-hidden
+      style={{
+        transform: "rotate(10deg)",
+        filter: "drop-shadow(4px 4px 0 #1a1a1a)",
+      }}
+    >
+      <polygon
+        points="70,2 86,18 104,4 100,26 124,20 112,40 138,46 116,58 132,76 108,72 116,98 92,82 84,108 70,90 56,108 48,82 24,98 32,72 8,76 24,58 2,46 28,40 16,20 40,26 36,4 54,18"
+        fill="#d7322e"
+        stroke="#1a1a1a"
+        strokeWidth="3"
+        strokeLinejoin="miter"
+      />
+      <text
+        x="70"
+        y="64"
+        textAnchor="middle"
+        fontFamily="var(--font-tattoo), sans-serif"
+        fontWeight={900}
+        fontSize="30"
+        fill="#F5ECCE"
+        letterSpacing="0.02em"
+      >
+        {text}
+      </text>
+      <text
+        x="70"
+        y="80"
+        textAnchor="middle"
+        fontFamily="var(--font-mono), monospace"
+        fontWeight={800}
+        fontSize="7"
+        fill="#F5ECCE"
+        letterSpacing="0.3em"
+      >
+        VOL · 01
+      </text>
+    </svg>
+  );
+}
+
+function StampWashiTape({ text }: { text: string }) {
+  return (
+    <svg
+      viewBox="0 0 220 88"
+      width="200"
+      height="80"
+      aria-hidden
+      style={{
+        transform: "rotate(-9deg)",
+        filter: "drop-shadow(3px 3px 0 #1a1a1a)",
+      }}
+    >
+      {/* Torn-edge tape body — semicircle bites on each end */}
+      <path
+        d="M2 14
+           L2 70
+           Q14 64, 6 56
+           Q14 48, 6 40
+           Q14 34, 6 26
+           Q14 20, 2 14
+           Z"
+        fill="#d7322e"
+        opacity="0.04"
+      />
+      <path
+        d="M10 8
+           L210 8
+           Q218 16, 212 24
+           Q220 32, 214 40
+           Q220 48, 212 56
+           Q218 64, 210 72
+           L10 72
+           Q4 64, 8 56
+           Q2 48, 8 40
+           Q2 32, 8 24
+           Q2 16, 10 8
+           Z"
+        fill="#d7322e"
+        stroke="#1a1a1a"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+      {/* Inner cream stripe */}
+      <line
+        x1="14"
+        y1="22"
+        x2="206"
+        y2="22"
+        stroke="#F5ECCE"
+        strokeWidth="1"
+        strokeDasharray="2 4"
+      />
+      <line
+        x1="14"
+        y1="58"
+        x2="206"
+        y2="58"
+        stroke="#F5ECCE"
+        strokeWidth="1"
+        strokeDasharray="2 4"
+      />
+      <text
+        x="110"
+        y="50"
+        textAnchor="middle"
+        fontFamily="var(--font-tattoo), sans-serif"
+        fontWeight={900}
+        fontSize="32"
+        fill="#F5ECCE"
+        letterSpacing="0.05em"
+      >
+        {text}
+      </text>
+    </svg>
+  );
+}
+
+function H5StampAlternatives() {
+  const [variant, setVariant] = useState<StampVariant>("S1");
+  const [label, setLabel] = useState("NEW!");
+  const active = STAMP_VARIANTS.find((v) => v.id === variant)!;
+
+  const stamp =
+    variant === "S1" ? (
+      <StampRibbonFlag text={label} />
+    ) : variant === "S2" ? (
+      <StampRoundPostage text={label} />
+    ) : variant === "S3" ? (
+      <StampMangaBubble text={label} />
+    ) : (
+      <StampWashiTape text={label} />
+    );
+
+  return (
+    <section>
+      <SectionLabel
+        tag="H5"
+        name="TOP STAMP — 4 NON-STAR ALTERNATIVES"
+        desc="The featured-print top-right corner currently uses FeaturedStickerNew, a starburst with 新作!. The bottom-left 100-SETS sticker is also a starburst, so the cover has two stars on the same plate. These are 4 non-star alternatives — pick one and I'll swap FeaturedStickerNew for it. Try different label copy below."
+      />
+      <div className="mx-auto max-w-5xl px-6 pb-12 sm:px-10">
+        {/* Variant picker */}
+        <div
+          className="mb-5 flex flex-wrap gap-2"
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 10,
+            letterSpacing: "0.22em",
+            fontWeight: 800,
+          }}
+        >
+          {STAMP_VARIANTS.map((v) => {
+            const on = v.id === variant;
+            return (
+              <button
+                key={v.id}
+                onClick={() => setVariant(v.id)}
+                style={{
+                  padding: "6px 12px",
+                  background: on ? "#F7C234" : "transparent",
+                  color: on ? "#1a1a1a" : "rgba(240,235,220,0.75)",
+                  border: `1px solid ${on ? "#F7C234" : "rgba(240,235,220,0.3)"}`,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  fontSize: "inherit",
+                  letterSpacing: "inherit",
+                  fontWeight: "inherit",
+                }}
+              >
+                {v.id} · {v.name}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Label input */}
+        <label
+          className="mb-6 inline-flex items-center gap-3"
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: 10,
+            letterSpacing: "0.28em",
+            fontWeight: 800,
+            color: "rgba(240,235,220,0.65)",
+          }}
+        >
+          LABEL TEXT:
+          <input
+            type="text"
+            value={label}
+            onChange={(e) => setLabel(e.target.value.slice(0, 8))}
+            maxLength={8}
+            style={{
+              padding: "4px 10px",
+              background: "rgba(240,235,220,0.08)",
+              border: "1px solid rgba(240,235,220,0.3)",
+              color: "#f0ebdc",
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: 12,
+              letterSpacing: "0.04em",
+              width: 120,
+              outline: "none",
+            }}
+          />
+        </label>
+
+        <p
+          className="mb-8"
+          style={{
+            fontFamily: "var(--font-display), serif",
+            fontSize: 15.5,
+            lineHeight: 1.55,
+            color: "rgba(240,235,220,0.85)",
+            maxWidth: 720,
+          }}
+        >
+          <strong style={{ color: "#F7C234" }}>
+            {active.id} · {active.name}
+          </strong>{" "}
+          — {active.blurb}
+        </p>
+
+        {/* Preview — mocked featured print plate with stamp at top-right */}
+        <div
+          className="mx-auto"
+          style={{
+            position: "relative",
+            width: "100%",
+            maxWidth: 360,
+            aspectRatio: "3 / 4",
+            background: "#fffef8",
+            border: "4px solid #1a1a1a",
+            boxShadow: "8px 8px 0 #d7322e, 8px 8px 0 2px #1a1a1a",
+            backgroundImage:
+              "radial-gradient(circle at 20% 30%, rgba(43,93,174,0.18) 0%, transparent 35%), radial-gradient(circle at 80% 70%, rgba(215,50,46,0.14) 0%, transparent 40%)",
+          }}
+        >
+          {/* Mock print body — abstract gallery placeholder */}
+          <div
+            className="absolute inset-4"
+            style={{
+              border: "1px dashed rgba(26,26,26,0.18)",
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "flex-start",
+              padding: "12px",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 9,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "rgba(26,26,26,0.4)",
+              }}
+            >
+              FEATURED PRINT · MOCK
+            </span>
+          </div>
+
+          {/* The stamp — top-right corner, same anchor as live FeaturedStickerNew */}
+          <div className="pointer-events-none absolute" style={{ top: -20, right: -20 }}>
+            {stamp}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ============== Page ============== */
 
 export default function LabHeadersPage() {
   return (
     <CheckoutProvider>
       <main style={{ background: "#0a0a0a", color: "#f0ebdc", minHeight: "100vh" }}>
-        <LabSubHeader title="LAB / HEADERS · scroll model + starburst + BUY + burger" />
+        <LabSubHeader title="LAB / HEADERS · scroll model + starburst + BUY + burger + stamp alts" />
         <H1ScrollPrototype />
         <H2StarburstCombos />
         <H3BuyCombos />
         <H4BurgerCombos />
+        <H5StampAlternatives />
         <footer
           className="mx-auto max-w-6xl px-6 py-14 sm:px-10"
           style={{ borderTop: "1px dashed rgba(240,235,220,0.3)" }}

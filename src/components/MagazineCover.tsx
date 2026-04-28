@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useId, useRef, useState } from "react";
 import { useCheckout } from "@/hooks/useCheckout";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
+import { QuoteStripSvgL } from "@/components/hero-quote/QuoteStripSvgL";
 
 // Fixed thumbs: prints 1-6. First 3 always visible, last 3 show on lg+ (desktop)
 // so mobile = 3 thumbs, desktop = 6 thumbs (2 rows of 3).
@@ -180,7 +181,17 @@ function PreOrderStarburst({
   );
 }
 
-const TICKER_TOKENS = ["小学館", "★", "WORLDWIDE SHIPPING", "★", "LIMITED 100", "★"];
+const TICKER_TOKENS = [
+  "小学館",
+  "★",
+  "WORLDWIDE SHIPPING",
+  "★",
+  "LIMITED 100",
+  "★",
+  "VOL.01",
+  "★",
+  "100 SETS · NO REPRINTS",
+];
 const TICKER_REPEAT = 10;
 
 function FeaturedStickerNew() {
@@ -217,11 +228,11 @@ function FeaturedStickerSets() {
   return (
     <svg
       viewBox="0 0 100 100"
-      className="h-[110px] w-[110px] lg:h-[156px] lg:w-[156px]"
+      className="h-[110px] w-[110px] lg:h-[260px] lg:w-[260px]"
       aria-hidden
       style={{
         transform: "rotate(-10deg)",
-        filter: "drop-shadow(3px 3px 0 var(--color-ink))",
+        filter: "drop-shadow(4px 4px 0 var(--color-ink))",
       }}
     >
       <polygon
@@ -267,32 +278,6 @@ function FeaturedStickerSets() {
       >
         ONLY
       </text>
-    </svg>
-  );
-}
-
-/* Pokémon menu arrow — chunky low-poly right-pointing triangle from
-   Gen 1/2 dialog select cursors. Uniform 12px stepped pyramid: 1 cell
-   top, 2 cells, 3 cells (tip), 2 cells, 1 cell. Bobs horizontally
-   6px every 0.5s via arrow-wiggle keyframe (hard step, no easing). */
-function RedArrow() {
-  return (
-    <svg
-      viewBox="0 0 36 60"
-      aria-hidden
-      className="h-[40px] w-[24px] shrink-0 sm:h-[56px] sm:w-[34px] lg:h-[72px] lg:w-[44px]"
-      style={{
-        animation: "arrow-wiggle 0.5s steps(1) infinite alternate",
-        shapeRendering: "crispEdges",
-      }}
-    >
-      <polygon
-        points="0,0 12,0 12,12 24,12 24,24 36,24 36,36 24,36 24,48 12,48 12,60 0,60"
-        fill="var(--color-crimson)"
-        stroke="var(--color-ink)"
-        strokeWidth={2}
-        strokeLinejoin="miter"
-      />
     </svg>
   );
 }
@@ -374,10 +359,7 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           willChange: "transform",
         }}
       >
-        <div
-          className="flex h-full shrink-0 items-center whitespace-nowrap"
-          style={{ animation: "marquee-scroll 35s linear infinite" }}
-        >
+        <div className="marquee-strip flex h-full shrink-0 items-center whitespace-nowrap">
           {tickerDoubled.map((token, i) => (
             <span
               key={i}
@@ -619,13 +601,12 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
               <FeaturedStickerNew />
             </div>
             {/* Desktop: 100 SETS sticker. Mobile: PRE-ORDER starburst replaces it. */}
-            <div className="pointer-events-none absolute z-10 hidden lg:-bottom-8 lg:-left-8 lg:block">
+            <div className="pointer-events-none absolute z-10 hidden lg:-bottom-16 lg:-left-16 lg:block">
               <FeaturedStickerSets />
             </div>
-            {/* Mobile ORDER NOW stamp — positioned inside the featured's lower-
-                 left, clear of the thumb row below (was bottom:-28 which made
-                 it overlap the N°01 thumb). */}
-            <div className="absolute z-10 lg:hidden" style={{ bottom: 32, left: -22 }}>
+            {/* Mobile ORDER NOW stamp — sits lower against the print's bottom
+                 edge so the body of the featured image breathes more. */}
+            <div className="absolute z-10 lg:hidden" style={{ bottom: -8, left: -22 }}>
               <PreOrderStarburst
                 onClick={() => dispatch({ type: "OPEN" })}
                 size={176}
@@ -719,150 +700,14 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
         </div>
       </div>
 
-      {/* D. Pull-quote strip — brackets absolute-pinned to corners so flex-wrap
-           can't fling them out of place on narrow viewports. */}
-      <div
-        className="relative mx-7 mb-6"
-        style={{
-          background: "#2B5DAE",
-          border: "3px solid var(--color-ink)",
-          boxShadow: "5px 5px 0 var(--color-ink)",
-          padding: "30px 56px 30px 56px",
-        }}
-      >
-        <span
-          aria-hidden
-          className="pointer-events-none absolute text-[44px] lg:text-[56px]"
-          style={{
-            top: 2,
-            left: 10,
-            fontFamily: "var(--font-tattoo), sans-serif",
-            color: "var(--color-gold)",
-            textShadow: "2px 2px 0 var(--color-ink)",
-            lineHeight: 0.7,
-          }}
-        >
-          「
-        </span>
-        <div className="flex flex-col items-center gap-2 text-center lg:flex-row lg:flex-wrap lg:justify-center lg:gap-4">
-          <p
-            style={{
-              fontFamily: "var(--font-display), serif",
-              fontStyle: "italic",
-              fontSize: 22,
-              lineHeight: 1.2,
-              color: "var(--color-paper)",
-              margin: 0,
-            }}
-          >
-            Worldwide shipping. 100 cream sets, hand-numbered - then gone.
-          </p>
-          <div className="flex items-center gap-3">
-            <span
-              style={{
-                fontFamily: "var(--font-mono), monospace",
-                fontSize: 11,
-                letterSpacing: "0.3em",
-                fontWeight: 800,
-                color: "var(--color-gold)",
-              }}
-            >
-              - SIGNED,
-            </span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/gallery/Firma.webp"
-              alt="Tony Decay signature"
-              style={{
-                height: 36,
-                width: "auto",
-                objectFit: "contain",
-                filter: "invert(1) brightness(1.15)",
-              }}
-            />
-          </div>
-        </div>
-        <span
-          aria-hidden
-          className="pointer-events-none absolute text-[44px] lg:text-[56px]"
-          style={{
-            bottom: 2,
-            right: 10,
-            fontFamily: "var(--font-tattoo), sans-serif",
-            color: "var(--color-gold)",
-            textShadow: "2px 2px 0 var(--color-ink)",
-            lineHeight: 0.7,
-          }}
-        >
-          」
-        </span>
+      {/* D. Pull-quote strip — Q2 (tiny gold SVG L-brackets), promoted from
+           /lab/quote-strip with bumped sizing. */}
+      <div className="mx-7 mb-6">
+        <QuoteStripSvgL />
       </div>
 
-      {/* E. CTA row — stacks vertically on mobile (arrow / button / price tag
-           centered), horizontal on desktop. */}
-      <div
-        className="flex flex-col items-center gap-3 px-7 pb-8 lg:flex-row lg:flex-wrap lg:justify-center"
-        style={{ marginTop: 22, columnGap: 18, rowGap: 12 }}
-      >
-        <RedArrow />
-
-        <button
-          onClick={() => dispatch({ type: "OPEN" })}
-          className="cta-collect-pad shrink-0"
-          style={{
-            // clamp() — bulletproof responsive sizing, bypasses any Tailwind JIT
-            // clamp() — bulletproof responsive sizing. Max lowered from 108 → 76
-            // because Anton at 108 was gigantic on 2K screens.
-            fontSize: "clamp(48px, 7.5vw, 76px)",
-            background: "linear-gradient(135deg, #FFD55A 0%, #F7C234 50%, #E3A81F 100%)",
-            border: "3px solid var(--color-ink)",
-            fontFamily: "var(--font-tattoo), sans-serif",
-            letterSpacing: "0.02em",
-            color: "var(--color-ink)",
-            boxShadow: "8px 8px 0 var(--color-crimson), 8px 8px 0 2px var(--color-ink)",
-            lineHeight: 1,
-            cursor: "pointer",
-          }}
-        >
-          COLLECT YOURS
-        </button>
-
-        <div
-          className="relative lg:!p-[18px_30px_18px_42px] lg:!text-[48px]"
-          style={{
-            padding: "10px 18px 10px 26px",
-            background: "var(--color-crimson)",
-            border: "3px solid var(--color-ink)",
-            fontFamily: "var(--font-tattoo), sans-serif",
-            fontSize: 26,
-            color: "var(--color-paper)",
-            transform: "rotate(-6deg)",
-            clipPath: "polygon(12% 0%, 100% 0%, 100% 100%, 12% 100%, 0% 50%)",
-            boxShadow: "4px 4px 0 var(--color-ink)",
-            lineHeight: 1,
-            letterSpacing: "0.02em",
-          }}
-        >
-          {/* Punched tag hole — dark fill reads as a real hole (not a pearl
-               dot). Inset shadow gives it depth so the paper looks cut. */}
-          <span
-            aria-hidden
-            className="lg:!left-[18px] lg:!h-[16px] lg:!w-[16px]"
-            style={{
-              position: "absolute",
-              left: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: "#2a0e0c",
-              boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4)",
-            }}
-          />
-          $300
-        </div>
-      </div>
+      {/* E. CTA moved out of the cover — now lives after the PixelGallery
+           (PostGalleryCta in src/app/page.tsx). */}
 
       {/* F. Stats strip — boxed cells, overlapping numbered badge */}
       <div

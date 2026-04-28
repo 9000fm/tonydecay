@@ -4,16 +4,10 @@ import Image from "next/image";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
 
 const POLAROIDS = [
-  { print: PLACEHOLDER_PRINTS[6], rotate: -6, top: "6%", left: "4%", caption: "studio / lima" },
-  {
-    print: PLACEHOLDER_PRINTS[9],
-    rotate: 4,
-    top: "12%",
-    left: "34%",
-    caption: "test print — 2026",
-  },
-  { print: PLACEHOLDER_PRINTS[2], rotate: -3, top: "44%", left: "56%", caption: "first pull" },
-  { print: PLACEHOLDER_PRINTS[11], rotate: 7, top: "52%", left: "14%", caption: "ink test" },
+  { print: PLACEHOLDER_PRINTS[6], rotate: -6, top: "6%", left: "4%" },
+  { print: PLACEHOLDER_PRINTS[9], rotate: 4, top: "12%", left: "34%" },
+  { print: PLACEHOLDER_PRINTS[2], rotate: -3, top: "44%", left: "56%" },
+  { print: PLACEHOLDER_PRINTS[11], rotate: 7, top: "52%", left: "14%" },
 ];
 
 /* Inline JP glyph with hover/longpress translation tooltip. Dotted crimson
@@ -43,8 +37,6 @@ export function Artist() {
       className="relative w-full overflow-hidden"
       style={{
         background: "var(--color-paper)",
-        borderTop: "3px solid var(--color-ink)",
-        borderBottom: "3px solid var(--color-ink)",
       }}
     >
       {/* Lined-notebook background lines (horizontal rules) */}
@@ -153,17 +145,6 @@ export function Artist() {
                       className="object-cover"
                     />
                   </div>
-                  <figcaption
-                    className="absolute right-0 bottom-2 left-0 text-center"
-                    style={{
-                      fontFamily: "var(--font-display), serif",
-                      fontStyle: "italic",
-                      fontSize: 12,
-                      color: "var(--color-ink-soft)",
-                    }}
-                  >
-                    {p.caption}
-                  </figcaption>
                 </div>
               </figure>
             ))}

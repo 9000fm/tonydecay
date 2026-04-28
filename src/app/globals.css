@@ -52,13 +52,20 @@
 html {
   -webkit-text-size-adjust: 100%;
   overscroll-behavior-y: none;
+  overflow-x: hidden;
 }
 
-/* Custom banana cursors — desktop only */
+body {
+  overflow-x: hidden;
+}
+
+/* Custom banana cursors — desktop only.
+   Cursor PNG is 32x27; hotspot at (3, 3) so clicks register at the banana's
+   TIP (top-left), not the bitmap center. */
 @media (pointer: fine) {
   * {
     cursor:
-      url("/cursor/banana-cursor.png") 12 4,
+      url("/cursor/banana-cursor.png") 3 3,
       auto !important;
   }
   a,
@@ -67,12 +74,12 @@ html {
   summary,
   [data-cursor-pointer] {
     cursor:
-      url("/cursor/banana-clicked-cursor.png") 12 4,
+      url("/cursor/banana-hover.png") 3 3,
       pointer !important;
   }
   *:active {
     cursor:
-      url("/cursor/banana-cursor.png") 12 4,
+      url("/cursor/banana-cursor.png") 3 3,
       pointer !important;
   }
 }
@@ -193,6 +200,17 @@ body {
   }
 }
 
+/* Top-bar marquee — desktop 35s, mobile ~2x faster so the strip
+   doesn't drag on small viewports. */
+.marquee-strip {
+  animation: marquee-scroll 35s linear infinite;
+}
+@media (max-width: 640px) {
+  .marquee-strip {
+    animation-duration: 18s;
+  }
+}
+
 /* Footer — Y-axis spin for logo */
 @keyframes spin-y {
   0% {
@@ -259,14 +277,14 @@ body {
   display: inline-block;
 }
 
-/* Red CTA arrow — Gen-1 Pokémon cursor tick. 8px hop so the bob is
-   actually visible, not subliminal. Use with steps(1) so it jumps, no ease. */
+/* CTA arrow — Gen-1 Pokémon menu tick pointing DOWN at COLLECT YOURS.
+   4px vertical hop with steps(1) so it jumps, no ease. */
 @keyframes arrow-wiggle {
   0% {
-    transform: translateX(0);
+    transform: translateY(0);
   }
   100% {
-    transform: translateX(8px);
+    transform: translateY(5px);
   }
 }
 

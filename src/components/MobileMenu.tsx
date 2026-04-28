@@ -5,13 +5,33 @@ import { gsap } from "@/lib/gsap";
 import { getLenis } from "@/lib/lenis";
 import { useCheckout } from "@/hooks/useCheckout";
 
+/* MobileMenu — pixel-curtain wipe variant.
+   Opens by sweeping a chunky-pixel diagonal wipe from top-left to
+   bottom-right via a WebGL fragment shader. Items use the lab N°XX
+   pixel-tab numbering vocabulary. Translucent dark plate stays over
+   the site behind so context is partially visible.
+
+   ============== TWEAK ME ==============
+   Most knobs live as constants here so we can iterate fast. */
+
+const WIPE_DURATION_IN = 1.5; // seconds, open
+const WIPE_DURATION_OUT = 0.8; // seconds, close
+const WIPE_EASE_IN = "steps(8)"; // chunky stepped wipe — matches gallery reveal
+const WIPE_EASE_OUT = "steps(6)"; // close steps slightly fewer
+const PIXEL_BLOCK = 0.045; // chunky-edge pixel size in UV (0.02 = finer, 0.08 = chunkier)
+const OVERLAY_R = 0.06; // overlay color (RGB 0..1) — deep ink
+const OVERLAY_G = 0.06;
+const OVERLAY_B = 0.07;
+const OVERLAY_ALPHA = 0.985; // 1 = fully opaque, 0.85 = quite translucent
+const ITEMS_FADE_AT = 0.72; // wipe progress where items begin to appear (0..1)
+const ITEMS_FADE_FULL = 0.97; // wipe progress where items are fully visible
+/* =====================================*/
+
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// Simplified menu: WORK removed until the portfolio section is built. SHOP is
-// now an action (opens checkout modal), not a scroll target.
 type NavItem =
   | { label: string; kind: "anchor"; href: string }
   | { label: string; kind: "checkout" };
@@ -24,52 +44,217 @@ const NAV_ITEMS: NavItem[] = [
   { label: "CONTACT", kind: "anchor", href: "#contact" },
 ];
 
-const MENU_BG = "#1A1A1E";
+/* WebGL: chunky pixel-wipe diagonal fragment shader. */
+const VERT = `
+attribute vec2 aPos;
+varying vec2 vUv;
+void main() {
+  vUv = aPos * 0.5 + 0.5;
+  gl_Position = vec4(aPos, 0.0, 1.0);
+}
+`;
+
+const FRAG = `
+precision mediump float;
+varying vec2 vUv;
+uniform float uProgress;   // 0..1 — wipe coverage
+uniform float uBlock;      // chunky-pixel size in UV
+uniform vec3 uColor;       // overlay RGB
+uniform float uAlpha;      // overlay alpha
+uniform vec2 uOrigin;      // wipe origin in UV (0,0 = top-left)
+void main() {
+  // Quantize UV so the wipe edge is chunky, not smooth.
+  vec2 puv = floor(vUv / uBlock) * uBlock + uBlock * 0.5;
+
+  // y in UV is bottom-up; we want top-left origin (0,1 in UV).
+  // Translate so the diagonal sweeps from origin toward opposite corner.
+  vec2 d = puv - uOrigin;
+  // Manhattan-ish distance, scaled into 0..1
+  float dist = (abs(d.x) + abs(d.y));
+  // diagonal sweep: covers when dist <= progress * 2.0 (max 2 in unit-square)
+  if (dist > uProgress * 2.0) discard;
+  gl_FragColor = vec4(uColor, uAlpha);
+}
+`;
+
+type GL = WebGLRenderingContext;
+
+function compile(gl: GL, type: number, src: string) {
+  const s = gl.createShader(type)!;
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+    const log = gl.getShaderInfoLog(s);
+    gl.deleteShader(s);
+    throw new Error("shader compile: " + log);
+  }
+  return s;
+}
+
+function buildProgram(gl: GL) {
+  const vs = compile(gl, gl.VERTEX_SHADER, VERT);
+  const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
+  const p = gl.createProgram()!;
+  gl.attachShader(p, vs);
+  gl.attachShader(p, fs);
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+    const log = gl.getProgramInfoLog(p);
+    gl.deleteProgram(p);
+    throw new Error("link: " + log);
+  }
+  gl.deleteShader(vs);
+  gl.deleteShader(fs);
+  return p;
+}
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const cvsRef = useRef<HTMLCanvasElement>(null);
+  const itemsRef = useRef<HTMLDivElement>(null);
   const { dispatch } = useCheckout();
 
+  /* Persist GL state + tween across opens/closes. */
+  const glRef = useRef<{
+    gl: GL;
+    program: WebGLProgram;
+    buf: WebGLBuffer;
+    uProgress: WebGLUniformLocation | null;
+    uBlock: WebGLUniformLocation | null;
+    uColor: WebGLUniformLocation | null;
+    uAlpha: WebGLUniformLocation | null;
+    uOrigin: WebGLUniformLocation | null;
+    progress: { v: number };
+    fitCanvas: () => void;
+    currentTween: gsap.core.Tween | null;
+  } | null>(null);
+
+  /* Mount-once GL setup. */
+  useEffect(() => {
+    const cvs = cvsRef.current;
+    if (!cvs) return;
+    const gl = cvs.getContext("webgl", { antialias: false, alpha: true, premultipliedAlpha: true });
+    if (!gl) return;
+
+    const fitCanvas = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = cvs.getBoundingClientRect();
+      cvs.width = Math.max(1, Math.floor(rect.width * dpr));
+      cvs.height = Math.max(1, Math.floor(rect.height * dpr));
+      gl.viewport(0, 0, cvs.width, cvs.height);
+    };
+
+    const program = buildProgram(gl);
+    gl.useProgram(program);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    const aPos = gl.getAttribLocation(program, "aPos");
+    const uProgress = gl.getUniformLocation(program, "uProgress");
+    const uBlock = gl.getUniformLocation(program, "uBlock");
+    const uColor = gl.getUniformLocation(program, "uColor");
+    const uAlpha = gl.getUniformLocation(program, "uAlpha");
+    const uOrigin = gl.getUniformLocation(program, "uOrigin");
+
+    const buf = gl.createBuffer()!;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    const progress = { v: 0 };
+
+    const draw = () => {
+      gl.viewport(0, 0, cvs.width, cvs.height);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform1f(uProgress, progress.v);
+      gl.uniform1f(uBlock, PIXEL_BLOCK);
+      gl.uniform3f(uColor, OVERLAY_R, OVERLAY_G, OVERLAY_B);
+      gl.uniform1f(uAlpha, OVERLAY_ALPHA);
+      /* origin = (0, 1) in WebGL UV (top-left of canvas). */
+      gl.uniform2f(uOrigin, 0.0, 1.0);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+    const ticker = () => draw();
+    gsap.ticker.add(ticker);
+    fitCanvas();
+
+    const onResize = () => fitCanvas();
+    window.addEventListener("resize", onResize);
+
+    glRef.current = {
+      gl,
+      program,
+      buf,
+      uProgress,
+      uBlock,
+      uColor,
+      uAlpha,
+      uOrigin,
+      progress,
+      fitCanvas,
+      currentTween: null,
+    };
+
+    return () => {
+      gsap.ticker.remove(ticker);
+      window.removeEventListener("resize", onResize);
+      glRef.current?.currentTween?.kill();
+      gl.deleteBuffer(buf);
+      gl.deleteProgram(program);
+      glRef.current = null;
+    };
+  }, []);
+
+  /* Open / close — drive uProgress and item opacity via GSAP. */
   useEffect(() => {
     const panel = panelRef.current;
-    if (!panel) return;
+    const items = itemsRef.current;
+    if (!panel || !items) return;
 
-    gsap.killTweensOf(panel);
+    const state = glRef.current;
+    if (!state) return;
+
+    state.currentTween?.kill();
 
     if (isOpen) {
       getLenis()?.stop();
       document.body.style.overflow = "hidden";
+      panel.style.display = "block";
+      state.fitCanvas();
+      state.progress.v = 0;
+      gsap.set(items, { opacity: 0 });
 
-      gsap.set(panel, {
-        display: "block",
-        top: 0,
-        left: 0,
-        width: 1,
-        height: 1,
-        borderRadius: 0,
-      });
-
-      // Overshoot by 40px so sub-pixel rounding + URL-bar shifts never leave a right/bottom edge uncovered.
-      gsap.to(panel, {
-        width: window.innerWidth + 40,
-        height: window.innerHeight + 40,
-        duration: 0.55,
-        ease: "power3.inOut",
+      state.currentTween = gsap.to(state.progress, {
+        v: 1,
+        duration: WIPE_DURATION_IN,
+        ease: WIPE_EASE_IN,
+        onUpdate: () => {
+          /* Items fade in over the second half of the wipe. */
+          const p = state.progress.v;
+          const o =
+            p < ITEMS_FADE_AT
+              ? 0
+              : Math.min(1, (p - ITEMS_FADE_AT) / (ITEMS_FADE_FULL - ITEMS_FADE_AT));
+          items.style.opacity = String(o);
+        },
       });
     } else {
-      const tl = gsap.timeline({
+      gsap.to(items, {
+        opacity: 0,
+        duration: 0.18,
+        ease: "power2.out",
+      });
+      state.currentTween = gsap.to(state.progress, {
+        v: 0,
+        duration: WIPE_DURATION_OUT,
+        ease: WIPE_EASE_OUT,
         onComplete: () => {
-          gsap.set(panel, { display: "none", width: 1, height: 1 });
+          panel.style.display = "none";
           getLenis()?.start();
           document.body.style.overflow = "";
         },
-      });
-
-      tl.to(panel, {
-        width: 1,
-        height: 1,
-        duration: 0.5,
-        ease: "power3.inOut",
       });
     }
   }, [isOpen]);
@@ -93,53 +278,48 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const handleAnchorClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     onClose();
-    setTimeout(() => {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }, 550);
+    setTimeout(
+      () => {
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      },
+      WIPE_DURATION_OUT * 1000 + 50,
+    );
   };
 
   const handleCheckoutClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onClose();
-    setTimeout(() => {
-      dispatch({ type: "OPEN" });
-    }, 550);
+    setTimeout(
+      () => {
+        dispatch({ type: "OPEN" });
+      },
+      WIPE_DURATION_OUT * 1000 + 50,
+    );
   };
 
   return (
     <div
       ref={panelRef}
       onClick={onClose}
-      className="fixed z-[110] hidden overflow-hidden"
-      style={{
-        top: 0,
-        left: 0,
-        width: 1,
-        height: 1,
-        backgroundColor: MENU_BG,
-        borderRadius: 0,
-      }}
+      className="fixed inset-0 z-[110] hidden"
+      style={{ display: "none" }}
     >
-      {/* Content fills viewport, positioned at final layout — panel overflow:hidden masks it.
-          As panel grows, content is revealed. No animation on the items themselves.
-          This flex wrapper is transparent to clicks — outer onClose handles the
-          empty side areas. Only the inner nav-group stops propagation (see below). */}
+      <canvas
+        ref={cvsRef}
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        aria-hidden
+      />
+
       <div
-        className="flex flex-col items-center justify-center"
-        style={{ width: "100vw", height: "100vh" }}
+        ref={itemsRef}
+        className="relative flex h-full w-full flex-col items-center justify-center"
+        style={{ opacity: 0 }}
       >
-        {/* Click-safe zone — stops propagation so clicks on the nav/IG don't
-            trigger the outer onClose. Clicks outside this zone (side areas)
-            fall through to the panel's onClose. */}
         <div className="flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
-          {/* Nav — NUMBERED STAGES (V08-B from lab). Magazine TOC feel: each row
-             has a crimson Anton number + cream Anton label + mono → arrow on
-             the right, separated by a thin crimson bottom rule. */}
           <nav className="flex w-full max-w-md flex-col items-stretch gap-3 px-8 sm:gap-4">
-            {NAV_ITEMS.map((item, i) => {
+            {NAV_ITEMS.map((item) => {
               const label = item.label;
-              const num = String(i + 1).padStart(2, "0");
               const onEnter = (e: React.MouseEvent<HTMLElement>) => {
                 e.currentTarget.style.opacity = "0.6";
               };
@@ -155,29 +335,12 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 cursor: "pointer",
                 background: "transparent",
                 width: "100%",
-                // textAlign: left forces SHOP's <button> to match the <a> rows —
-                // buttons inherit text-align: center by default, which was
-                // centering the label span's text inside the row.
                 textAlign: "left",
                 textDecoration: "none",
                 transition: "opacity 200ms ease",
               };
               const Inner = (
                 <>
-                  <span
-                    style={{
-                      // Chunky arcade Sigmar for the numbers — playful + heavy.
-                      // Label font (Anton) stays so the contrast does the work.
-                      fontFamily: "var(--font-arcade), sans-serif",
-                      fontSize: 32,
-                      color: "var(--color-crimson)",
-                      lineHeight: 1,
-                      letterSpacing: "0.02em",
-                      minWidth: 58,
-                    }}
-                  >
-                    {num}
-                  </span>
                   <span
                     style={{
                       fontFamily: "var(--font-tattoo), sans-serif",
