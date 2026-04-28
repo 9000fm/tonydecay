@@ -12,7 +12,10 @@ function getResend(): Resend {
   return cached;
 }
 
-const FROM_EMAIL = "Tony Decay <orders@tonydecay.com>";
+// TODO: switch to "Tony Decay <orders@tonydecay.com>" once the domain is
+// registered + verified in Resend. resend.dev only delivers to the account
+// owner's verified email, so this is dev/testing only.
+const FROM_EMAIL = "Tony Decay <onboarding@resend.dev>";
 
 export async function sendConfirmationEmail(order: {
   email: string;

@@ -48,8 +48,8 @@ const STATS = [
   },
   {
     n: "便",
-    label: "SHIP",
-    value: "WORLDWIDE",
+    label: "SHIPS TO",
+    value: "WORLD",
     fill: "var(--color-gold)",
     valueColor: "var(--color-ink)",
   },
@@ -395,26 +395,29 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           willChange: "transform",
         }}
       >
-        {/* MENU — outlined rect (image #102 ref). Inverts when menu is open. */}
+        {/* MENU — outlined rect (image #102 ref). Renders boxed ✕ when menu
+            is open so old-Safari users have a clear close affordance. */}
         <button
           type="button"
           onClick={onOpenMenu}
-          aria-label="Open menu"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
           style={{
             background: menuOpen ? "var(--color-paper)" : "transparent",
             color: "var(--color-ink)",
             border: "2px solid var(--color-ink)",
-            padding: "10px 20px",
+            padding: menuOpen ? "8px 14px" : "10px 20px",
             cursor: "pointer",
             fontFamily: "var(--font-mono), monospace",
-            fontSize: 13,
-            letterSpacing: "0.32em",
+            fontSize: menuOpen ? 22 : 13,
+            letterSpacing: menuOpen ? "0" : "0.32em",
             fontWeight: 800,
             lineHeight: 1,
             transition: "background 200ms ease",
+            minWidth: menuOpen ? 48 : undefined,
+            textAlign: "center",
           }}
         >
-          MENU
+          {menuOpen ? "✕" : "MENU"}
         </button>
 
         {/* Centered title — scaled up +60%. Hidden on very narrow widths. */}
@@ -497,13 +500,13 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
               style={{ fontFamily: "var(--font-tattoo), sans-serif", lineHeight: 0.88 }}
             >
               <span
-                className="text-[64px] sm:text-[92px] lg:text-[116px]"
+                className="text-[44px] sm:text-[92px] lg:text-[116px]"
                 style={{ color: "var(--color-ink)" }}
               >
                 TONY
               </span>
               <span
-                className="mx-1 text-[32px] sm:text-[40px] lg:text-[48px]"
+                className="mx-1 text-[22px] sm:text-[40px] lg:text-[48px]"
                 style={{
                   color: "var(--color-crimson)",
                   fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
@@ -513,7 +516,7 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
                 の
               </span>
               <span
-                className="text-[64px] sm:text-[92px] lg:text-[116px]"
+                className="text-[44px] sm:text-[92px] lg:text-[116px]"
                 style={{
                   color: "var(--color-crimson)",
                   WebkitTextStroke: "2px var(--color-ink)",

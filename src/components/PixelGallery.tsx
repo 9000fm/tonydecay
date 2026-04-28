@@ -7,7 +7,6 @@ import { PLACEHOLDER_PRINTS } from "@/lib/constants";
 const INK = "#1a1a1a";
 const PAPER = "#f0ebdc";
 const GOLD = "#F7C234";
-const CRIMSON = "#d7322e";
 
 const PRINTS = PLACEHOLDER_PRINTS;
 
@@ -133,25 +132,6 @@ function PixelThumb({
       >
         N°{String(index + 1).padStart(2, "0")}
       </span>
-      {viewed && (
-        <span
-          style={{
-            position: "absolute",
-            bottom: 6,
-            right: 6,
-            background: CRIMSON,
-            color: PAPER,
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 9,
-            letterSpacing: "0.28em",
-            fontWeight: 800,
-            padding: "2px 6px",
-            border: `1px solid ${INK}`,
-          }}
-        >
-          VIEWED
-        </span>
-      )}
     </button>
   );
 }
