@@ -11,14 +11,16 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as {
       shipping: ShippingInfo;
       paymentMethod?: "paypal" | "yape";
+      productSlug?: string;
     };
-    const { shipping, paymentMethod = "paypal" } = body;
+    const { shipping, paymentMethod = "paypal", productSlug = "vol-01" } = body;
 
     if (!shipping?.email || !shipping?.fullName) {
       return NextResponse.json({ error: "shipping incomplete" }, { status: 400 });
     }
 
     const { data, error } = await supabaseAdmin.rpc("create_order", {
+      p_product_slug: productSlug,
       p_email: shipping.email,
       p_full_name: shipping.fullName,
       p_phone: shipping.phone,

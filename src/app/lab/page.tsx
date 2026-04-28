@@ -161,6 +161,66 @@ const LAB_ROUTES = [
     ],
   },
   {
+    group: "CTA",
+    items: [
+      {
+        href: "/lab/cta",
+        label: "mobile hero cta · 5 variants",
+        status: "live",
+      },
+    ],
+  },
+  {
+    group: "QUOTE STRIP",
+    items: [
+      {
+        href: "/lab/quote-strip",
+        label: "2-bracket takes · 5 variants",
+        status: "live",
+      },
+    ],
+  },
+  {
+    group: "MOTION",
+    items: [
+      {
+        href: "/lab/stacked-anchors",
+        label: "stacked anchors · earmarked for FAQ",
+        status: "live",
+      },
+      {
+        href: "/lab/page-flip",
+        label: "magazine page-flip · 3 spreads",
+        status: "live",
+      },
+    ],
+  },
+  {
+    group: "INTERACTIVE",
+    items: [
+      {
+        href: "/lab/pixel-gallery",
+        label: "pixel gallery · WebGL reveal · favorite",
+        status: "live",
+      },
+      {
+        href: "/lab/index-rail",
+        label: "N° index rail · sticky mini-map",
+        status: "live",
+      },
+    ],
+  },
+  {
+    group: "PARKED",
+    items: [
+      {
+        href: "/lab/work",
+        label: "selected work · pulled from home",
+        status: "live",
+      },
+    ],
+  },
+  {
     group: "THEMES",
     items: [
       { href: "#lab-01", label: "01 · XEROX treatment", status: "here" },
