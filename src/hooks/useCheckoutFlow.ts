@@ -33,6 +33,7 @@ export function useCheckoutFlow() {
   const [localOrderId, setLocalOrderId] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   function validateShipping() {
     const e: Partial<Record<keyof ShippingInfo, string>> = {};
@@ -60,6 +61,7 @@ export function useCheckoutFlow() {
           shipping,
           paymentMethod: "paypal",
           productSlug: "vol-01",
+          turnstileToken,
         }),
       });
       const d = await r.json();
@@ -120,6 +122,7 @@ export function useCheckoutFlow() {
     paypalCreateOrder,
     paypalOnApprove,
     reset,
+    setTurnstileToken,
   };
 }
 

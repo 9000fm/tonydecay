@@ -343,14 +343,12 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <>
                   <span
                     style={{
-                      fontFamily: "var(--font-tattoo), sans-serif",
-                      fontSize: 44,
                       color: "rgba(255,255,255,0.92)",
                       lineHeight: 1,
                       letterSpacing: "0.02em",
                       flex: 1,
                     }}
-                    className="sm:text-5xl md:text-6xl"
+                    className="font-tattoo text-[34px] sm:text-5xl md:text-6xl"
                   >
                     {label}
                   </span>

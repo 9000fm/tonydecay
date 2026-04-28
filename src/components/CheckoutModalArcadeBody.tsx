@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { PRICE_USD } from "@/lib/constants";
 import { useCheckoutFlow, COUNTRY_OPTIONS } from "@/hooks/useCheckoutFlow";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
 
 /* Live checkout modal body (promoted from lab A2 Quiet Arcade).
    Cream paper, thin 2px borders, single ink drop-shadow (no crimson),
@@ -24,6 +26,25 @@ const MUTED = "rgba(26,26,26,0.55)";
 
 export function CheckoutModalArcadeBody({ open, onClose }: Props) {
   const f = useCheckoutFlow();
+
+  // Lock pinch-zoom while the checkout modal is open. Old Safari (iPhone X)
+  // lets the user pinch-zoom into form fields, then horizontal-scroll, which
+  // visually clips field labels at the left edge.
+  useEffect(() => {
+    if (!open) return;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+    const prev = meta?.getAttribute("content") ?? null;
+    if (meta) {
+      meta.setAttribute(
+        "content",
+        "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+      );
+    }
+    return () => {
+      if (meta && prev !== null) meta.setAttribute("content", prev);
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const stepIndex =
@@ -140,6 +161,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
 
           {f.step === "shipping" && (
             <form onSubmit={f.submitShipping} noValidate>
+              <TurnstileWidget onToken={f.setTurnstileToken} />
               <QField
                 label="FULL NAME"
                 value={f.shipping.fullName}
@@ -486,7 +508,7 @@ function ReviewPanel({ onContinue }: { onContinue: () => void }) {
         </div>
 
         <div
-          className="mt-4 grid grid-cols-2 gap-2"
+          className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2"
           style={{
             fontFamily: "var(--font-mono), monospace",
             fontSize: 10,
