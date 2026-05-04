@@ -40,6 +40,10 @@ yarn-error.log*
 .claude/
 CLAUDE.md
 
+# private dev/brand notes
+BRAND.md
+_docs/
+
 # private personal notes
 NEXT_STEPS.md
 
