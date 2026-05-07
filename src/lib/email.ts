@@ -1,8 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
 
-/* Lazy-init Resend — module-level `new Resend(undefined)` fails the build
-   when RESEND_API_KEY is empty. Instantiates on first send. */
 let cached: Resend | null = null;
 function getResend(): Resend {
   if (cached) return cached;
@@ -12,9 +10,8 @@ function getResend(): Resend {
   return cached;
 }
 
-// TODO: switch to "Tony Decay <orders@tonydecay.com>" once the domain is
-// registered + verified in Resend. resend.dev only delivers to the account
-// owner's verified email, so this is dev/testing only.
+// resend.dev only delivers to the account-owner's verified email until
+// tonydecay.com is verified in Resend.
 const FROM_EMAIL = "Tony Decay <onboarding@resend.dev>";
 
 export async function sendConfirmationEmail(order: {
@@ -25,14 +22,14 @@ export async function sendConfirmationEmail(order: {
   await getResend().emails.send({
     from: FROM_EMAIL,
     to: order.email,
-    subject: `Order Confirmed — ${order.orderNumber}`,
+    subject: `Order Confirmed - ${order.orderNumber}`,
     html: `
       <h1>Thank you, ${order.fullName}!</h1>
       <p>Your order <strong>${order.orderNumber}</strong> has been confirmed.</p>
       <p>Your Tony Decay Limited Edition Collection will ship within 5-7 business days via DHL.</p>
       <p>You'll receive tracking information once your order ships.</p>
       <br/>
-      <p>— Tony Decay</p>
+      <p>- Tony Decay</p>
     `,
   });
 }
@@ -48,7 +45,7 @@ export async function sendAbandonedEmail(email: string, remaining: number) {
       <p>Complete your order before they're gone.</p>
       <p><a href="https://tonydecay.com">Complete your order</a></p>
       <br/>
-      <p>— Tony Decay</p>
+      <p>- Tony Decay</p>
     `,
   });
 }

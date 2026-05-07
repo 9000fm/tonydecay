@@ -3,15 +3,6 @@ import { capturePayPalOrder } from "@/lib/paypal";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { sendConfirmationEmail } from "@/lib/email";
 
-/* Captures the PayPal order. On success:
-   1. Calls confirm_payment RPC — atomically marks order paid + increments
-      inventory.sold. Returns order_number + remaining.
-   2. Fires the Resend confirmation email (best effort, non-blocking).
-   3. Returns { orderNumber, remaining, capture } to the client.
-
-   Body shape: { orderId: paypalOrderID, localOrderId: supabaseOrderUUID }
-*/
-
 export async function POST(req: NextRequest) {
   try {
     const { orderId, localOrderId } = (await req.json()) as {
@@ -22,10 +13,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "orderId required" }, { status: 400 });
     }
 
-    // 1. Capture with PayPal (throws with real PP error on failure)
     const capture = await capturePayPalOrder(orderId);
 
-    // 2. If we have a local Supabase order, confirm it + increment inventory
     let orderNumber: string | null = null;
     let remaining: number | null = null;
     if (localOrderId) {
@@ -43,7 +32,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3. Fire confirmation email (best effort — failure doesn't block response)
     if (orderNumber && localOrderId) {
       const { data: orderRow } = await supabaseAdmin
         .from("orders")
@@ -59,16 +47,11 @@ export async function POST(req: NextRequest) {
           });
         } catch (emailErr) {
           console.error("[paypal/capture] sendConfirmationEmail failed", emailErr);
-          // Don't fail the capture over email — order is paid.
         }
       }
     }
 
-    return NextResponse.json({
-      capture,
-      orderNumber,
-      remaining,
-    });
+    return NextResponse.json({ capture, orderNumber, remaining });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[paypal/capture]", message);

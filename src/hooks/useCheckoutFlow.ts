@@ -3,10 +3,6 @@
 import { useState } from "react";
 import type { ShippingInfo } from "@/lib/types";
 
-/* Shared logic for every checkout-modal variant in /lab/checkout.
-   Keeps the 4 styles (arcade, broadsheet, tegata, museum, terminal) as pure
-   layout/typography — the state machine and API calls live here. */
-
 type Step = "review" | "shipping" | "payment" | "success";
 
 const EMPTY_SHIPPING: ShippingInfo = {
@@ -24,6 +20,26 @@ const EMPTY_SHIPPING: ShippingInfo = {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type { Step };
+
+function friendlyError(raw: unknown): string {
+  const s = (raw instanceof Error ? raw.message : String(raw)).toLowerCase();
+  if (s.includes("rate_limited")) return "too many tries - wait 30 seconds and retry";
+  if (s.includes("bot_check_failed")) return "checking you're human - hold on a sec, then retry";
+  if (s.includes("sold_out")) return "sold out - the last set just went";
+  if (s.includes("invalid_client") || s.includes("paypal token 401"))
+    return "payment service is temporarily unavailable - try again shortly";
+  if (
+    s.includes("fetch failed") ||
+    s.includes("failed to fetch") ||
+    s.includes("network") ||
+    s.includes("enotfound") ||
+    s.includes("econnrefused") ||
+    s.includes("etimedout") ||
+    s.includes("aborted")
+  )
+    return "couldn't reach our order service - try again in a moment";
+  return "couldn't complete - please try again or email tony@tonydecay.com";
+}
 
 export function useCheckoutFlow() {
   const [step, setStep] = useState<Step>("review");
@@ -52,6 +68,14 @@ export function useCheckoutFlow() {
     e.preventDefault();
     if (!validateShipping()) return;
     setPayError(null);
+
+    // Idempotency: if we already created an order this session, skip the POST
+    // and resume at payment. Prevents duplicate Supabase rows on retry.
+    if (localOrderId) {
+      setStep("payment");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const r = await fetch("/api/orders/create", {
@@ -65,37 +89,59 @@ export function useCheckoutFlow() {
         }),
       });
       const d = await r.json();
-      if (!r.ok || !d.orderId) throw new Error(d.error || "could not create order");
+      if (!r.ok || !d.orderId) {
+        const raw = d.error || `http_${r.status}`;
+        console.error("[checkout] orders/create failed", raw);
+        throw new Error(raw);
+      }
       setLocalOrderId(d.orderId);
       setOrderNumber(d.orderNumber);
       setStep("payment");
     } catch (err) {
-      setPayError(err instanceof Error ? err.message : String(err));
+      console.error("[checkout] submitShipping", err);
+      setPayError(friendlyError(err));
     } finally {
       setSubmitting(false);
     }
   }
 
   async function paypalCreateOrder() {
-    const r = await fetch("/api/paypal/create-order", { method: "POST" });
-    const j = await r.json();
-    if (!j.id) throw new Error(j.error ?? "create failed");
-    return j.id as string;
+    try {
+      const r = await fetch("/api/paypal/create-order", { method: "POST" });
+      const j = await r.json();
+      if (!j.id) throw new Error(j.error ?? "create failed");
+      return j.id as string;
+    } catch (err) {
+      console.error("[checkout] paypalCreateOrder", err);
+      setPayError(friendlyError(err));
+      throw err;
+    }
   }
 
   async function paypalOnApprove(data: { orderID: string }) {
-    const r = await fetch("/api/paypal/capture", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId: data.orderID, localOrderId }),
-    });
-    const j = await r.json();
-    if (j.error) {
-      setPayError(String(j.error));
-      return;
+    try {
+      const r = await fetch("/api/paypal/capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: data.orderID, localOrderId }),
+      });
+      const j = await r.json();
+      if (j.error) {
+        console.error("[checkout] capture", j.error);
+        setPayError(friendlyError(j.error));
+        return;
+      }
+      if (j.orderNumber) setOrderNumber(j.orderNumber);
+      setStep("success");
+    } catch (err) {
+      console.error("[checkout] paypalOnApprove", err);
+      setPayError(friendlyError(err));
     }
-    if (j.orderNumber) setOrderNumber(j.orderNumber);
-    setStep("success");
+  }
+
+  function paypalOnError(err: unknown) {
+    console.error("[checkout] paypal SDK error", err);
+    setPayError(friendlyError(err));
   }
 
   function reset() {
@@ -121,6 +167,7 @@ export function useCheckoutFlow() {
     submitShipping,
     paypalCreateOrder,
     paypalOnApprove,
+    paypalOnError,
     reset,
     setTurnstileToken,
   };

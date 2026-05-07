@@ -1,22 +1,27 @@
-/* In-memory per-IP rate limiter. Tiny belt-and-braces guard for checkout
-   endpoints — keeps abusive bots off Supabase RPC and PayPal calls.
-
-   Not a substitute for proper bot guard (Turnstile does that). Survives
-   only as long as the serverless instance lives, which on Vercel is good
-   enough to slow down a single attacker but won't catch coordinated waves. */
+// Soft per-IP guard. Real bot defense is Turnstile + PayPal anti-fraud.
+// In-memory state survives only as long as a Vercel serverless instance lives,
+// so attackers rotating across cold starts bypass it. Useful as a backstop for
+// a single user hammering one warm instance.
 
 const buckets = new Map<string, { count: number; resetAt: number }>();
+const CLEANUP_THRESHOLD = 500;
 
 export function rateLimit(
   ip: string,
-  { limit = 6, windowMs = 60_000 }: { limit?: number; windowMs?: number } = {},
+  { limit = 20, windowMs = 60_000 }: { limit?: number; windowMs?: number } = {},
 ) {
-  // Dev escape: rate limiting blocks rapid checkout testing locally.
-  // Production keeps strict enforcement.
   if (process.env.NODE_ENV !== "production") {
     return { ok: true, remaining: limit };
   }
+
   const now = Date.now();
+
+  if (buckets.size > CLEANUP_THRESHOLD) {
+    for (const [key, b] of buckets) {
+      if (b.resetAt < now) buckets.delete(key);
+    }
+  }
+
   const b = buckets.get(ip);
   if (!b || b.resetAt < now) {
     buckets.set(ip, { count: 1, resetAt: now + windowMs });
@@ -30,7 +35,9 @@ export function rateLimit(
 }
 
 export function ipFromHeaders(h: Headers): string {
+  const cf = h.get("cf-connecting-ip");
+  if (cf) return cf.trim();
   const fwd = h.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0]!.trim();
-  return h.get("x-real-ip") ?? "0.0.0.0";
+  return h.get("x-real-ip")?.trim() ?? "anon";
 }

@@ -1,7 +1,8 @@
 import "server-only";
+import { fetchWithRetry } from "./fetch-with-retry";
 
 const PAYPAL_API_BASE =
-  process.env.NODE_ENV === "production"
+  process.env.PAYPAL_ENV === "live"
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
 
@@ -19,7 +20,7 @@ export async function getPayPalAccessToken(): Promise<string> {
 
   const auth = Buffer.from(`${clientId}:${secret}`).toString("base64");
 
-  const res = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
+  const res = await fetchWithRetry(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${auth}`,
@@ -42,7 +43,7 @@ export async function getPayPalAccessToken(): Promise<string> {
 export async function createPayPalOrder(amountUsd: number): Promise<string> {
   const accessToken = await getPayPalAccessToken();
 
-  const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
+  const res = await fetchWithRetry(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -52,10 +53,7 @@ export async function createPayPalOrder(amountUsd: number): Promise<string> {
       intent: "CAPTURE",
       purchase_units: [
         {
-          amount: {
-            currency_code: "USD",
-            value: amountUsd.toFixed(2),
-          },
+          amount: { currency_code: "USD", value: amountUsd.toFixed(2) },
           description: "Tony Decay Limited Edition Collection",
         },
       ],
@@ -76,13 +74,16 @@ export async function createPayPalOrder(amountUsd: number): Promise<string> {
 export async function capturePayPalOrder(paypalOrderId: string) {
   const accessToken = await getPayPalAccessToken();
 
-  const res = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders/${paypalOrderId}/capture`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+  const res = await fetchWithRetry(
+    `${PAYPAL_API_BASE}/v2/checkout/orders/${paypalOrderId}/capture`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
 
   const text = await res.text();
   if (!res.ok) {
