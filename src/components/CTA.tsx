@@ -3,26 +3,113 @@
 import { useRef } from "react";
 import { JP } from "./JP";
 
-/* CTA — SHOGAKUKAN ATTRACT
-   Maximalist closer that echoes the MagazineCover vocabulary: warm
-   masthead band, kanji JP, dotted paper bg, levitating crimson
-   starburst, prints peeking from the edges, hard offset shadows
-   everywhere. Giant COLLECT / YOURS wordmark anchors the section. */
+/* CTA — TYPE-AS-IMAGE
+   1968 Wim Crouwel / Total Design brutalist statement. The wordmark
+   IS the visual. Mega-type fills the viewport, confronts the user
+   instead of selling at them. Two ink ticker bands sandwich the type,
+   scrolling in opposite directions for X-crossed motion. */
 
-type Layer = {
-  src: string;
-  w: number;
-  rot: number;
-  side: "left" | "right";
-  top: string;
-};
+/* CTA header — merged STAMP SEAL (VOL.01 round badge) + CUT-EDGE
+   RIBBON (TONY DECAY · 特集) stacked vertically. Replaces the prior
+   black ink tickers. Both pieces share a single paper background and
+   sit above the mega type body as the section's masthead. */
+function CTAHeader() {
+  return (
+    <div
+      style={{
+        background: "var(--color-paper)",
+        borderBottom: "2px solid var(--color-ink)",
+      }}
+    >
+      {/* Top half — round VOL.01 stamp on a hairline. */}
+      <div
+        style={{
+          padding: "32px 24px 20px",
+          position: "relative",
+          textAlign: "center",
+        }}
+      >
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            top: "calc(50% + 4px)",
+            left: 0,
+            right: 0,
+            height: 1,
+            background: "var(--color-ink)",
+            opacity: 0.3,
+          }}
+        />
+        <div
+          style={{
+            position: "relative",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 84,
+            height: 84,
+            borderRadius: "50%",
+            background: "var(--color-gold)",
+            border: "3px solid var(--color-ink)",
+            boxShadow: "3px 3px 0 var(--color-ink)",
+            color: "var(--color-ink)",
+          }}
+        >
+          <div className="text-center" style={{ lineHeight: 1 }}>
+            <div
+              className="font-mono"
+              style={{
+                fontSize: 8,
+                fontWeight: 800,
+                letterSpacing: "0.28em",
+              }}
+            >
+              VOL.
+            </div>
+            <div
+              className="font-tattoo"
+              style={{ fontSize: 24, fontWeight: 900, letterSpacing: "0.02em" }}
+            >
+              01
+            </div>
+          </div>
+        </div>
+      </div>
 
-const LAYERS: Layer[] = [
-  { src: "/gallery/2.webp", w: 200, rot: -8, side: "left", top: "10%" },
-  { src: "/gallery/8.webp", w: 220, rot: 6, side: "right", top: "8%" },
-  { src: "/gallery/12.webp", w: 180, rot: 4, side: "left", top: "58%" },
-  { src: "/gallery/5.webp", w: 200, rot: -5, side: "right", top: "56%" },
-];
+      {/* Bottom half — gold cut-edge ribbon with the wordmark. */}
+      <div
+        style={{
+          padding: "8px 0 28px",
+          textAlign: "center",
+        }}
+      >
+        <div
+          className="font-mono"
+          style={{
+            display: "inline-block",
+            background: "var(--color-gold)",
+            color: "var(--color-ink)",
+            border: "2.5px solid var(--color-ink)",
+            padding: "10px 48px",
+            fontSize: 12,
+            fontWeight: 800,
+            letterSpacing: "0.32em",
+            clipPath:
+              "polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%)",
+            boxShadow: "4px 4px 0 var(--color-ink)",
+          }}
+        >
+          ✦ TONY DECAY ·{" "}
+          <span className="font-jp" style={{ fontSize: 14 }}>
+            特集
+          </span>{" "}
+          ✦
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function CTA({ onBuy }: { onBuy?: () => void }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -47,304 +134,107 @@ export function CTA({ onBuy }: { onBuy?: () => void }) {
         borderBottom: "3px solid var(--color-ink)",
       }}
     >
-      {/* warm masthead band */}
-      <div
-        className="relative flex items-center justify-between"
-        style={{
-          background: "#ECE4D0",
-          borderBottom: "3px solid var(--color-ink)",
-          padding: "22px 56px",
-          zIndex: 5,
-        }}
-      >
-        <span
-          className="font-mono"
-          style={{
-            fontSize: 11,
-            fontWeight: 800,
-            letterSpacing: "0.3em",
-            color: "var(--color-crimson)",
-          }}
-        >
-          VOL.01 · NEXT STEP / <JP en="tsugi no ippo — the next step">次の一歩</JP>
-        </span>
-        <span
-          className="font-jp"
-          style={{
-            fontSize: 18,
-            color: "var(--color-ink)",
-            opacity: 0.7,
-            letterSpacing: "0.06em",
-          }}
-        >
-          ★{" "}
-          <JP en="puresutāto — press start (Famicom-era game-start screen language)">
-            プレスタート
-          </JP>{" "}
-          ★
-        </span>
-      </div>
+      {/* Section masthead — VOL.01 stamp + TONY DECAY ribbon stacked. */}
+      <CTAHeader />
 
-      {/* dotted body */}
+      {/* Mega type body — fills the viewport, type IS the image */}
       <div
-        className="relative"
         style={{
-          minHeight: 680,
           backgroundImage: "radial-gradient(rgba(26,26,26,0.22) 1.2px, transparent 1.6px)",
           backgroundSize: "9px 9px",
-          padding: "72px 56px 96px",
+          padding: "clamp(40px, 8vw, 80px) clamp(16px, 4vw, 56px)",
+          minHeight: "min(720px, 90vh)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
-        {/* Inner frame — caps the composition at 1280 so prints + wordmark
-            stay grouped on ultrawide instead of flying to the viewport edges. */}
-        <div className="relative mx-auto" style={{ maxWidth: 1280 }}>
-          {/* edge prints */}
-          {LAYERS.map((p, i) => (
-            <div
-              key={i}
-              aria-hidden
-              // Mobile shows only LAYERS[0] (top-left) + LAYERS[3] (bottom-right);
-              // the other 2 polaroids hide on <lg so the title isn't crashed.
-              className={`pointer-events-none absolute ${i === 1 || i === 2 ? "hidden lg:block" : ""}`}
-              style={{
-                top: p.top,
-                [p.side]: -40,
-                transform: `rotate(${p.rot}deg)`,
-                width: p.w,
-                aspectRatio: "3/4",
-                background: "#fff",
-                border: "3px solid var(--color-ink)",
-                boxShadow: "5px 5px 0 var(--color-crimson), 5px 5px 0 2px var(--color-ink)",
-                zIndex: 1,
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.src}
-                alt=""
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-              />
-            </div>
-          ))}
-
-          {/* center wordmark */}
-          <div className="relative text-center" style={{ zIndex: 3 }}>
-            <div
-              className="mb-5 inline-block font-mono"
-              style={{
-                background: "var(--color-crimson)",
-                color: "var(--color-paper)",
-                border: "3px solid var(--color-ink)",
-                padding: "5px 14px",
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: "0.32em",
-                boxShadow: "3px 3px 0 var(--color-ink)",
-                transform: "rotate(-2deg)",
-              }}
-            >
-              ★ ONE EDITION · NEVER REPRINTED ★
-            </div>
-
-            <h2
-              className="font-tattoo"
-              style={{
-                margin: 0,
-                fontSize: "clamp(72px, 16vw, 200px)",
-                lineHeight: 0.84,
-                color: "var(--color-ink)",
-                letterSpacing: "-0.005em",
-              }}
-            >
-              COLLECT
-            </h2>
-            <h2
-              className="font-tattoo"
-              style={{
-                margin: "-4px 0 0",
-                fontSize: "clamp(72px, 16vw, 200px)",
-                lineHeight: 0.84,
-                color: "var(--color-crimson)",
-                letterSpacing: "-0.005em",
-                WebkitTextStroke: "3px var(--color-ink)",
-              }}
-            >
+        <div className="mx-auto w-full" style={{ maxWidth: 1280 }}>
+          <h2
+            className="font-tattoo"
+            style={{
+              margin: 0,
+              fontSize: "clamp(80px, 22vw, 280px)",
+              lineHeight: 0.84,
+              color: "var(--color-ink)",
+              letterSpacing: "-0.01em",
+              textAlign: "left",
+            }}
+          >
+            COLLECT
+          </h2>
+          <h2
+            className="font-tattoo"
+            style={{
+              margin: "-4px 0 0",
+              fontSize: "clamp(80px, 22vw, 280px)",
+              lineHeight: 0.84,
+              color: "var(--color-crimson)",
+              letterSpacing: "-0.01em",
+              WebkitTextStroke: "3px var(--color-ink)",
+              textAlign: "left",
+            }}
+          >
+            <JP en="を (wo) — Japanese object marker · reads 'COLLECT → YOURS'" bare>
               <span
                 className="font-jp"
                 style={{
                   fontSize: "0.42em",
                   color: "var(--color-ink)",
                   WebkitTextStroke: 0,
-                  marginRight: "0.18em",
+                  marginRight: "0.14em",
                   verticalAlign: "middle",
                 }}
               >
-                <JP en="wo — Japanese particle marking the direct object">を</JP>
+                を
               </span>
-              YOURS
-              <span
-                style={{
-                  color: "var(--color-gold)",
-                  WebkitTextStroke: "3px var(--color-ink)",
-                }}
-              >
-                .
-              </span>
-            </h2>
-
-            <p
-              className="font-display mx-auto"
-              style={{
-                fontStyle: "italic",
-                fontSize: "clamp(18px, 1.7vw, 22px)",
-                lineHeight: 1.5,
-                color: "var(--color-ink-soft)",
-                marginTop: 22,
-                maxWidth: "40ch",
-              }}
-            >
-              fifteen prints, signed certificate, archival packaging — sent worldwide by DHL.
-            </p>
-
-            {/* CTA cluster */}
-            <div
-              className="mt-10 inline-flex flex-wrap items-center justify-center"
-              style={{ gap: 22 }}
-            >
-              <span
-                aria-hidden
-                className="font-tattoo"
-                style={{
-                  fontSize: 56,
-                  color: "var(--color-crimson)",
-                  transform: "rotate(-8deg)",
-                  textShadow: "3px 3px 0 var(--color-ink)",
-                  animation: "arrow-wiggle 0.8s ease-in-out infinite alternate",
-                }}
-              >
-                ☞
-              </span>
-
-              <button
-                onClick={handleBuy}
-                className="font-tattoo relative cursor-pointer"
-                style={{
-                  padding: "24px 44px",
-                  background: "linear-gradient(180deg, #f7c234 0%, #e0a91d 100%)",
-                  color: "var(--color-ink)",
-                  border: "4px solid var(--color-ink)",
-                  fontSize: 36,
-                  letterSpacing: "0.04em",
-                  boxShadow: "8px 8px 0 var(--color-crimson), 8px 8px 0 4px var(--color-ink)",
-                  lineHeight: 1,
-                }}
-              >
-                ORDER NOW
-                <span
-                  aria-hidden
-                  className="font-jp absolute"
-                  style={{
-                    top: -16,
-                    right: -18,
-                    fontSize: 20,
-                    color: "var(--color-crimson)",
-                    textShadow: "2px 2px 0 var(--color-ink)",
-                    transform: "rotate(10deg)",
-                  }}
-                >
-                  <JP en="shinsaku — new release / latest work">新作</JP>!
-                </span>
-              </button>
-
-              <span
-                aria-hidden
-                className="font-tattoo hidden sm:inline"
-                style={{
-                  fontSize: 56,
-                  color: "var(--color-crimson)",
-                  transform: "rotate(8deg) scaleX(-1)",
-                  textShadow: "3px 3px 0 var(--color-ink)",
-                  animation: "arrow-wiggle 0.8s ease-in-out infinite alternate",
-                }}
-              >
-                ☞
-              </span>
-            </div>
-
-            <div
-              className="mt-7 font-mono"
-              style={{
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: "0.34em",
-                color: "var(--color-ink-soft)",
-              }}
-            >
-              PAYPAL · CARD · GUEST · DHL WORLDWIDE
-            </div>
-          </div>
-
-          {/* big crimson levitating starburst — pinned to inner frame's top-right.
-             Hidden on mobile (the giant ORDER NOW button does the same job
-             without crashing into the title). */}
-          <div
-            className="absolute hidden lg:block"
-            style={{
-              right: -16,
-              top: 0,
-              zIndex: 2,
-              filter: "drop-shadow(4px 4px 0 var(--color-ink))",
-              animation: "star-levitate 3.4s ease-in-out infinite",
-            }}
-          >
-            <JP en="yoyaku — pre-order / reservation" bare>
-              <svg width="170" height="170" viewBox="0 0 100 100">
-                <polygon
-                  points="50,0 57,14 70,4 68,20 86,16 78,32 96,38 80,48 96,62 76,64 84,82 64,76 66,96 50,84 34,96 36,76 16,82 24,64 4,62 20,48 4,38 22,32 14,16 32,20 30,4 43,14"
-                  fill="var(--color-crimson)"
-                  stroke="var(--color-ink)"
-                  strokeWidth={2.5}
-                  strokeLinejoin="round"
-                />
-                <text
-                  x="50"
-                  y="40"
-                  textAnchor="middle"
-                  fontFamily="var(--font-jp)"
-                  fontWeight={900}
-                  fontSize="22"
-                  fill="var(--color-paper)"
-                >
-                  予約
-                </text>
-                <text
-                  x="50"
-                  y="58"
-                  textAnchor="middle"
-                  fontFamily="var(--font-tattoo)"
-                  fontWeight={700}
-                  fontSize="14"
-                  fill="var(--color-gold)"
-                >
-                  NOW!
-                </text>
-                <text
-                  x="50"
-                  y="72"
-                  textAnchor="middle"
-                  fontFamily="var(--font-mono)"
-                  fontSize="9"
-                  fontWeight={800}
-                  fill="var(--color-paper)"
-                  letterSpacing="0.2em"
-                >
-                  VOL.01
-                </text>
-              </svg>
             </JP>
+            YOURS
+          </h2>
+
+          {/* Bottom row — ORDER NOW alone, right-aligned. */}
+          <div className="mt-12 flex justify-end">
+            <button
+              type="button"
+              onClick={handleBuy}
+              className="cta-press w-full font-mono sm:w-auto"
+              style={{
+                padding: "16px 32px",
+                background: "var(--color-ink)",
+                color: "var(--color-gold)",
+                border: "2px solid var(--color-ink)",
+                fontSize: 16,
+                fontWeight: 900,
+                letterSpacing: "0.32em",
+                lineHeight: 1,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                // Flash-stamp press animation — chunky offset shadow that
+                // grows on hover and collapses on active (button physically
+                // presses into its own shadow).
+                boxShadow: "4px 4px 0 var(--color-crimson)",
+                transition: "transform 120ms ease-out, box-shadow 120ms ease-out",
+              }}
+            >
+              ORDER NOW →
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Stamp-press animation — used by all .cta-press buttons.
+          Hover: lifts -1/-1, shadow grows to 5px. Active: drops +4/+4,
+          shadow shrinks to 1px (button "presses into" shadow). */}
+      <style>{`
+        .cta-press:hover {
+          transform: translate(-1px, -1px);
+          box-shadow: 5px 5px 0 var(--color-crimson) !important;
+        }
+        .cta-press:active {
+          transform: translate(4px, 4px);
+          box-shadow: 1px 1px 0 var(--color-crimson) !important;
+        }
+      `}</style>
     </section>
   );
 }

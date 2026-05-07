@@ -191,8 +191,6 @@ export function Contact() {
             className="relative"
             style={{
               background: "#ECE4D0",
-              backgroundImage: PAPER_DOT_BG,
-              backgroundSize: PAPER_DOT_SIZE,
               border: "3px solid var(--color-ink)",
               boxShadow: "5px 5px 0 var(--color-crimson), 5px 5px 0 2px var(--color-ink)",
               padding: "28px 24px 24px",

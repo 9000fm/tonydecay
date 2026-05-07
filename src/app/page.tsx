@@ -56,12 +56,12 @@ export default function Home() {
         <main>
           <MagazineCover onOpenMenu={() => setMenuOpen((v) => !v)} menuOpen={menuOpen} />
           <PixelGallery />
-          <PostGalleryCta />
           {/* === CANDIDATE BLOCK — pick the keeper, delete the rest. === */}
           <GameManual />
           {/* === END CANDIDATE BLOCK === */}
           <PrintSpecs />
           <FAQ />
+          <PostGalleryCta />
           <Artist />
           <Contact />
         </main>

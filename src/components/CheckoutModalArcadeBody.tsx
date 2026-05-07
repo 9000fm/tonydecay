@@ -7,12 +7,6 @@ import { useCheckoutFlow, COUNTRY_OPTIONS } from "@/hooks/useCheckoutFlow";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { JP } from "./JP";
 
-/* Live checkout modal body (promoted from lab A2 Quiet Arcade).
-   Cream paper, thin 2px borders, single ink drop-shadow (no crimson),
-   outlined step chips, ink-on-gold continue button. Hosts its own 3-step
-   flow via useCheckoutFlow — parent supplies open/onClose from the
-   global useCheckout reducer. */
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -25,12 +19,18 @@ const CRIMSON = "#d7322e";
 const GOLD = "#F7C234";
 const MUTED = "rgba(26,26,26,0.55)";
 
+function maskEmail(email: string): string {
+  if (!email || !email.includes("@")) return "********";
+  const [local, domain] = email.split("@");
+  const visible = local.length <= 4 ? local.slice(0, 2) : local.slice(0, 6);
+  return `${visible}********@${domain}`;
+}
+
 export function CheckoutModalArcadeBody({ open, onClose }: Props) {
   const f = useCheckoutFlow();
 
-  // Lock pinch-zoom while the checkout modal is open. Old Safari (iPhone X)
-  // lets the user pinch-zoom into form fields, then horizontal-scroll, which
-  // visually clips field labels at the left edge.
+  // Lock pinch-zoom while the modal is open. Old Safari pinch-zooms form
+  // fields and horizontal-scrolls, clipping field labels.
   useEffect(() => {
     if (!open) return;
     const meta = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
@@ -67,14 +67,13 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="max-h-[92vh] overflow-y-auto p-7 sm:p-10">
-          {/* Header */}
           <div className="mb-6 flex items-start justify-between gap-3">
             <div>
               <div
                 style={{
                   fontFamily: "var(--font-mono), monospace",
-                  fontSize: 9,
-                  letterSpacing: "0.4em",
+                  fontSize: 11,
+                  letterSpacing: "0.36em",
                   fontWeight: 800,
                   color: MUTED,
                 }}
@@ -124,11 +123,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
             </button>
           </div>
 
-          {/* Step indicator — outlined, gold-filled when active. Completed
-              steps are clickable buttons (jump back); future + active are
-              non-interactive. Disable jump-back if final 'success' step
-              has been reached (no going back from a confirmed order). */}
-          <div className="mb-7 flex items-center gap-2">
+          <div className="mb-8 flex items-center gap-2">
             {[
               { n: 0, label: "REVIEW", key: "review" as const },
               { n: 1, label: "SHIPPING", key: "shipping" as const },
@@ -142,16 +137,21 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
 
               const baseStyle: React.CSSProperties = {
                 flex: 1,
-                padding: "6px 10px",
+                padding: "8px 6px",
                 background: active ? GOLD : "transparent",
                 color: active ? INK : done ? INK : MUTED,
-                border: `1.5px solid ${active || done ? INK : "rgba(26,26,26,0.25)"}`,
+                border: `2px solid ${active || done ? INK : "rgba(26,26,26,0.28)"}`,
+                boxShadow: active ? `3px 3px 0 ${INK}` : "none",
                 fontFamily: "var(--font-mono), monospace",
-                fontSize: 9,
-                letterSpacing: "0.22em",
+                fontSize: 11,
+                letterSpacing: "0.16em",
                 fontWeight: 800,
-                lineHeight: 1,
+                lineHeight: 1.15,
                 textAlign: "center",
+                height: 46,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               };
 
               if (clickable) {
@@ -247,49 +247,72 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                 />
               </div>
 
-              <div className="mt-7 flex items-center justify-between">
-                {f.payError ? (
-                  <span
+              <div className="mt-7">
+                <div className="mb-4">
+                  {f.payError ? (
+                    <span
+                      style={{
+                        fontFamily: "var(--font-display), serif",
+                        fontStyle: "italic",
+                        fontSize: 13,
+                        color: CRIMSON,
+                      }}
+                    >
+                      - {f.payError}
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        fontFamily: "var(--font-display), serif",
+                        fontStyle: "italic",
+                        fontSize: 13,
+                        color: MUTED,
+                      }}
+                    >
+                      ships worldwide · all prices final
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => f.setStep("review")}
+                    aria-label="Back to review step"
                     style={{
-                      fontFamily: "var(--font-display), serif",
-                      fontStyle: "italic",
-                      fontSize: 13,
-                      color: CRIMSON,
+                      padding: "11px 22px",
+                      background: GOLD,
+                      color: INK,
+                      border: `2px solid ${INK}`,
+                      fontFamily: "var(--font-tattoo), sans-serif",
+                      fontSize: 18,
+                      letterSpacing: "0.04em",
+                      lineHeight: 1,
+                      cursor: "pointer",
+                      boxShadow: `3px 3px 0 ${INK}`,
                     }}
                   >
-                    — {f.payError}
-                  </span>
-                ) : (
-                  <span
+                    ← BACK
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={f.submitting}
                     style={{
-                      fontFamily: "var(--font-display), serif",
-                      fontStyle: "italic",
-                      fontSize: 13,
-                      color: MUTED,
+                      padding: "11px 22px",
+                      background: GOLD,
+                      color: INK,
+                      border: `2px solid ${INK}`,
+                      fontFamily: "var(--font-tattoo), sans-serif",
+                      fontSize: 18,
+                      letterSpacing: "0.04em",
+                      lineHeight: 1,
+                      cursor: f.submitting ? "wait" : "pointer",
+                      opacity: f.submitting ? 0.6 : 1,
+                      boxShadow: `3px 3px 0 ${INK}`,
                     }}
                   >
-                    ships worldwide · all prices final
-                  </span>
-                )}
-                <button
-                  type="submit"
-                  disabled={f.submitting}
-                  style={{
-                    padding: "11px 22px",
-                    background: INK,
-                    color: GOLD,
-                    border: `1.5px solid ${INK}`,
-                    fontFamily: "var(--font-tattoo), sans-serif",
-                    fontSize: 18,
-                    letterSpacing: "0.04em",
-                    lineHeight: 1,
-                    cursor: f.submitting ? "wait" : "pointer",
-                    opacity: f.submitting ? 0.6 : 1,
-                    boxShadow: `3px 3px 0 ${INK}`,
-                  }}
-                >
-                  {f.submitting ? "…" : "CONTINUE →"}
-                </button>
+                    {f.submitting ? "…" : "CONTINUE →"}
+                  </button>
+                </div>
               </div>
             </form>
           )}
@@ -345,7 +368,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                 style={{ layout: "vertical", height: 46, shape: "rect" }}
                 createOrder={f.paypalCreateOrder}
                 onApprove={(data) => f.paypalOnApprove(data)}
-                onError={(err) => f.setPayError(String(err))}
+                onError={f.paypalOnError}
               />
 
               {f.payError && (
@@ -358,7 +381,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                     marginTop: 10,
                   }}
                 >
-                  — {f.payError}
+                  - {f.payError}
                 </p>
               )}
 
@@ -388,7 +411,11 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                 >
                   ← BACK
                 </button>
-                <span>SANDBOX · NO REAL CHARGE</span>
+                <span>
+                  {process.env.NODE_ENV === "production"
+                    ? "SECURE PAYMENT"
+                    : "SANDBOX · NO REAL CHARGE"}
+                </span>
               </div>
             </div>
           )}
@@ -398,8 +425,8 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
               <div
                 style={{
                   fontFamily: "var(--font-mono), monospace",
-                  fontSize: 9,
-                  letterSpacing: "0.42em",
+                  fontSize: 11,
+                  letterSpacing: "0.38em",
                   fontWeight: 800,
                   color: MUTED,
                 }}
@@ -410,7 +437,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                 className="mt-3"
                 style={{
                   fontFamily: "var(--font-tattoo), sans-serif",
-                  fontSize: "clamp(2rem, 5.5vw, 2.8rem)",
+                  fontSize: "clamp(2.2rem, 6vw, 3rem)",
                   color: INK,
                   lineHeight: 0.95,
                 }}
@@ -422,26 +449,32 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                 style={{
                   fontFamily: "var(--font-display), serif",
                   fontStyle: "italic",
-                  fontSize: 15,
+                  fontSize: 17,
                   color: MUTED,
                   lineHeight: 1.55,
-                  maxWidth: 380,
+                  maxWidth: 420,
                 }}
               >
-                We&apos;ve sent confirmation &amp; tracking details to {f.shipping.email}. Your
-                prints ship within 5–7 business days via DHL.
+                Your order is now confirmed. A confirmation email has been sent to{" "}
+                <span style={{ color: INK, fontStyle: "normal", whiteSpace: "nowrap" }}>
+                  {maskEmail(f.shipping.email)}
+                </span>
+                . DHL tracking will be shared once the package ships. Estimated dispatch: 5 to 7
+                business days.
               </p>
               {f.orderNumber && (
                 <div
-                  className="mt-5 inline-block"
+                  className="mt-6 inline-block"
                   style={{
                     fontFamily: "var(--font-mono), monospace",
-                    fontSize: 11,
-                    letterSpacing: "0.28em",
+                    fontSize: 13,
+                    letterSpacing: "0.26em",
                     fontWeight: 800,
                     color: INK,
-                    padding: "5px 12px",
-                    border: `1.5px solid ${INK}`,
+                    padding: "10px 16px",
+                    background: GOLD,
+                    border: `2px solid ${INK}`,
+                    boxShadow: `3px 3px 0 ${INK}`,
                   }}
                 >
                   ORDER · {f.orderNumber}
@@ -450,17 +483,27 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-7 block"
+                className="mt-10 block"
                 style={{
-                  padding: "10px 20px",
+                  padding: "13px 26px",
                   background: "transparent",
                   color: INK,
-                  border: `1.5px solid ${INK}`,
+                  border: `2px solid ${INK}`,
                   fontFamily: "var(--font-mono), monospace",
-                  fontSize: 11,
+                  fontSize: 13,
                   letterSpacing: "0.3em",
                   fontWeight: 800,
                   cursor: "pointer",
+                  boxShadow: `3px 3px 0 ${INK}`,
+                  transition: "transform 120ms ease, box-shadow 120ms ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translate(1px,1px)";
+                  e.currentTarget.style.boxShadow = `2px 2px 0 ${INK}`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translate(0,0)";
+                  e.currentTarget.style.boxShadow = `3px 3px 0 ${INK}`;
                 }}
               >
                 CLOSE
@@ -679,7 +722,7 @@ function QField({
             marginTop: 3,
           }}
         >
-          — {error}
+          - {error}
         </div>
       )}
     </label>

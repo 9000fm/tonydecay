@@ -534,7 +534,7 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
               <span
                 style={{
                   color: "var(--color-ink)",
-                  fontSize: "clamp(82px, 20vw, 144px)",
+                  fontSize: "clamp(56px, 17vw, 144px)",
                 }}
               >
                 TONY
@@ -545,7 +545,7 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
                   color: "var(--color-crimson)",
                   fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
                   transform: "translateY(-18%)",
-                  fontSize: "clamp(38px, 8.5vw, 62px)",
+                  fontSize: "clamp(28px, 7.5vw, 62px)",
                 }}
               >
                 の
@@ -554,7 +554,7 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
                 style={{
                   color: "var(--color-crimson)",
                   WebkitTextStroke: "2px var(--color-ink)",
-                  fontSize: "clamp(82px, 20vw, 144px)",
+                  fontSize: "clamp(56px, 17vw, 144px)",
                 }}
               >
                 DECAY
@@ -597,10 +597,13 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
         </div>
       </div>
 
-      {/* C. Gallery section — dotted paper, makes the photo cards pop off the bg */}
+      {/* C. Gallery section — dotted DARKER paper #DDD3BD. Gallery + the
+           SIGNED-TD blue banner share this tone; the 4-kanji stats strip
+           below uses the lighter #ECE4D0 for contrast (swap). */}
       <div
         className="relative px-7 pt-6 pb-8 sm:px-8 sm:pt-8 sm:pb-10"
         style={{
+          background: "#DDD3BD",
           backgroundImage: PAPER_DOT_BG,
           backgroundSize: PAPER_DOT_SIZE,
         }}
@@ -700,6 +703,31 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
               })}
             </div>
 
+            {/* Primary CTA — gold bg, ink type, ink+crimson stacked shadow.
+                Sits ABOVE the VIEW ALL link as the conversion action. */}
+            <button
+              type="button"
+              onClick={() => dispatch({ type: "OPEN" })}
+              className="w-full"
+              style={{
+                padding: "18px 20px",
+                background: "var(--color-gold)",
+                border: "2px solid var(--color-ink)",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 13,
+                letterSpacing: "0.3em",
+                fontWeight: 800,
+                color: "var(--color-ink)",
+                lineHeight: 1,
+                cursor: "pointer",
+                boxShadow: "4px 4px 0 var(--color-crimson), 4px 4px 0 2px var(--color-ink)",
+                textAlign: "center",
+                marginBottom: 14,
+              }}
+            >
+              ▸ CLAIM YOUR SET
+            </button>
+
             <button
               type="button"
               onClick={() => {
@@ -737,11 +765,13 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
       {/* E. CTA moved out of the cover — now lives after the PixelGallery
            (PostGalleryCta in src/app/page.tsx). */}
 
-      {/* F. Stats strip — boxed cells, overlapping numbered badge */}
+      {/* F. Stats strip — boxed cells. Bg uses LIGHTER #ECE4D0 so it
+           reads distinct from the darker gallery section above (the
+           swap Flavio asked for). */}
       <div
         className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 md:gap-5"
         style={{
-          background: "#DDD3BD",
+          background: "#ECE4D0",
           backgroundImage: PAPER_DOT_BG,
           backgroundSize: PAPER_DOT_SIZE,
           borderTop: "3px solid var(--color-ink)",

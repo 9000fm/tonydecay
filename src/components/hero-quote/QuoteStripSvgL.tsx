@@ -32,7 +32,7 @@ export function QuoteStripSvgL() {
               margin: 0,
             }}
           >
-            Worldwide shipping. 100 cream sets, hand-numbered - then gone.
+            100 hand-numbered sets. Signed and sealed.
           </p>
           <Bracket position="br" />
         </div>
