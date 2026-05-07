@@ -2,33 +2,14 @@
 
 import Image from "next/image";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
+import { JP } from "./JP";
 
 const POLAROIDS = [
-  { print: PLACEHOLDER_PRINTS[6], rotate: -6, top: "6%", left: "4%" },
-  { print: PLACEHOLDER_PRINTS[9], rotate: 4, top: "12%", left: "34%" },
-  { print: PLACEHOLDER_PRINTS[2], rotate: -3, top: "44%", left: "56%" },
-  { print: PLACEHOLDER_PRINTS[11], rotate: 7, top: "52%", left: "14%" },
+  { print: PLACEHOLDER_PRINTS[6], rotate: -6, top: "5%", left: "10%" },
+  { print: PLACEHOLDER_PRINTS[9], rotate: 5, top: "11%", left: "52%" },
+  { print: PLACEHOLDER_PRINTS[2], rotate: -3, top: "48%", left: "54%" },
+  { print: PLACEHOLDER_PRINTS[11], rotate: 7, top: "54%", left: "8%" },
 ];
-
-/* Inline JP glyph with hover/longpress translation tooltip. Dotted crimson
-   underline signals "hover for translation". Rule across the site: every
-   decorative JP character goes through this helper with a real translation. */
-function JP({ children, en }: { children: React.ReactNode; en: string }) {
-  return (
-    <span
-      title={en}
-      aria-label={en}
-      style={{
-        textDecoration: "underline dotted",
-        textDecorationColor: "rgba(215,50,46,0.45)",
-        textUnderlineOffset: 4,
-        cursor: "help",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
 
 export function Artist() {
   return (
@@ -148,44 +129,13 @@ export function Artist() {
                 </div>
               </figure>
             ))}
-
-            {/* Hand-drawn SVG arrows + annotation */}
-            <svg
-              className="pointer-events-none absolute inset-0"
-              viewBox="0 0 620 520"
-              preserveAspectRatio="none"
-              aria-hidden
-            >
-              <path
-                d="M 170 200 Q 260 150, 340 180"
-                fill="none"
-                stroke="var(--color-crimson)"
-                strokeWidth="2"
-                strokeDasharray="6 5"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 338 180 l -10 -4 m 10 4 l -5 -10"
-                fill="none"
-                stroke="var(--color-crimson)"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <text
-                x="230"
-                y="138"
-                fontFamily="var(--font-display), serif"
-                fontStyle="italic"
-                fontSize="16"
-                fill="var(--color-crimson)"
-              >
-                new favorite
-              </text>
-            </svg>
           </div>
 
           {/* Handwritten bio + margin notes */}
           <div className="relative flex flex-col gap-6 lg:justify-center lg:gap-10">
+            {/* Bio — illuminated manuscript dropcap (medieval-frame style):
+                 crimson block, double inset hairlines, gold-dot corner
+                 ornaments. Letter rendered above the ornament layer. */}
             <p
               style={{
                 fontFamily: "var(--font-display), serif",
@@ -197,27 +147,84 @@ export function Artist() {
               <span
                 style={{
                   float: "left",
-                  fontFamily: "var(--font-tattoo), sans-serif",
-                  fontSize: 72,
-                  lineHeight: 0.8,
-                  paddingRight: 10,
-                  paddingTop: 4,
-                  color: "var(--color-crimson)",
+                  position: "relative",
+                  // Capped at ~100px so the dropcap covers max 3 lines of
+                  // body text (line-height 1.55 × ~21px ≈ 32px/line × 3).
+                  width: "clamp(84px, 8.5vw, 100px)",
+                  height: "clamp(84px, 8.5vw, 100px)",
+                  marginRight: 14,
+                  marginTop: 4,
+                  background: "var(--color-crimson)",
+                  color: "var(--color-paper)",
+                  border: "2px solid var(--color-ink)",
+                  fontFamily: "var(--font-display), serif",
+                  fontSize: "clamp(64px, 6.5vw, 78px)",
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "4px 4px 0 var(--color-ink)",
                 }}
               >
-                A
-              </span>{" "}
-              tattoo artist and illustrator blending traditional flash iconography with a raw,
-              hand-drawn practice. The work reflects a generation shaped by collectibles, low-tech
+                {/* Double inset hairlines — manuscript frame */}
+                <span
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    inset: 5,
+                    border: "1px solid rgba(240,235,220,0.7)",
+                    pointerEvents: "none",
+                  }}
+                />
+                <span
+                  aria-hidden
+                  style={{
+                    position: "absolute",
+                    inset: 9,
+                    border: "1px solid rgba(247,194,52,0.45)",
+                    pointerEvents: "none",
+                  }}
+                />
+                {/* Four corner ornaments — small cross + gold dot */}
+                {[
+                  { top: 4, left: 4 },
+                  { top: 4, right: 4 },
+                  { bottom: 4, left: 4 },
+                  { bottom: 4, right: 4 },
+                ].map((pos, i) => (
+                  <svg
+                    key={i}
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    style={{ position: "absolute", ...pos }}
+                    aria-hidden
+                  >
+                    <path
+                      d="M 6 1 L 6 11 M 1 6 L 11 6"
+                      stroke="rgba(240,235,220,0.75)"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                    />
+                    <circle cx="6" cy="6" r="1.6" fill="var(--color-gold)" />
+                  </svg>
+                ))}
+                <span style={{ position: "relative", zIndex: 1 }}>T</span>
+              </span>
+              ony Decay is a tattoo artist and illustrator. His work blends traditional flash
+              iconography with a raw, hand-drawn practice — shaped by collectibles, low-tech
               graphics, and early online culture.
             </p>
 
             <div className="relative">
+              {/* Decorative scribble arrow — desktop only (overlapped the red
+                  left rule on mobile and read as a glitch). */}
               <svg
                 width="42"
                 height="32"
                 viewBox="0 0 42 32"
-                className="absolute -top-6 -left-2"
+                className="absolute -top-6 -left-2 hidden md:block"
                 aria-hidden
               >
                 <path
@@ -246,7 +253,7 @@ export function Artist() {
               >
                 <li>— traditional tattoo</li>
                 <li>— flash &amp; illustration</li>
-                <li>— hand-pulled printmaking</li>
+                <li>— printmaking</li>
               </ul>
             </div>
 

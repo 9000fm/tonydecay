@@ -47,22 +47,22 @@ export function Footer() {
             </p>
             <ul className="text-paper/85 space-y-2 font-sans text-base">
               <li>
-                <a href="#gallery" className="hover:text-royal transition-colors">
+                <a href="#gallery" className="decoration-2 underline-offset-4 hover:underline">
                   Vol. I
                 </a>
               </li>
               <li>
-                <a href="#artist" className="hover:text-royal transition-colors">
+                <a href="#artist" className="decoration-2 underline-offset-4 hover:underline">
                   About
                 </a>
               </li>
               <li>
-                <a href="#package" className="hover:text-royal transition-colors">
+                <a href="#package" className="decoration-2 underline-offset-4 hover:underline">
                   Shop
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-royal transition-colors">
+                <a href="#faq" className="decoration-2 underline-offset-4 hover:underline">
                   FAQ
                 </a>
               </li>
@@ -82,7 +82,7 @@ export function Footer() {
                   href="https://www.instagram.com/tony.decay"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-royal transition-colors"
+                  className="decoration-2 underline-offset-4 hover:underline"
                 >
                   @tony.decay
                 </a>
@@ -90,13 +90,13 @@ export function Footer() {
               <li>
                 <a
                   href="mailto:contact@tonydecay.com"
-                  className="hover:text-royal transition-colors"
+                  className="decoration-2 underline-offset-4 hover:underline"
                 >
                   Email
                 </a>
               </li>
               <li>
-                <a href="#contact" className="hover:text-royal transition-colors">
+                <a href="#contact" className="decoration-2 underline-offset-4 hover:underline">
                   Notify Me
                 </a>
               </li>
@@ -112,12 +112,12 @@ export function Footer() {
             </p>
             <ul className="text-paper/85 space-y-2 font-sans text-base">
               <li>
-                <Link href="/terms" className="hover:text-royal transition-colors">
+                <Link href="/terms" className="decoration-2 underline-offset-4 hover:underline">
                   Terms
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-royal transition-colors">
+                <Link href="/privacy" className="decoration-2 underline-offset-4 hover:underline">
                   Privacy
                 </Link>
               </li>

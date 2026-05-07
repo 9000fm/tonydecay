@@ -5,6 +5,7 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { PRICE_USD } from "@/lib/constants";
 import { useCheckoutFlow, COUNTRY_OPTIONS } from "@/hooks/useCheckoutFlow";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { JP } from "./JP";
 
 /* Live checkout modal body (promoted from lab A2 Quiet Arcade).
    Cream paper, thin 2px borders, single ink drop-shadow (no crimson),
@@ -54,7 +55,6 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center px-4 py-8"
       style={{ background: "rgba(26,26,26,0.72)" }}
-      onClick={onClose}
     >
       <div
         className="relative w-full max-w-[560px] overflow-hidden"
@@ -79,7 +79,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                   color: MUTED,
                 }}
               >
-                PURCHASE ORDER · TONY DECAY
+                PURCHASE ORDER
               </div>
               <h2
                 style={{
@@ -100,7 +100,7 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
                     fontSize: "0.75em",
                   }}
                 >
-                  会計
+                  <JP en="kaikei — checkout / accounting">会計</JP>
                 </span>
               </h2>
             </div>
@@ -124,33 +124,61 @@ export function CheckoutModalArcadeBody({ open, onClose }: Props) {
             </button>
           </div>
 
-          {/* Step indicator — outlined, gold-filled only when active */}
+          {/* Step indicator — outlined, gold-filled when active. Completed
+              steps are clickable buttons (jump back); future + active are
+              non-interactive. Disable jump-back if final 'success' step
+              has been reached (no going back from a confirmed order). */}
           <div className="mb-7 flex items-center gap-2">
             {[
-              { n: 0, label: "REVIEW" },
-              { n: 1, label: "SHIPPING" },
-              { n: 2, label: "PAYMENT" },
-              { n: 3, label: "DONE" },
+              { n: 0, label: "REVIEW", key: "review" as const },
+              { n: 1, label: "SHIPPING", key: "shipping" as const },
+              { n: 2, label: "PAYMENT", key: "payment" as const },
+              { n: 3, label: "DONE", key: "success" as const },
             ].map((s) => {
               const active = s.n === stepIndex;
               const done = s.n < stepIndex;
+              const orderConfirmed = f.step === "success";
+              const clickable = done && !orderConfirmed;
+
+              const baseStyle: React.CSSProperties = {
+                flex: 1,
+                padding: "6px 10px",
+                background: active ? GOLD : "transparent",
+                color: active ? INK : done ? INK : MUTED,
+                border: `1.5px solid ${active || done ? INK : "rgba(26,26,26,0.25)"}`,
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 9,
+                letterSpacing: "0.22em",
+                fontWeight: 800,
+                lineHeight: 1,
+                textAlign: "center",
+              };
+
+              if (clickable) {
+                return (
+                  <button
+                    key={s.n}
+                    type="button"
+                    onClick={() => f.setStep(s.key)}
+                    aria-label={`Go back to ${s.label.toLowerCase()} step`}
+                    style={{
+                      ...baseStyle,
+                      cursor: "pointer",
+                      transition: "background 140ms ease, color 140ms ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(247,194,52,0.18)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                    }}
+                  >
+                    0{s.n} · {s.label}
+                  </button>
+                );
+              }
               return (
-                <div
-                  key={s.n}
-                  style={{
-                    flex: 1,
-                    padding: "6px 10px",
-                    background: active ? GOLD : "transparent",
-                    color: active ? INK : done ? INK : MUTED,
-                    border: `1.5px solid ${active || done ? INK : "rgba(26,26,26,0.25)"}`,
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize: 9,
-                    letterSpacing: "0.22em",
-                    fontWeight: 800,
-                    lineHeight: 1,
-                    textAlign: "center",
-                  }}
-                >
+                <div key={s.n} style={baseStyle}>
                   0{s.n} · {s.label}
                 </div>
               );

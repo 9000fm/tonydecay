@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
+import { JP } from "./JP";
 
 const INK = "#1a1a1a";
 const PAPER = "#f0ebdc";
@@ -207,7 +208,7 @@ type RevealProps = {
   onDismiss: () => void;
 };
 
-function FullscreenReveal({ src, index, total, onPrev, onNext, onDismiss }: RevealProps) {
+function FullscreenReveal({ src, index, onPrev, onNext, onDismiss }: RevealProps) {
   const cvsRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const dismissingRef = useRef(false);
@@ -502,23 +503,26 @@ function FullscreenReveal({ src, index, total, onPrev, onNext, onDismiss }: Reve
             cursor: "pointer",
           }}
         />
+        {/* Counter — Anton tattoo, chunky brutalist gold tag, larger size. */}
         <div
           style={{
             position: "absolute",
-            top: 10,
-            left: 10,
+            top: 14,
+            left: 14,
             background: GOLD,
             color: INK,
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: 10,
-            letterSpacing: "0.32em",
-            fontWeight: 800,
-            padding: "4px 10px",
-            border: `1px solid ${INK}`,
+            fontFamily: "var(--font-tattoo), sans-serif",
+            fontSize: 36,
+            fontWeight: 900,
+            letterSpacing: "0.04em",
+            padding: "4px 18px",
+            border: `2.5px solid ${INK}`,
+            lineHeight: 1,
             pointerEvents: "none",
+            zIndex: 10,
           }}
         >
-          N°{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+          N°{String(index + 1).padStart(2, "0")}
         </div>
         <div
           style={{
@@ -595,7 +599,7 @@ export function PixelGallery() {
                 color: GOLD,
               }}
             >
-              GALLERY · 印刷 · {PRINTS.length} PRINTS
+              GALLERY · <JP en="insatsu — printing">印刷</JP> · {PRINTS.length} PRINTS
             </span>
             <h2
               className="mt-2"
@@ -626,14 +630,16 @@ export function PixelGallery() {
           <div
             className="hidden sm:block"
             style={{
-              fontFamily: "var(--font-arcade), sans-serif",
-              fontSize: 24,
+              fontFamily: "var(--font-tattoo), sans-serif",
+              fontSize: "clamp(2rem, 6.5vw, 4.4rem)",
+              fontWeight: 900,
               color: GOLD,
               letterSpacing: "0.04em",
-              textShadow: `2px 2px 0 ${INK}`,
+              lineHeight: 0.95,
+              alignSelf: "flex-end",
             }}
           >
-            {viewed.size}/{PRINTS.length}
+            {viewed.size} / {PRINTS.length}
           </div>
         </div>
 

@@ -7,6 +7,12 @@ const VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 export async function verifyTurnstile(token: string | undefined, remoteIp?: string) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) return { ok: true, skipped: true as const };
+  // Dev escape: ALWAYS skip in dev. Local site key may differ from the
+  // server secret (or not be set), and we don't want the bot check
+  // blocking checkout testing. Production still enforces normally.
+  if (process.env.NODE_ENV !== "production") {
+    return { ok: true, skipped: true as const };
+  }
   if (!token) return { ok: false, reason: "missing_token" as const };
 
   const body = new URLSearchParams();

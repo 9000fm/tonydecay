@@ -11,6 +11,11 @@ export function rateLimit(
   ip: string,
   { limit = 6, windowMs = 60_000 }: { limit?: number; windowMs?: number } = {},
 ) {
+  // Dev escape: rate limiting blocks rapid checkout testing locally.
+  // Production keeps strict enforcement.
+  if (process.env.NODE_ENV !== "production") {
+    return { ok: true, remaining: limit };
+  }
   const now = Date.now();
   const b = buckets.get(ip);
   if (!b || b.resetAt < now) {

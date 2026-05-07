@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { initLenis, destroyLenis } from "@/lib/lenis";
-import { SplashScreen } from "@/components/SplashScreen";
+import { SplashScreen, markSplashShown } from "@/components/SplashScreen";
 import { MagazineCover } from "@/components/MagazineCover";
 import { MobileMenu } from "@/components/MobileMenu";
 import { Artist } from "@/components/Artist";
 import { PixelGallery } from "@/components/PixelGallery";
 import { PrintSpecs } from "@/components/PrintSpecs";
-import { CtaHandsDaggers } from "@/components/hero-cta/CtaHandsDaggers";
+import { CTA } from "@/components/CTA";
 import { useCheckout } from "@/hooks/useCheckout";
 import { FAQ } from "@/components/FAQ";
 import { Contact } from "@/components/Contact";
@@ -18,6 +18,7 @@ import { CheckoutModal } from "@/components/CheckoutModal";
 import { FloatingBadge } from "@/components/FloatingBadge";
 import { MetaPixel } from "@/components/MetaPixel";
 import { CheckoutProvider } from "@/hooks/useCheckout";
+import { GameManual } from "@/components/candidates/GameManual";
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "";
 
@@ -26,22 +27,19 @@ const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "";
    useCheckout (must be inside CheckoutProvider). */
 function PostGalleryCta() {
   const { dispatch } = useCheckout();
-  return (
-    <section
-      className="relative w-full overflow-hidden"
-      style={{ background: "var(--color-paper)" }}
-    >
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-7 py-10 sm:px-10 sm:py-14">
-        <CtaHandsDaggers onBuy={() => dispatch({ type: "OPEN" })} />
-      </div>
-    </section>
-  );
+  return <CTA onBuy={() => dispatch({ type: "OPEN" })} />;
 }
 
 export default function Home() {
+  // Splash always mounts (hydration-safe). It decides full vs. brief mode
+  // internally based on localStorage 'td-splash-day': first visit today =
+  // full (waits for click), return visit = brief (auto-fires in ~1.6s).
   const [splashDone, setSplashDone] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const handleSplashEnter = useCallback(() => setSplashDone(true), []);
+  const handleSplashEnter = useCallback(() => {
+    markSplashShown();
+    setSplashDone(true);
+  }, []);
 
   // Init Lenis after splash completes
   useEffect(() => {
@@ -58,10 +56,13 @@ export default function Home() {
         <main>
           <MagazineCover onOpenMenu={() => setMenuOpen((v) => !v)} menuOpen={menuOpen} />
           <PixelGallery />
-          <Artist />
-          <PrintSpecs />
           <PostGalleryCta />
+          {/* === CANDIDATE BLOCK — pick the keeper, delete the rest. === */}
+          <GameManual />
+          {/* === END CANDIDATE BLOCK === */}
+          <PrintSpecs />
           <FAQ />
+          <Artist />
           <Contact />
         </main>
         <Footer />

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { JP } from "./JP";
 
 interface FormState {
   name: string;
@@ -144,7 +145,7 @@ export function Contact() {
               lineHeight: 1,
             }}
           >
-            連絡
+            <JP en="renraku — contact / get in touch">連絡</JP>
           </span>
           <span
             style={{
@@ -179,7 +180,7 @@ export function Contact() {
               lineHeight: 1,
             }}
           >
-            / 連絡
+            / <JP en="renraku — contact / get in touch">連絡</JP>
           </span>
         </div>
 
@@ -208,13 +209,18 @@ export function Contact() {
               }}
             >
               DIRECT MESSAGE
-              <span style={jpLabelStyle}>手紙</span>
+              <JP en="tegami — letter">
+                <span style={jpLabelStyle}>手紙</span>
+              </JP>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div>
                 <label style={labelStyle}>
-                  NAME<span style={jpLabelStyle}>名前</span>
+                  NAME
+                  <JP en="namae — name">
+                    <span style={jpLabelStyle}>名前</span>
+                  </JP>
                 </label>
                 <input
                   type="text"
@@ -226,7 +232,10 @@ export function Contact() {
               </div>
               <div>
                 <label style={labelStyle}>
-                  EMAIL<span style={jpLabelStyle}>メール</span>
+                  EMAIL
+                  <JP en="mēru — email">
+                    <span style={jpLabelStyle}>メール</span>
+                  </JP>
                 </label>
                 <input
                   type="email"
@@ -238,7 +247,10 @@ export function Contact() {
               </div>
               <div>
                 <label style={labelStyle}>
-                  MESSAGE<span style={jpLabelStyle}>本文</span>
+                  MESSAGE
+                  <JP en="honbun — body / message text">
+                    <span style={jpLabelStyle}>本文</span>
+                  </JP>
                 </label>
                 <textarea
                   placeholder="What's on your mind?"
@@ -281,8 +293,10 @@ export function Contact() {
                 padding: "26px 24px 22px",
               }}
             >
-              <div className="pointer-events-none absolute" style={{ top: -22, right: -18 }}>
-                <StarStamp />
+              <div className="absolute" style={{ top: -22, right: -18 }}>
+                <JP en="kōdoku — subscribe" bare>
+                  <StarStamp />
+                </JP>
               </div>
               <div
                 className="mb-3 flex items-center"
@@ -303,7 +317,7 @@ export function Contact() {
                     marginLeft: 8,
                   }}
                 >
-                  次号
+                  <JP en="jigō — next issue">次号</JP>
                 </span>
               </div>
               <p
@@ -378,7 +392,9 @@ export function Contact() {
                 }}
               >
                 ELSEWHERE
-                <span style={jpLabelStyle}>他</span>
+                <JP en="hoka — other / etc">
+                  <span style={jpLabelStyle}>他</span>
+                </JP>
               </div>
               <a
                 href="https://www.instagram.com/tony.decay"

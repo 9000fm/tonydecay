@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useCheckout } from "@/hooks/useCheckout";
 import { PLACEHOLDER_PRINTS } from "@/lib/constants";
 import { QuoteStripSvgL } from "@/components/hero-quote/QuoteStripSvgL";
+import { JP } from "./JP";
 
 // Fixed thumbs: prints 1-6. First 3 always visible, last 3 show on lg+ (desktop)
 // so mobile = 3 thumbs, desktop = 6 thumbs (2 rows of 3).
@@ -27,6 +28,7 @@ const DEFAULT_STAT_VALUE_CLASS = "text-[32px] sm:text-[40px] lg:text-[52px]";
 const STATS = [
   {
     n: "印",
+    nEn: "in — print / seal / stamp",
     label: "PRINTS",
     value: "15",
     fill: "var(--color-crimson)",
@@ -34,6 +36,7 @@ const STATS = [
   },
   {
     n: "組",
+    nEn: "kumi — set / group / collection",
     label: "SETS",
     value: "100",
     fill: "var(--color-royal)",
@@ -41,6 +44,7 @@ const STATS = [
   },
   {
     n: "紙",
+    nEn: "kami — paper",
     label: "PAPER",
     value: "CREAM",
     fill: "var(--color-leaf)",
@@ -48,6 +52,7 @@ const STATS = [
   },
   {
     n: "便",
+    nEn: "bin — mail / post",
     label: "SHIPS TO",
     value: "WORLD",
     fill: "var(--color-gold)",
@@ -98,12 +103,10 @@ function PreOrderStarburst({
           border: "none",
           padding: 0,
           cursor: "pointer",
-          // Premium buttery stamp-growth — ease-out-expo for dramatic slow
-          // deceleration. Long 720ms hold so the hover feels weighted and
-          // expensive, not twitchy. Same easing on hover-out.
+          // Fluid stamp-growth — smooth but not slow. Mid-range ease-out.
           transitionProperty: "transform",
-          transitionDuration: "720ms",
-          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+          transitionDuration: "320ms",
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
@@ -161,7 +164,7 @@ function PreOrderStarburst({
             strokeWidth="0.6"
             paintOrder="stroke"
           >
-            ORDER NOW
+            PRE-ORDER
           </text>
           <text
             x="50"
@@ -182,15 +185,13 @@ function PreOrderStarburst({
 }
 
 const TICKER_TOKENS = [
-  "小学館",
-  "★",
   "WORLDWIDE SHIPPING",
   "★",
   "LIMITED 100",
   "★",
   "VOL.01",
   "★",
-  "100 SETS · NO REPRINTS",
+  "PRE-ORDER OPEN",
 ];
 const TICKER_REPEAT = 10;
 
@@ -299,6 +300,17 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
   const [featuredPool, setFeaturedPool] = useState<number[]>(DEFAULT_FEATURED_POOL);
   const [featuredRotIdx, setFeaturedRotIdx] = useState(0);
 
+  // Card shadow color rotates with the featured print so each transition
+  // also swaps the brand-color shadow under the frame. Cycles through the
+  // four hero brand colors.
+  const CARD_SHADOW_COLORS = [
+    "var(--color-crimson)",
+    "var(--color-royal)",
+    "var(--color-leaf)",
+    "var(--color-gold)",
+  ];
+  const cardShadowColor = CARD_SHADOW_COLORS[featuredRotIdx % CARD_SHADOW_COLORS.length];
+
   useEffect(() => {
     // Thumbs are fixed to prints 1-6. Featured cycles through the remaining 9
     // (prints 7–15); shuffle client-side so each session starts on a random print.
@@ -321,7 +333,10 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
   // the threshold, marquee slides up and a compact sticky bar (MENU / mini
   // TONY の DECAY / BUY) slides in to replace it. Return to very top → marquee
   // returns, compact hides.
-  const HIDE_THRESHOLD = 120;
+  // Sticky compact navbar only appears AFTER the masthead has fully
+  // scrolled out of view, so the eyebrow / TONY DECAY title / desc never
+  // sit behind the navbar mid-scroll.
+  const HIDE_THRESHOLD = 480;
   const [pastTop, setPastTop] = useState(false);
   const scrollRafRef = useRef<number | null>(null);
   useEffect(() => {
@@ -384,24 +399,33 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
            MENU inverts to cream-fill/ink-text when menuOpen so it stays
            visible on the dark menu overlay. */}
       <div
-        className="fixed top-0 right-0 left-0 z-[80] flex w-full items-center justify-between gap-4"
+        className="fixed top-0 right-0 left-0 z-[80] w-full items-center"
         style={{
           background: "var(--color-paper-warm, #ECE4D0)",
           borderBottom: "2px solid var(--color-ink)",
-          padding: "14px 24px",
+          padding: "14px 28px",
           minHeight: 76,
           transform: pastTop ? "translateY(0)" : "translateY(-100%)",
           transition: "transform 350ms cubic-bezier(0.22, 1, 0.36, 1)",
           willChange: "transform",
+          // 3-col grid (1fr | auto | 1fr) so the centered title is viewport-
+          // centered regardless of MENU / ORDER NOW widths.
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
+          alignItems: "center",
+          columnGap: 16,
         }}
       >
-        {/* MENU — outlined rect (image #102 ref). Renders boxed ✕ when menu
-            is open so old-Safari users have a clear close affordance. */}
+        {/* MENU — outlined rect. Pinned to the left edge of its column.
+             Explicit gridColumn so when the title is display:none on
+             mobile, ORDER NOW still lands in column 3, not column 2. */}
         <button
           type="button"
           onClick={onOpenMenu}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           style={{
+            gridColumn: 1,
+            justifySelf: "start",
             background: menuOpen ? "var(--color-paper)" : "transparent",
             color: "var(--color-ink)",
             border: "2px solid var(--color-ink)",
@@ -420,16 +444,18 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           {menuOpen ? "✕" : "MENU"}
         </button>
 
-        {/* Centered title — scaled up +60%. Hidden on very narrow widths. */}
+        {/* Centered title — sits in the middle column, viewport-centered. */}
         <span
           aria-hidden
           className="hidden sm:inline"
           style={{
+            justifySelf: "center",
             fontFamily: "var(--font-tattoo), sans-serif",
             fontSize: 34,
             color: "var(--color-ink)",
             letterSpacing: "0.02em",
             lineHeight: 1,
+            whiteSpace: "nowrap",
           }}
         >
           TONY{" "}
@@ -445,12 +471,14 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           <span style={{ color: "var(--color-crimson)" }}>DECAY</span>
         </span>
 
-        {/* ORDER NOW — image #101 ref. Chunky yellow block w/ crimson shadow. */}
+        {/* ORDER NOW — pinned to the right edge of its column. */}
         <button
           type="button"
           onClick={() => dispatch({ type: "OPEN" })}
           aria-label="Order now"
           style={{
+            gridColumn: 3,
+            justifySelf: "end",
             background: "var(--color-gold)",
             color: "var(--color-ink)",
             border: "2px solid var(--color-ink)",
@@ -467,7 +495,8 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
         </button>
       </div>
 
-      {/* B. Masthead — solid warm paper (no dots, clean for type) */}
+      {/* B. Masthead — solid warm paper (no dots, clean for type). Bottom
+           padding tightened so the cream area ends right after the desc. */}
       <div
         className="relative w-full"
         style={{
@@ -476,50 +505,56 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
         }}
       >
         <div
-          className="relative mx-auto flex w-full max-w-[888px] flex-col gap-3 md:flex-row md:items-start md:justify-between"
+          className="relative mx-auto flex w-full max-w-[1100px] flex-col gap-3 md:flex-row md:items-start md:justify-between"
           style={{
-            padding: "54px 28px 14px",
+            // Top: 3.25rem floor (52px) clears the 32px marquee with ~20px
+            // breath. Tightened bottom padding kills the empty cream band
+            // that previously sat between the desc and the gallery border.
+            padding:
+              "clamp(3.25rem, 5.5vw, 3.75rem) clamp(1rem, 2.5vw, 2.25rem) clamp(0.75rem, 1.5vw, 1.25rem)",
           }}
         >
-          <div className="flex flex-col lg:pr-[236px]">
+          <div className="flex flex-col gap-3 lg:pr-[260px]">
             <div
               style={{
                 fontFamily: "var(--font-mono), monospace",
-                fontSize: 11,
+                fontSize: 13,
                 letterSpacing: "0.3em",
                 fontWeight: 800,
                 color: "var(--color-crimson)",
-                marginBottom: 8,
               }}
             >
-              VOL.01 · JUNE 2026 · $300
+              VOL.01 · 100 SETS · JUNE 2026
             </div>
 
             <div
-              className="flex items-end"
+              className="mt-2 flex items-end md:mt-0"
               style={{ fontFamily: "var(--font-tattoo), sans-serif", lineHeight: 0.88 }}
             >
               <span
-                className="text-[44px] sm:text-[92px] lg:text-[116px]"
-                style={{ color: "var(--color-ink)" }}
+                style={{
+                  color: "var(--color-ink)",
+                  fontSize: "clamp(82px, 20vw, 144px)",
+                }}
               >
                 TONY
               </span>
               <span
-                className="mx-1 text-[22px] sm:text-[40px] lg:text-[48px]"
+                className="mx-1"
                 style={{
                   color: "var(--color-crimson)",
                   fontFamily: "var(--font-jp), var(--font-tattoo), sans-serif",
                   transform: "translateY(-18%)",
+                  fontSize: "clamp(38px, 8.5vw, 62px)",
                 }}
               >
                 の
               </span>
               <span
-                className="text-[44px] sm:text-[92px] lg:text-[116px]"
                 style={{
                   color: "var(--color-crimson)",
                   WebkitTextStroke: "2px var(--color-ink)",
+                  fontSize: "clamp(82px, 20vw, 144px)",
                 }}
               >
                 DECAY
@@ -530,28 +565,34 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
               style={{
                 fontFamily: "var(--font-display), serif",
                 fontStyle: "italic",
-                fontSize: 18,
+                fontSize: 16,
+                lineHeight: 1.35,
                 color: "var(--color-ink-soft)",
-                marginTop: 10,
               }}
             >
-              - 15 prints, 100 collector sets, hand-numbered on cream paper.
+              15 original prints. Limited to 100 signed collector sets.
             </div>
           </div>
 
-          {/* Desktop starburst — z-index 10 sits BELOW the pink marquee (z-[81])
-             so the crown slides behind the marquee instead of over it.
-             "Peeking from behind" look. */}
+          {/* Desktop starburst — TUCKED INSIDE the cream area: smaller
+              (size 200), nudged DOWN to ~54% so even mid-levitate the top
+              edge stays well below the 32px marquee. No hover-z-bump —
+              never reaches the marquee, never conflicts with scroll. */}
           <div
             className="hidden lg:block"
             style={{
               position: "absolute",
-              right: 88,
-              top: 36,
+              // Pulled further LEFT (right offset bumped) and pushed LOWER
+              // (top % up so the centerline of the stamp drops on desktop).
+              right: 100,
+              top: "60%",
+              transform: "translateY(-50%)",
               zIndex: 10,
             }}
           >
-            <PreOrderStarburst onClick={() => dispatch({ type: "OPEN" })} size={200} />
+            <JP en="yoyaku — pre-order / reservation" bare>
+              <PreOrderStarburst onClick={() => dispatch({ type: "OPEN" })} size={224} />
+            </JP>
           </div>
         </div>
       </div>
@@ -579,10 +620,14 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
             aria-label="Show next print"
             className="relative w-full cursor-pointer select-none"
             style={{
-              aspectRatio: "3 / 4",
+              // Matches the NARROWEST print ratio (~0.694) so no print
+              // gets chopped on top/bottom. Wider prints get tiny side
+              // crop instead — decorative borders stay intact.
+              aspectRatio: "1600 / 2307",
               border: "4px solid var(--color-ink)",
-              background: "#ffffff",
-              boxShadow: "6px 6px 0 var(--color-crimson), 6px 6px 0 2px var(--color-ink)",
+              background: "var(--color-paper)",
+              boxShadow: `6px 6px 0 ${cardShadowColor}, 6px 6px 0 2px var(--color-ink)`,
+              transition: "box-shadow 600ms ease-out",
             }}
           >
             {PLACEHOLDER_PRINTS.map((print, i) => {
@@ -600,8 +645,10 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
                 />
               );
             })}
-            <div className="pointer-events-none absolute -top-4 -right-4 z-10 lg:-top-7 lg:-right-7">
-              <FeaturedStickerNew />
+            <div className="absolute -top-4 -right-4 z-10 lg:-top-7 lg:-right-7">
+              <JP en="shinsaku — new release / latest work" bare>
+                <FeaturedStickerNew />
+              </JP>
             </div>
             {/* Desktop: 100 SETS sticker. Mobile: PRE-ORDER starburst replaces it. */}
             <div className="pointer-events-none absolute z-10 hidden lg:-bottom-16 lg:-left-16 lg:block">
@@ -619,47 +666,25 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
           </div>
 
           {/* Right column: 3 thumbs on mobile (prints 1/2/3), 6 on desktop
-               (adds prints 4/5/6) with N°XX pixel-tab labels + VIEW ALL button. */}
+               (adds prints 4/5/6). No number labels; aspect-ratio matches
+               the print PNG so nothing gets cropped. */}
           <div className="flex flex-col gap-5 lg:gap-6">
             <div className="grid grid-cols-3 gap-4 lg:gap-5">
               {gridIndices.map((printIdx, cellIdx) => {
                 const print = PLACEHOLDER_PRINTS[printIdx];
-                const label = String(printIdx + 1).padStart(2, "0");
                 const hideOnMobile = cellIdx >= 3;
                 return (
                   <div
                     key={`${print.id}-${cellIdx}`}
                     className={`relative ${hideOnMobile ? "hidden lg:block" : ""}`}
                   >
-                    {/* N°XX gold pixel tab on top of each thumb */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: -12,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        padding: "4px 12px",
-                        background: "var(--color-gold)",
-                        color: "var(--color-ink)",
-                        border: "2px solid var(--color-ink)",
-                        fontFamily: "var(--font-mono), monospace",
-                        fontSize: 11,
-                        letterSpacing: "0.2em",
-                        fontWeight: 800,
-                        lineHeight: 1,
-                        zIndex: 2,
-                        boxShadow: "2px 2px 0 var(--color-ink)",
-                      }}
-                    >
-                      N°{label}
-                    </div>
                     <div
                       className="relative"
                       style={{
-                        aspectRatio: "3 / 4",
+                        aspectRatio: "1600 / 2307",
                         border: "3px solid var(--color-ink)",
                         boxShadow: "3px 3px 0 var(--color-ink)",
-                        background: "#ffffff",
+                        background: "var(--color-paper)",
                       }}
                     >
                       <Image
@@ -747,7 +772,7 @@ export function MagazineCover({ onOpenMenu, menuOpen = false }: MagazineCoverPro
                 lineHeight: 1,
               }}
             >
-              {stat.n}
+              <JP en={stat.nEn}>{stat.n}</JP>
             </div>
             <div className="flex flex-col items-center gap-1 lg:gap-2">
               <div

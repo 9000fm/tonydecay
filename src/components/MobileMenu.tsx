@@ -18,7 +18,7 @@ const WIPE_DURATION_IN = 1.5; // seconds, open
 const WIPE_DURATION_OUT = 0.8; // seconds, close
 const WIPE_EASE_IN = "steps(8)"; // chunky stepped wipe — matches gallery reveal
 const WIPE_EASE_OUT = "steps(6)"; // close steps slightly fewer
-const PIXEL_BLOCK = 0.045; // chunky-edge pixel size in UV (0.02 = finer, 0.08 = chunkier)
+const PIXEL_BLOCK = 0.075; // bigger blocks — matches splash pixel-grid (Pokemon-battle feel)
 const OVERLAY_R = 0.06; // overlay color (RGB 0..1) — deep ink
 const OVERLAY_G = 0.06;
 const OVERLAY_B = 0.07;
@@ -61,18 +61,20 @@ uniform float uProgress;   // 0..1 — wipe coverage
 uniform float uBlock;      // chunky-pixel size in UV
 uniform vec3 uColor;       // overlay RGB
 uniform float uAlpha;      // overlay alpha
-uniform vec2 uOrigin;      // wipe origin in UV (0,0 = top-left)
+uniform vec2 uOrigin;      // (unused in chess pattern — kept for compat)
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
 void main() {
-  // Quantize UV so the wipe edge is chunky, not smooth.
-  vec2 puv = floor(vUv / uBlock) * uBlock + uBlock * 0.5;
-
-  // y in UV is bottom-up; we want top-left origin (0,1 in UV).
-  // Translate so the diagonal sweeps from origin toward opposite corner.
-  vec2 d = puv - uOrigin;
-  // Manhattan-ish distance, scaled into 0..1
-  float dist = (abs(d.x) + abs(d.y));
-  // diagonal sweep: covers when dist <= progress * 2.0 (max 2 in unit-square)
-  if (dist > uProgress * 2.0) discard;
+  // Pokemon-battle chess: even cells (cx+cy even) cover in phase 1
+  // (0..0.5 progress), odd cells in phase 2 (0.5..1). Per-cell jitter
+  // inside each phase so a batch doesn't snap in one frame. Matches
+  // the splash pixel-grid scale-shrink mechanic.
+  vec2 cell = floor(vUv / uBlock);
+  float parity = mod(cell.x + cell.y, 2.0);
+  float jitter = hash(cell) * 0.35;
+  float startAt = (parity < 1.0 ? 0.05 : 0.55) + jitter;
+  if (uProgress < startAt) discard;
   gl_FragColor = vec4(uColor, uAlpha);
 }
 `;

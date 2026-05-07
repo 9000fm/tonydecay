@@ -21,8 +21,8 @@
   --color-ink-faint: #8a8170;
 
   /* === Dark sections === */
-  --color-bg: #1e3a5f;
-  --color-bg-alt: #152940;
+  --color-bg: #2b5dae;
+  --color-bg-alt: #2b5dae;
 
   /* === Legacy mappings (transition) === */
   --color-cream: var(--color-paper);
@@ -59,13 +59,12 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom banana cursors — desktop only.
-   Cursor PNG is 32x27; hotspot at (3, 3) so clicks register at the banana's
-   TIP (top-left), not the bitmap center. */
+/* Custom monkey-1 cursor — desktop only.
+   Hotspot at (3, 3) — adjust if the monkey art's pointing-tip sits elsewhere. */
 @media (pointer: fine) {
   * {
     cursor:
-      url("/cursor/banana-cursor.png") 3 3,
+      url("/cursor/monkey-1-64.png") 6 6,
       auto !important;
   }
   a,
@@ -74,12 +73,12 @@ body {
   summary,
   [data-cursor-pointer] {
     cursor:
-      url("/cursor/banana-hover.png") 3 3,
+      url("/cursor/monkey-1-64.png") 6 6,
       pointer !important;
   }
   *:active {
     cursor:
-      url("/cursor/banana-cursor.png") 3 3,
+      url("/cursor/monkey-1-64.png") 6 6,
       pointer !important;
   }
 }
@@ -380,4 +379,86 @@ body {
     transform: translateX(3px);
     opacity: 0.75;
   }
+}
+
+/* CRT-flicker for splash [ENTER] dialog — irregular hard-step opacity drops
+   like a bad cartridge signal. No easing on purpose. */
+@keyframes crt-flicker {
+  0%,
+  19% {
+    opacity: 1;
+  }
+  20%,
+  21% {
+    opacity: 0.35;
+  }
+  22%,
+  46% {
+    opacity: 1;
+  }
+  47%,
+  48% {
+    opacity: 0.55;
+  }
+  49%,
+  72% {
+    opacity: 1;
+  }
+  73% {
+    opacity: 0.4;
+  }
+  74%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Splash [ENTER] letters reveal one by one (typewriter cadence). */
+@keyframes splash-type-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Splash Game-Boy menu pointer — 2px hard up/down toggle, no easing. */
+@keyframes splash-gb-bounce {
+  0%,
+  50% {
+    transform: translateY(0);
+  }
+  51%,
+  100% {
+    transform: translateY(2px);
+  }
+}
+
+/* Splash editorial-caption arrow — 1px march left/right, hard step. */
+@keyframes splash-arrow-march {
+  0%,
+  50% {
+    transform: translateX(-1px);
+  }
+  51%,
+  100% {
+    transform: translateX(1px);
+  }
+}
+
+/* Splash caret — hard on/off blink, no fade. */
+@keyframes splash-caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Splash transition pixel containers — keep edges chunky on hi-DPI */
+.pixel-edge {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
