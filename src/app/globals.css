@@ -59,30 +59,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom monkey-1 cursor — desktop only.
-   Hotspot at (3, 3) — adjust if the monkey art's pointing-tip sits elsewhere. */
-@media (pointer: fine) {
-  * {
-    cursor:
-      url("/cursor/monkey-1-64.png") 6 6,
-      auto !important;
-  }
-  a,
-  button,
-  [role="button"],
-  summary,
-  [data-cursor-pointer] {
-    cursor:
-      url("/cursor/monkey-1-64.png") 6 6,
-      pointer !important;
-  }
-  *:active {
-    cursor:
-      url("/cursor/monkey-1-64.png") 6 6,
-      pointer !important;
-  }
-}
-
 html.lenis,
 html.lenis body {
   height: auto;
