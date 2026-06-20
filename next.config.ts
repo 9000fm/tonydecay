@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "fastly.picsum.photos" },
     ],
   },
+  // Teaser phase: serve the coming-soon page at the domain root.
+  // Remove this block to restore the full store homepage at /.
+  async rewrites() {
+    return [{ source: "/", destination: "/coming-soon" }];
+  },
 };
 
 export default nextConfig;
