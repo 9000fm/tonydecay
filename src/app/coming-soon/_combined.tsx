@@ -48,20 +48,20 @@ export function ComingSoonCombined({
   }
 
   return (
-    <Shell className="flex items-center justify-center px-6 py-16 sm:px-10">
-      {/* MOBILE — V1 centered stack */}
+    <Shell className="flex items-center justify-center px-6 py-8 sm:px-10 sm:py-16">
+      {/* MOBILE — V1 centered stack (sized to fit one screen, no scroll) */}
       <div className="flex w-full flex-col items-center text-center lg:hidden">
-        <ComingSoon className="relative z-10 mb-5 text-sm tracking-[0.3em] sm:text-base" />
-        <Wordmark className="relative z-10" style={{ fontSize: "clamp(3.5rem, 13vw, 8rem)" }} />
+        <ComingSoon className="relative z-10 mb-3 text-sm tracking-[0.3em] sm:text-base" />
+        <Wordmark className="relative z-10" style={{ fontSize: "clamp(2.8rem, 12vw, 8rem)" }} />
 
-        <div className="relative z-10 mt-8 mb-8 flex items-center justify-center">
+        <div className="relative z-10 mt-5 mb-5 flex items-center justify-center">
           {MOBILE_SLOTS.map((s, i) => (
             <PrintCard
               key={i}
               src={prints[i]}
               onClick={() => swap(i)}
               style={{
-                width: "clamp(120px, 32vw, 210px)",
+                width: "clamp(108px, 29vw, 200px)",
                 transform: `rotate(${s.rot}deg)`,
                 marginLeft: i === 0 ? 0 : "-2.5rem",
                 zIndex: s.z,
@@ -70,9 +70,9 @@ export function ComingSoonCombined({
           ))}
         </div>
 
-        <ShippingLine className="relative z-10 mb-8 text-[12px] tracking-[0.25em]" />
+        <ShippingLine className="relative z-10 mb-5 text-[12px] tracking-[0.25em]" />
         <EmailCapture className="relative z-10 mx-auto max-w-xs" />
-        <Monogram className="relative z-10 mt-10 w-[clamp(30px,6vw,44px)]" opacity={0.85} />
+        <Monogram className="relative z-10 mt-6 w-[clamp(28px,5.5vw,42px)]" opacity={0.85} />
       </div>
 
       {/* DESKTOP — V2 editorial split */}
