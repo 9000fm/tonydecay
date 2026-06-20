@@ -127,14 +127,18 @@ export function PrintCard({
   style?: React.CSSProperties;
   onClick?: () => void;
 }) {
-  // Crossfade on swap: keep the previous print underneath, fade the new one in.
+  // Crossfade on swap: keep the previous print underneath at full opacity, and fade
+  // the NEW one in once it has actually loaded (not on mount - the webp may not be
+  // decoded yet, which would make the fade finish before the image paints).
   // Adjust state during render (React's prop-change pattern) instead of an effect.
   const [front, setFront] = useState(src);
   const [back, setBack] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(true);
 
   if (src !== front) {
     setBack(front);
     setFront(src);
+    setLoaded(false);
   }
 
   return (
@@ -166,9 +170,11 @@ export function PrintCard({
         fill
         sizes="440px"
         className="object-cover"
+        onLoad={() => setLoaded(true)}
         style={{
           filter: PRINT_GRADE,
-          animation: back ? "cs-fade 0.85s ease both" : undefined,
+          opacity: back && !loaded ? 0 : 1,
+          transition: back ? "opacity 0.85s ease" : undefined,
         }}
       />
       <div
