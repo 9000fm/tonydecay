@@ -261,7 +261,7 @@ export function EmailCapture({
         <button
           type="submit"
           disabled={status === "loading"}
-          className="border px-6 py-3 font-mono text-sm font-semibold tracking-[0.18em] uppercase disabled:opacity-60"
+          className="border px-6 py-3 font-mono text-sm font-semibold tracking-[0.18em] whitespace-nowrap uppercase disabled:opacity-60"
           style={{ backgroundColor: "#e8edf2", borderColor: "#e8edf2", color: "#0b0e12" }}
         >
           {status === "loading" ? "..." : "Notify me"}

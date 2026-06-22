@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { rateLimit, ipFromHeaders } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { sendWaitlistEmail } from "@/lib/email";
+import { sendWaitlistEmail, sendSignupAlert } from "@/lib/email";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -53,11 +53,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "save_failed" }, { status: 500 });
     }
 
-    // Fire-and-forget confirmation - don't fail the signup if the email bounces.
+    // Fire-and-forget emails - don't fail the signup if a send bounces.
     try {
       await sendWaitlistEmail(email);
     } catch (e) {
       console.error("[notify] email send failed", e instanceof Error ? e.message : e);
+    }
+    try {
+      await sendSignupAlert(email);
+    } catch (e) {
+      console.error("[notify] alert send failed", e instanceof Error ? e.message : e);
     }
 
     return NextResponse.json({ ok: true });
