@@ -38,7 +38,7 @@ export function waitlistEmailHtml(iconUrl: string = IG_ICON): string {
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0;padding-top:24px;border-top:1px solid rgba(150,170,190,0.14);width:100%;">
               <tr>
                 <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:#c4cfda;">
-                  Questions? Reply to this email, or DM us
+                  Questions? Reply to this email, or DM
                   <a href="${IG_URL}" style="color:#e8edf2;text-decoration:none;white-space:nowrap;">
                     <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tonydecay</a>
                 </td>
@@ -96,7 +96,7 @@ export function confirmationEmailHtml(
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0;padding-top:24px;border-top:1px solid rgba(150,170,190,0.14);width:100%;">
               <tr>
                 <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:#c4cfda;">
-                  Questions? Reply to this email, or DM us
+                  Questions? Reply to this email, or DM
                   <a href="${IG_URL}" style="color:#e8edf2;text-decoration:none;white-space:nowrap;">
                     <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tonydecay</a>
                 </td>
@@ -131,7 +131,7 @@ export function abandonedEmailHtml(remaining: number, iconUrl: string = IG_ICON)
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0;padding-top:24px;border-top:1px solid rgba(150,170,190,0.14);width:100%;">
               <tr>
                 <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:#c4cfda;">
-                  Questions? Reply to this email, or DM us
+                  Questions? Reply to this email, or DM
                   <a href="${IG_URL}" style="color:#e8edf2;text-decoration:none;white-space:nowrap;">
                     <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tonydecay</a>
                 </td>
