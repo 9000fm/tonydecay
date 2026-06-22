@@ -32,7 +32,7 @@ export function waitlistEmailHtml(iconUrl: string = IG_ICON): string {
         <tr>
           <td style="padding:44px 40px;font-family:'Helvetica Neue',Arial,sans-serif;">
             <p style="margin:0 0 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7f93a6;">You're on the list</p>
-            <p style="margin:0 0 32px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;">&#12398;</span> DECAY</p>
+            <p style="margin:0 0 32px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;font-size:0.7em;">&#215;</span> DECAY</p>
             <p style="margin:0 0 18px;font-size:15px;line-height:1.7;color:#c4cfda;">Your address has been added to the Tony Decay notification list.</p>
             <p style="margin:0 0 36px;font-size:15px;line-height:1.7;color:#c4cfda;">The moment the prints are available to purchase, you'll receive a single email with a direct link to place your order. The collection is fifty signed sets, shipped worldwide.</p>
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0;padding-top:24px;border-top:1px solid rgba(150,170,190,0.14);width:100%;">
@@ -64,7 +64,7 @@ export function signupAlertHtml(subscriberEmail: string): string {
         <tr>
           <td style="padding:44px 40px;font-family:'Helvetica Neue',Arial,sans-serif;">
             <p style="margin:0 0 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7f93a6;">New waitlist signup</p>
-            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;">&#12398;</span> DECAY</p>
+            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;font-size:0.7em;">&#215;</span> DECAY</p>
             <p style="margin:0 0 10px;font-size:20px;font-weight:700;line-height:1.4;">
               <a href="mailto:${subscriberEmail}" style="color:#e8edf2;text-decoration:none;word-break:break-all;">${subscriberEmail}</a>
             </p>
@@ -89,7 +89,7 @@ export function confirmationEmailHtml(
         <tr>
           <td style="padding:44px 40px;font-family:'Helvetica Neue',Arial,sans-serif;">
             <p style="margin:0 0 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7f93a6;">Order confirmed</p>
-            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;">&#12398;</span> DECAY</p>
+            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;font-size:0.7em;">&#215;</span> DECAY</p>
             <p style="margin:0 0 22px;font-size:18px;font-weight:600;color:#e8edf2;">Thank you, ${order.fullName}.</p>
             <p style="margin:0 0 26px;">
               <span style="display:inline-block;padding:8px 14px;border:1px solid rgba(150,170,190,0.3);font-family:'Courier New',monospace;font-size:13px;letter-spacing:2px;color:#e8edf2;">ORDER ${order.orderNumber}</span>
@@ -125,7 +125,7 @@ export function abandonedEmailHtml(remaining: number, iconUrl: string = IG_ICON)
         <tr>
           <td style="padding:44px 40px;font-family:'Helvetica Neue',Arial,sans-serif;">
             <p style="margin:0 0 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7f93a6;">Order unfinished</p>
-            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;">&#12398;</span> DECAY</p>
+            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;font-size:0.7em;">&#215;</span> DECAY</p>
             <p style="margin:0 0 18px;font-size:15px;line-height:1.7;color:#c4cfda;">You started an order but didn't finish it.</p>
             <p style="margin:0 0 32px;font-size:15px;line-height:1.7;color:#c4cfda;">The set is still available - ${remaining} of fifty remain. You can pick up where you left off whenever you're ready.</p>
             <p style="margin:0 0 36px;">

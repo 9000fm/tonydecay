@@ -5,6 +5,7 @@ import {
   ALL_PRINTS,
   ComingSoon,
   EmailCapture,
+  IgLink,
   Monogram,
   PrintCard,
   ShippingLine,
@@ -72,7 +73,10 @@ export function ComingSoonCombined({
 
         <ShippingLine className="relative z-10 mb-5 text-[12px] tracking-[0.25em]" />
         <EmailCapture className="relative z-10 mx-auto max-w-xs" />
-        <Monogram className="relative z-10 mt-6 w-[clamp(28px,5.5vw,42px)]" opacity={0.85} />
+        <div className="relative z-10 mt-6 flex items-center gap-4">
+          <Monogram className="w-[clamp(28px,5.5vw,42px)]" opacity={0.85} />
+          <IgLink className="w-[clamp(17px,3.2vw,21px)]" />
+        </div>
       </div>
 
       {/* DESKTOP — V2 editorial split */}
@@ -86,7 +90,10 @@ export function ComingSoonCombined({
           <Wordmark style={{ fontSize: "clamp(2.6rem, 6vw, 5rem)" }} />
           <ShippingLine className="mt-5 mb-8 text-[12px] tracking-[0.25em]" />
           <EmailCapture className="max-w-md" />
-          <Monogram className="mt-10 w-[clamp(32px,6vw,46px)]" opacity={0.85} />
+          <div className="mt-10 flex items-center gap-4">
+            <Monogram className="w-[clamp(32px,6vw,46px)]" opacity={0.85} />
+            <IgLink className="w-[clamp(19px,2vw,23px)]" />
+          </div>
         </div>
       </div>
     </Shell>
