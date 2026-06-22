@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tony Decay — Coming Soon",
     description: "Fifty signed sets, shipped worldwide.",
-    images: ["/gallery/1.webp"],
+    // og:image is supplied automatically by ./opengraph-image.tsx
   },
 };
 

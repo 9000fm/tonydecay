@@ -32,12 +32,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "invalid_email" }, { status: 400 });
     }
 
-    // Turnstile only enforced when a token is supplied (widget optional for now).
-    if (body.turnstileToken) {
-      const ts = await verifyTurnstile(body.turnstileToken, ip);
-      if (!ts.ok) {
-        return NextResponse.json({ error: "bot_check_failed" }, { status: 403 });
-      }
+    // Turnstile: enforced in prod when TURNSTILE_SECRET_KEY is set. verifyTurnstile
+    // skips in dev / when the secret is unset, so the form keeps working until keys
+    // are added - then a valid token becomes mandatory and bots are rejected.
+    const ts = await verifyTurnstile(body.turnstileToken, ip);
+    if (!ts.ok) {
+      return NextResponse.json({ error: "bot_check_failed" }, { status: 403 });
     }
 
     const { error } = await supabaseAdmin

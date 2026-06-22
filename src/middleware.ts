@@ -10,8 +10,17 @@ import { NextRequest, NextResponse } from "next/server";
    Allowed through in production: the teaser route, the waitlist API, Next internals,
    and the image/static assets the teaser needs. */
 
-const ALLOW_PREFIX = ["/api/notify", "/_next", "/gallery", "/fonts", "/email"];
-const ALLOW_EXACT = new Set(["/coming-soon", "/favicon.ico", "/robots.txt"]);
+const ALLOW_PREFIX = [
+  "/api/notify",
+  "/_next",
+  "/gallery",
+  "/fonts",
+  "/email",
+  "/coming-soon", // teaser route + its opengraph-image / d1..d4 variants
+  "/icon", // banana favicon (icon.svg, icon.png)
+  "/apple-icon", // iOS home-screen icon
+];
+const ALLOW_EXACT = new Set(["/favicon.ico", "/robots.txt"]);
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

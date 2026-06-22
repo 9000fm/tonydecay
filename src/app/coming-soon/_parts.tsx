@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Script from "next/script";
+import { useEffect, useRef, useState } from "react";
 
 /* Shared building blocks for the coming-soon layout.
    Cold / solid palette. Dumb + composable. */
@@ -207,6 +208,16 @@ export function PrintCard({
   );
 }
 
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+interface TurnstileApi {
+  render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+  reset: (id: string) => void;
+}
+function turnstileApi(): TurnstileApi | undefined {
+  return (globalThis as { turnstile?: TurnstileApi }).turnstile;
+}
+
 export function EmailCapture({
   className = "",
   stack = false,
@@ -216,7 +227,38 @@ export function EmailCapture({
 }) {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState(""); // honeypot - real users never see/fill this
+  const [token, setToken] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const widgetRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  // Render the Turnstile widget once its script has loaded. No-op without a site key.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    let stop = false;
+    function render() {
+      const ts = turnstileApi();
+      if (!ts || !widgetRef.current || widgetIdRef.current) return;
+      widgetIdRef.current = ts.render(widgetRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: "dark",
+        callback: (t: string) => setToken(t),
+        "expired-callback": () => setToken(""),
+        "error-callback": () => setToken(""),
+      });
+    }
+    render();
+    let tries = 0;
+    const id = setInterval(() => {
+      tries += 1;
+      if (stop || widgetIdRef.current || tries > 25) return clearInterval(id);
+      render();
+    }, 200);
+    return () => {
+      stop = true;
+      clearInterval(id);
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -226,12 +268,18 @@ export function EmailCapture({
       const res = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, website }),
+        body: JSON.stringify({ email, website, turnstileToken: token }),
       });
       if (!res.ok) throw new Error("request failed");
       setStatus("done");
     } catch {
       setStatus("error");
+      // Reset Turnstile so the retry gets a fresh, unused token.
+      const ts = turnstileApi();
+      if (ts && widgetIdRef.current) {
+        ts.reset(widgetIdRef.current);
+        setToken("");
+      }
     }
   }
 
@@ -247,43 +295,49 @@ export function EmailCapture({
 
   return (
     <div className={`w-full ${className}`}>
-      <form
-        onSubmit={handleSubmit}
-        className={`flex w-full gap-3 ${stack ? "flex-col" : "flex-col sm:flex-row"}`}
-      >
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="your@email.com"
-          className="flex-1 border px-4 py-3 font-mono text-sm outline-none"
-          style={{
-            backgroundColor: "rgba(150,170,190,0.05)",
-            borderColor: "rgba(150,170,190,0.3)",
-            color: "#e8edf2",
-          }}
+      {TURNSTILE_SITE_KEY && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
         />
-        {/* honeypot field - hidden from users, only bots fill it */}
-        <input
-          type="text"
-          name="website"
-          tabIndex={-1}
-          autoComplete="off"
-          aria-hidden="true"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
-          className="absolute h-0 w-0 overflow-hidden opacity-0"
-          style={{ left: "-9999px" }}
-        />
-        <button
-          type="submit"
-          disabled={status === "loading"}
-          className="border px-6 py-3 font-mono text-sm font-semibold tracking-[0.18em] whitespace-nowrap uppercase disabled:opacity-60"
-          style={{ backgroundColor: "#e8edf2", borderColor: "#e8edf2", color: "#0b0e12" }}
-        >
-          {status === "loading" ? "..." : "Notify me"}
-        </button>
+      )}
+      <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3">
+        <div className={`flex w-full gap-3 ${stack ? "flex-col" : "flex-col sm:flex-row"}`}>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="flex-1 border px-4 py-3 font-mono text-sm outline-none"
+            style={{
+              backgroundColor: "rgba(150,170,190,0.05)",
+              borderColor: "rgba(150,170,190,0.3)",
+              color: "#e8edf2",
+            }}
+          />
+          {/* honeypot field - hidden from users, only bots fill it */}
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="absolute h-0 w-0 overflow-hidden opacity-0"
+            style={{ left: "-9999px" }}
+          />
+          <button
+            type="submit"
+            disabled={status === "loading" || (Boolean(TURNSTILE_SITE_KEY) && !token)}
+            className="border px-6 py-3 font-mono text-sm font-semibold tracking-[0.18em] whitespace-nowrap uppercase disabled:opacity-60"
+            style={{ backgroundColor: "#e8edf2", borderColor: "#e8edf2", color: "#0b0e12" }}
+          >
+            {status === "loading" ? "..." : "Notify me"}
+          </button>
+        </div>
+        {TURNSTILE_SITE_KEY && <div ref={widgetRef} className="mt-1" />}
       </form>
       {status === "error" && (
         <p className="mt-2 font-mono text-xs tracking-wide" style={{ color: "#d98a8a" }}>

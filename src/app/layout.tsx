@@ -39,12 +39,12 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tonydecay.com"),
   title: "Tony Decay — Limited Edition Art Prints",
-  description:
-    "100 sets of 15 exclusive mini art prints. Signed and numbered. $300 all-inclusive worldwide shipping.",
+  description: "Fifty signed sets of 15 mini art prints. Signed and numbered. Shipped worldwide.",
   openGraph: {
     title: "Tony Decay — Limited Edition Art Prints",
-    description: "100 sets of 15 exclusive mini art prints. $300 all-inclusive.",
+    description: "Fifty signed sets of 15 mini art prints. Shipped worldwide.",
     type: "website",
   },
 };
