@@ -18,7 +18,7 @@ const REPLY_TO = "flaviomanyariz@gmail.com";
 const ADMIN_EMAILS = ["flaviomanyariz@gmail.com"];
 
 const SITE = "https://tonydecay.com";
-const IG_URL = "https://instagram.com/tonydecay";
+const IG_URL = "https://www.instagram.com/tony.decay";
 const IG_ICON = `${SITE}/email/instagram.png`;
 
 // --- Template builders (pure, exported so the preview page can render them) ---
@@ -40,7 +40,7 @@ export function waitlistEmailHtml(iconUrl: string = IG_ICON): string {
                 <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:#c4cfda;">
                   Questions? Reply to this email, or DM
                   <a href="${IG_URL}" style="color:#e8edf2;text-decoration:none;white-space:nowrap;">
-                    <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tonydecay</a>
+                    <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tony.decay</a>
                 </td>
               </tr>
               <tr>
@@ -57,15 +57,18 @@ export function waitlistEmailHtml(iconUrl: string = IG_ICON): string {
 
 export function signupAlertHtml(subscriberEmail: string): string {
   return `
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0b0e12;margin:0;padding:32px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0b0e12;margin:0;padding:40px 0;">
   <tr>
     <td align="center">
-      <table role="presentation" width="440" cellpadding="0" cellspacing="0" style="max-width:440px;width:100%;background-color:#0b0e12;border:1px solid rgba(150,170,190,0.18);">
+      <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background-color:#0b0e12;border:1px solid rgba(150,170,190,0.18);">
         <tr>
-          <td style="padding:32px;font-family:'Helvetica Neue',Arial,sans-serif;">
-            <p style="margin:0 0 18px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7f93a6;">New waitlist signup</p>
-            <p style="margin:0 0 8px;font-size:20px;font-weight:700;color:#e8edf2;word-break:break-all;">${subscriberEmail}</p>
-            <p style="margin:0;font-size:13px;line-height:1.6;color:#7f93a6;">just joined the Tony Decay notification list.</p>
+          <td style="padding:44px 40px;font-family:'Helvetica Neue',Arial,sans-serif;">
+            <p style="margin:0 0 28px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7f93a6;">New waitlist signup</p>
+            <p style="margin:0 0 28px;font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#e8edf2;">TONY <span style="color:#7f93a6;font-weight:400;">&#12398;</span> DECAY</p>
+            <p style="margin:0 0 10px;font-size:20px;font-weight:700;line-height:1.4;">
+              <a href="mailto:${subscriberEmail}" style="color:#e8edf2;text-decoration:none;word-break:break-all;">${subscriberEmail}</a>
+            </p>
+            <p style="margin:0;font-size:15px;line-height:1.7;color:#7f93a6;">just joined the notification list. Reply to this email to reach them directly.</p>
           </td>
         </tr>
       </table>
@@ -98,7 +101,7 @@ export function confirmationEmailHtml(
                 <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:#c4cfda;">
                   Questions? Reply to this email, or DM
                   <a href="${IG_URL}" style="color:#e8edf2;text-decoration:none;white-space:nowrap;">
-                    <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tonydecay</a>
+                    <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tony.decay</a>
                 </td>
               </tr>
               <tr>
@@ -133,7 +136,7 @@ export function abandonedEmailHtml(remaining: number, iconUrl: string = IG_ICON)
                 <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;line-height:1.6;color:#c4cfda;">
                   Questions? Reply to this email, or DM
                   <a href="${IG_URL}" style="color:#e8edf2;text-decoration:none;white-space:nowrap;">
-                    <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tonydecay</a>
+                    <img src="${iconUrl}" width="16" height="16" alt="Instagram" style="vertical-align:-3px;border:0;margin:0 2px 0 4px;"/>@tony.decay</a>
                 </td>
               </tr>
               <tr>
