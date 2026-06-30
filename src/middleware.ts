@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const ALLOW_PREFIX = [
   "/api/notify",
+  "/api/cron", // Supabase keep-alive cron - must reach the DB, not the teaser
   "/_next",
   "/gallery",
   "/fonts",
